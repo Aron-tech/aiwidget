@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->smallInteger('status')->default(1); // 0 = Blokkolt, 1 = Inaktív, 2 = Aktív
+            $table->smallInteger('status')->default(2); // 0 = Blokkolt, 1 = Inaktív, 2 = Aktív
             $table->rememberToken();
             $table->timestamps();
         });
