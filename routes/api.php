@@ -1,8 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware(['throttle:1000,1', 'verify.referer'])->name('widget.')->group(function () {
+
+    Route::post('/submit-message/{site:uuid}', [MessageController::class, 'storeUserMessage'])->name('store');
+    Route::get('/messages/{site:uuid}', [ChatController::class, 'show'])->name('show');
+    Route::delete('/messages/delete/{site:uuid}', [ChatController::class, 'delete'])->name('delete');
+
+});
