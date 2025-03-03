@@ -15,8 +15,9 @@ class VerifyAdminRole
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $type = auth()->user()->keys()->first()->type ?? null;
 
-        if(auth()->user()->keys()->first()->type < 2) {
+        if(empty($type) || $type < 2) {
             return redirect()->route('dashboard');
         }
 
