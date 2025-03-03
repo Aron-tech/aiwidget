@@ -8,10 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Authenticatable // implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $guarded = ['id'];
 
     /**
      * The attributes that are mass assignable.
@@ -20,8 +22,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'image',
+        'other_data',
         'email',
         'password',
+        'status',
     ];
 
     /**
@@ -33,6 +38,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function sites()
+    {
+        return $this->belongsToMany(Site::class);
+    }
+
+    public function keys()
+    {
+        return $this->hasMany(Key::class);
+    }
 
     /**
      * Get the attributes that should be cast.
