@@ -35,9 +35,9 @@ class Site extends Model
         'settings' => 'json',
     ];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasManyThrough(User::class, Key::class);
     }
 
     public function chats()
