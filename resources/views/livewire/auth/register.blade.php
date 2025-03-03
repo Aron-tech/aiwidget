@@ -9,7 +9,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.auth')] class extends Component {
-    public string $name = '';
+    public string $first_name = '';
+    public string $last_name = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
@@ -20,18 +21,25 @@ new #[Layout('components.layouts.auth')] class extends Component {
     public function register(): void
     {
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'first_name' => ['required', 'string', 'min:3', 'max:50'],
+            'last_name' => ['required', 'string', 'min:3', 'max:50'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        $name = $validated['first_name'].' '.$validated['last_name'];
 
         $validated['password'] = Hash::make($validated['password']);
 
-        event(new Registered(($user = User::create($validated))));
+        event(new Registered(($user = User::create([
+            'name' => $name,
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]))));
 
         Auth::login($user);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        $this->redirect(route('site.picker', absolute: false), navigate: true);
     }
 }; ?>
 
@@ -43,53 +51,45 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     <form wire:submit="register" class="flex flex-col gap-6">
         <!-- Name -->
-        <flux:input
-            wire:model="name"
-            id="name"
-            label="{{ __('Name') }}"
-            type="text"
-            name="name"
-            required
-            autofocus
-            autocomplete="name"
-            placeholder="Full name"
-        />
+        <div class="grid gap-2">
+            <flux:input wire:model="first_name" min="3" id="first_name" label="{{ __('first_name') }}" type="text" name="first_name" required autofocus autocomplete="first_name" placeholder="First name" />
+        </div>
+        <div class="grid gap-2">
+            <flux:input wire:model="last_name" id="last_name" label="{{ __('last_name') }}" type="text" name="last_name" required autofocus autocomplete="last_name" placeholder="Last name" />
+        </div>
 
         <!-- Email Address -->
-        <flux:input
-            wire:model="email"
-            id="email"
-            label="{{ __('Email address') }}"
-            type="email"
-            name="email"
-            required
-            autocomplete="email"
-            placeholder="email@example.com"
-        />
+        <div class="grid gap-2">
+            <flux:input wire:model="email" id="email" label="{{ __('Email address') }}" type="email" name="email" required autocomplete="email" placeholder="email@example.com" />
+        </div>
 
         <!-- Password -->
-        <flux:input
-            wire:model="password"
-            id="password"
-            label="{{ __('Password') }}"
-            type="password"
-            name="password"
-            required
-            autocomplete="new-password"
-            placeholder="Password"
-        />
+        <div class="grid gap-2">
+            <flux:input
+                wire:model="password"
+                id="password"
+                label="{{ __('Password') }}"
+                type="password"
+                name="password"
+                required
+                autocomplete="new-password"
+                placeholder="Password"
+            />
+        </div>
 
         <!-- Confirm Password -->
-        <flux:input
-            wire:model="password_confirmation"
-            id="password_confirmation"
-            label="{{ __('Confirm password') }}"
-            type="password"
-            name="password_confirmation"
-            required
-            autocomplete="new-password"
-            placeholder="Confirm password"
-        />
+        <div class="grid gap-2">
+            <flux:input
+                wire:model="password_confirmation"
+                id="password_confirmation"
+                label="{{ __('Confirm password') }}"
+                type="password"
+                name="password_confirmation"
+                required
+                autocomplete="new-password"
+                placeholder="Confirm password"
+            />
+        </div>
 
         <div class="flex items-center justify-end">
             <flux:button type="submit" variant="primary" class="w-full">
