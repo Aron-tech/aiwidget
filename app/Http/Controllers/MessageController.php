@@ -1,0 +1,188 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Chat;
+use App\Models\Site;
+use App\Models\Message;
+use App\Models\QuestionAnswer;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+
+class MessageController extends Controller
+{
+    public function findBestAnswer($user_question, $site_id)
+    {
+
+        $exact_match = QuestionAnswer::where('site_id', $site_id)
+            ->where('question', $user_question)
+            ->first();
+
+        if ($exact_match) {
+            return $exact_match->answer;
+        }
+
+        $user_embedding = $this->getEmbedding($user_question);
+
+        $best_match = null;
+        $highest_score = 0;
+
+        $questions = QuestionAnswer::where('site_id', $site_id)->get();
+
+        foreach ($questions as $question) {
+            $question_embedding = json_decode($question->embedding, true);
+            $similarity_score = $this->cosineSimilarity($user_embedding, $question_embedding);
+
+            if ($similarity_score > $highest_score) {
+                $highest_score = $similarity_score;
+                $best_match = $question;
+            }
+        }
+        Log::info($highest_score);
+
+        if ($best_match && $highest_score > 0.5) {
+
+                Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
+                $optimalized_result = Prism::text()
+                    ->using(Provider::OpenAI, 'gpt-3.5-turbo')
+                    ->withPrompt(
+                        'Felhasználó kérdése: ' . $user_question . ' ' .
+                        'Rendszer kérdés:' . $best_match->question . ' ' .
+                        'Rendszer válasz: ' . $best_match->answer . '. ' .
+                        'Kérlek, formázd át a választ úgy, hogy pontosan illeszkedjen a felhasználó kérdéséhez, viszont csakis a Rendszer kérdés és válaszából használhatsz információt.' .
+                        'Csak a Rendszer kérdésében és válaszában szereplő információkat használd fel, és semmi mást. ' .
+                        'Ne adj hozzá semmilyen extra információt, és ne változtasd meg a Rendszer kérdés és válasz tartalmát. ' .
+                        'Csak egy egész mondatban add vissza a választ.'
+
+                    )
+                    ->generate();
+
+                if (isset($optimalized_result->text))
+                    return $optimalized_result->text;
+            }
+
+            return false; // Nincs megfelelő válasz
+    }
+
+    private function getEmbedding($text)
+    {
+        $cacheKey = 'embedding_' . md5($text);
+
+        return Cache::remember($cacheKey, now()->addHours(24), function () use ($text) {
+            /*$response = OpenAI::embeddings()->create([
+                'model' => 'text-embedding-3-large',
+                'input' => $text,
+                'timeout' => 60,
+            ]);*/
+
+            $response = Prism::embeddings()
+                ->using(Provider::OpenAI, 'text-embedding-3-large')
+                ->fromInput($text)
+                ->withClientOptions(['timeout' => 30])
+                ->withClientRetry(3, 100)
+                ->generate();
+
+            if (empty($response->embeddings)) {
+                throw new \Exception("Hiba: A beágyazás generálása sikertelen.");
+            }
+
+            return $response->embeddings;
+            //return $response['data'][0]['embedding'];
+        });
+    }
+
+    private function cosineSimilarity($embedding1, $embedding2)
+    {
+        if (count($embedding1) !== count($embedding2)) {
+            throw new \Exception("A beágyazás vektorok mérete nem egyezik. Várható: " . count($embedding1) . ", kapott: " . count($embedding2));
+        }
+
+        $dotProduct = 0;
+        $magnitude1 = 0;
+        $magnitude2 = 0;
+
+        for ($i = 0; $i < count($embedding1); $i++) {
+            $dotProduct += $embedding1[$i] * $embedding2[$i];
+            $magnitude1 += $embedding1[$i] * $embedding1[$i];
+            $magnitude2 += $embedding2[$i] * $embedding2[$i];
+        }
+
+        $magnitude1 = sqrt($magnitude1);
+        $magnitude2 = sqrt($magnitude2);
+
+        if ($magnitude1 * $magnitude2 == 0) {
+            return 0; // Ha valamelyik vektor nullvektor, a hasonlóság 0
+        }
+
+        return $dotProduct / ($magnitude1 * $magnitude2);
+    }
+
+    public function storeUserMessage(Site $site, Request $request)
+    {
+        if (!$site) {
+            return response()->json(['error' => 'A webhely nem található'], 404);
+        }
+
+        $site_id = $site->id;
+
+        $validated = $request->validate([
+                    'nickname' => 'nullable|string|max:255',
+                    'email' => 'nullable|email|max:255',
+                    'message' => 'required|min:6|string',
+                    'chat_id' => 'nullable|max:255',
+                ]);
+
+        $chat_id = $validated['chat_id'] ?? null;
+
+        if (!$chat_id) {
+
+            $chat = Chat::create([
+                'site_id' => $site_id,
+                'visitor_name' => $validated['nickname'],
+                'visitor_email' => $validated['email'],
+            ]);
+
+            $chat_id = $chat->id;
+
+        } else {
+            $chat = Chat::where('id', $chat_id)->where('site_id', $site_id)->first();
+            if (!$chat) {
+                return response()->json(['error' => 'Érvénytelen chat azonosító'], 400);
+            }
+        }
+
+        $message = Message::create([
+            'chat_id' => $chat_id,
+            'message' => $validated['message'],
+        ]);
+
+        $answer = $this->findBestAnswer($validated['message'], $site_id);
+
+
+        if($answer === false ){
+            $answer = "A kérdésedre nem sikerült helyes választ találni, hamarosan megválaszolja egy munkatárs a kérdésedet.";
+            $chat->status = 2;
+            $chat->save();
+        }
+
+        Log::info("Bot válasz lekérdezés után: $answer");
+
+        $bot_message = Message::create([
+            'chat_id' => $chat_id,
+            'message' => $answer,
+            'sender_role' => 'bot',
+        ]);
+
+        //Log::info("Bot üzenet mentése adatbázisba: $bot_message->id");
+
+        return response()->json([
+            'message' => 'Az üzenet sikeresen elküldve!',
+            'data' => [
+                'chat_id' => $chat_id,
+            ]
+        ], 200);
+    }
+}
