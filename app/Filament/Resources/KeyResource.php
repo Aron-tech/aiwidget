@@ -84,6 +84,10 @@ class KeyResource extends Resource
                     ->label('Oldal név')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('user.name')
+                    ->label('Felhasználó neve')
+                    ->searchable()
+                    ->sortable(),
                 SelectColumn::make('type')
                     ->label('Típus')
                     ->options([
