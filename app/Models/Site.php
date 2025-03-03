@@ -18,6 +18,7 @@ class Site extends Model
         'uuid',
         'domain',
         'user_id',
+        'key_id',
         'settings',
     ];
 
