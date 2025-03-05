@@ -27,6 +27,7 @@ class User extends Authenticatable // implements MustVerifyEmail
         'email',
         'password',
         'status',
+        'key_id'
     ];
 
     /**
@@ -39,14 +40,14 @@ class User extends Authenticatable // implements MustVerifyEmail
         'remember_token',
     ];
 
-    public function sites()
-    {
-        return $this->belongsToMany(Site::class);
-    }
-
     public function keys()
     {
         return $this->hasMany(Key::class);
+    }
+
+    public function sites()
+    {
+        return $this->hasManyThrough(Site::class, Key::class);
     }
 
     /**

@@ -18,8 +18,22 @@ class Key extends Model
         'user_id',
         'type',
         'expiration_time',
-        'activated',
     ];
+
+    public function setTokenAttribute($value)
+    {
+        $this->attributes['token'] = hash('sha256', $value);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->expiration_time)) {
+                $model->expiration_time = now()->addDays(360);
+            }
+        });
+    }
 
     public function site()
     {
