@@ -47,7 +47,7 @@ class User extends Authenticatable // implements MustVerifyEmail
 
     public function sites()
     {
-        return $this->hasManyThrough(Site::class, Key::class);
+        return $this->hasManyThrough(Site::class, Key::class, 'user_id', 'id', 'id', 'site_id');
     }
 
     /**

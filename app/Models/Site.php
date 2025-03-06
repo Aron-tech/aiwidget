@@ -38,7 +38,7 @@ class Site extends Model
 
     public function users()
     {
-        return $this->hasManyThrough(User::class, Key::class);
+        return $this->hasManyThrough(User::class, Key::class, 'site_id', 'id', 'id', 'user_id');
     }
 
     public function chats()
