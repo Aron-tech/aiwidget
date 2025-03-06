@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->string('name')->min(3)->max(100);
             $table->string('image')->default('default.png');
-            $table->foreignIdFor(Key::class)->nullable();
             $table->json('other_data')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

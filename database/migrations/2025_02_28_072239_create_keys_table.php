@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('keys', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Site::class)->nullable();  // Akkor nincs Site megadva tehát null, ha owner és még nincs beállítva az oldal
+            $table->foreignIdFor(Site::class)->nullable();  // Ha Site törlődik, akkor a hozzá tartozó Key is törlődik
             $table->foreignIdFor(User::class)->nullable();
             $table->string('token')->unique();
             $table->smallInteger('type')->default(0); /// 0 = moderator, 1 = owner, 2 = superadmin
