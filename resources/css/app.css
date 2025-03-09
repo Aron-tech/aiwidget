@@ -9,6 +9,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+    /*Betűtípusok*/
+    --font-*: initial;
+    --font-sora: "Sora", "sans-serif";
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --color-zinc-50: #fafafa;
