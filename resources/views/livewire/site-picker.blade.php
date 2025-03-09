@@ -1,7 +1,7 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 grid-rows-auto gap-6 items-center justify-items-center min-h-screen p-8 pt-0">
     <!-- Címsor -->
     <div class="col-span-full">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">{{__('interface.select_website')}}</h1>
+        <x-text.h1>{{ __('interface.select_website') }}</x-text.h1>
     </div>
 
     <!-- Weboldal kártyák -->
@@ -14,7 +14,7 @@
             <p class="text-gray-500 dark:text-white text-sm sm:text-base md:text-lg mt-2 uppercase">{{ __('interface.add_new_website')}}</p>
         </div>
     </flux:modal.trigger>
-    
+
     <!-- Livewire komponensek -->
     @livewire('site.create')
     @livewire('site.edit')

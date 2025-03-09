@@ -18,7 +18,7 @@ row-span-2 bg-white dark:bg-black/10 rounded-lg shadow-md w-full h-full p-6 hove
     </div>
 
     <div class="flex flex-col justify-center items-center flex-grow">
-        <h2 class="text-gray-800 dark:text-gray-200 text-xl sm:text-2xl md:text-3xl font-semibold mb-4">{{$site->name}}</h2>
+        <x-text.h2>{{$site->name}}</x-text.h2>
         <a href="{{ route('dashboard', $site->uuid) }}" class="bg-gray-800 dark:bg-gray-700 text-white px-4 sm:px-6 py-2 rounded-lg font-medium hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-300 uppercase text-sm sm:text-base">{{__('interface.select')}}</a>
     </div>
 
