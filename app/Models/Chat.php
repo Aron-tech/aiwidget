@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chat extends Model
 {
@@ -19,12 +21,12 @@ class Chat extends Model
         'site_id',
     ];
 
-    public function site()
+    public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }

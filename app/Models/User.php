@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -40,12 +42,12 @@ class User extends Authenticatable // implements MustVerifyEmail
         'remember_token',
     ];
 
-    public function keys()
+    public function keys(): HasMany
     {
         return $this->hasMany(Key::class);
     }
 
-    public function sites()
+    public function sites(): HasManyThrough
     {
         return $this->hasManyThrough(Site::class, Key::class, 'user_id', 'id', 'id', 'site_id');
     }

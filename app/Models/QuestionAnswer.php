@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuestionAnswer extends Model
 {
@@ -23,7 +24,7 @@ class QuestionAnswer extends Model
         'embedding' => 'json',
     ];
 
-    public function site()
+    public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
     }
