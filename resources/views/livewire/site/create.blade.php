@@ -96,7 +96,7 @@ new class extends Component {
             </div>
 
             <div class="mt-4">
-                <flux:input wire:model="token" icon="key" id="token" label="{{ __('interface.token') }}" type="token" name="token" required autocomplete="token" placeholder="key-token" />
+                <flux:input wire:model="token" icon="key" id="token" label="{{ __('interface.token') }}" type="token" name="token" required autocomplete="token" placeholder="key-token" clearable/>
             </div>
 
             <div class="flex">
@@ -115,11 +115,11 @@ new class extends Component {
             </div>
 
             <div class="mt-4">
-                <flux:input wire:model="new_site_name" id="new_site_name" label="{{ __('interface.site_name') }}" type="text" name="new_site_name" required autofocus autocomplete="new_site_name" placeholder="My website name" />
+                <flux:input wire:model="new_site_name" id="new_site_name" label="{{ __('interface.site_name') }}" type="text" name="new_site_name" required autofocus autocomplete="new_site_name" placeholder="My website name" clearable />
             </div>
 
             <div class="mt-4">
-                <flux:input wire:model="new_site_domain" icon="link" id="new_site_domain" label="{{ __('interface.domain') }}" type="url" name="new_site_domain" placeholder="https://mywebsite.hu/" />
+                <flux:input wire:model="new_site_domain" icon="link" id="new_site_domain" label="{{ __('interface.domain') }}" type="url" name="new_site_domain" placeholder="https://mywebsite.hu/" clearable/>
             </div>
 
             <div class="flex">
