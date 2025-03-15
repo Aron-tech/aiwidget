@@ -54,5 +54,9 @@ return [
     'delete_success' => 'Sucessfully deleted!',
     'edit_success' => 'Successfully edited!',
     'missing_site' => 'The requested site is currently unavailable or missing. Please check the URL or try again later.',
-    'missing_permission' => 'You dont have permission',
+    'missing_permission' => 'You dont have permission!',
+    'download_success' => 'Successfully downloaded',
+    'import_success' => 'Sucessfully imported',
+    'missing_auth_question' => 'You dont have permission or not found the question.',
+    'refresh_success' => 'Sucessfully refreshed!',
 ];

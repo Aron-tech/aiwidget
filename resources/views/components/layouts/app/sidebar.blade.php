@@ -14,7 +14,11 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group heading="Platform" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    @php $uuid = request()->route()->site->uuid ?? request()->route()->site; @endphp
+                    @if(isset($uuid))
+                        <flux:navlist.item icon="home" :href="route('dashboard', $uuid)" :current="request()->routeIs('dashboard', $uuid)" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="question-mark-circle" :href="route('manager.question', $uuid  )" :current="request()->routeIs('manager.question', $uuid)" wire:navigate>{{ __('Question-Manager') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
