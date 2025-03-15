@@ -18,9 +18,16 @@ new class extends Component {
 
         $this->site = Site::find($site_id);
 
+        if(!isset($this->site->keys[0]) && auth()->user()->id !== $this->site->keys[0]->user_id)
+        {
+            $this->dispatch('notify','danger',__('interface.missing_permission'));
+            return;
+        }
+
+
         if(empty($this->site))
         {
-            return;
+            $this->dispatch('notify','warning',__('interface.missing_site'));
         }
 
         $this->new_site_name = $this->site->name;
@@ -33,7 +40,7 @@ new class extends Component {
     {
         if(empty($this->site))
         {
-            return;
+            $this->dispatch('notify','danger',__('interface.missing_site'));
         }
 
         $validated = $this->validate([
@@ -49,6 +56,8 @@ new class extends Component {
         Flux::modal('edit-site')->close();
 
         $this->dispatch('reloadSites');
+
+        $this->dispatch('notify','success',__('interface.edit_success'));
     }
 
 }; ?>

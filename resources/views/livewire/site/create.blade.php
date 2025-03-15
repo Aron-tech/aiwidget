@@ -37,12 +37,15 @@ new class extends Component {
         if($this->key->type === 1)
         {
             Flux::modal('create-site')->show();
+
         }else if($this->key->type === 2 || $this->key->type === 0){
             $this->key->update([
                 'user_id' => $this->auth_user->id,
                 ]);
 
             $this->dispatch('reloadSites');
+
+            $this->dispatch('notify','success',__('interface.add_success'));
         }
 
         Flux::modal('add-site')->close();
@@ -73,6 +76,7 @@ new class extends Component {
 
         $this->dispatch('reloadSites');
 
+        $this->dispatch('notify','success',__('interface.create_success'));
     }
 
     private function resetForm()

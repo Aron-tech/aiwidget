@@ -49,6 +49,8 @@ new class extends Component {
         Flux::modal('delete-site')->close();
 
         $this->dispatch('reloadSites');
+
+        $this->dispatch('notify','success',__('interface.delete_success'));
     }
 }; ?>
 
