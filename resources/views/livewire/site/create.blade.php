@@ -4,16 +4,17 @@ use Livewire\Volt\Component;
 use App\Models\Key;
 use Illuminate\Support\Facades\Auth;
 use Flux\Flux;
+use App\Models\User;
 
 new class extends Component {
 
-    public $auth_user = null;
+    public ?User $auth_user = null;
 
     public $new_site_name = '';
     public $new_site_domain = '';
     public $token = null;
 
-    public $key = null;
+    public ?Key $key = null;
 
     public function addWebsite()
     {

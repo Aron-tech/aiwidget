@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
+use Illuminate\Support\Facades\Route;
 
 new #[Layout('components.layouts.auth')] class extends Component {
     #[Validate('required|string|email')]

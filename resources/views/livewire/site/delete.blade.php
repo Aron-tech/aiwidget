@@ -3,12 +3,13 @@
 use Livewire\Volt\Component;
 use App\Models\Site;
 use Livewire\Attributes\On;
+use App\Models\User;
 
 new class extends Component {
 
-    public $auth_user = null;
+    public ?User $auth_user = null;
 
-    public $site = null;
+    public ?Site $site = null;
 
     #[On('openDeleteModal')]
     public function openDeleteModal($site_id)

@@ -6,7 +6,7 @@ use Livewire\Attributes\On;
 
 new class extends Component {
 
-    public $site = null;
+    public ?Site $site = null;
 
     public $new_site_name = '';
     public $new_site_domain = '';
