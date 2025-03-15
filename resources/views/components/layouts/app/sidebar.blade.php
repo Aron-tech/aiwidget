@@ -4,29 +4,27 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="border-r border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+        <flux:sidebar sticky stashable class="border-r border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 {{request()->routeIs('site.picker') ? 'hidden' : ''}}">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
-                <x-app-logo class="size-8" href="#"></x-app-logo>
+            <a href="{{ route('site.picker') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+                <flux:icon name="arrow-left" />
+                <span class="text-sm font-semibold">{{ __('interface.back_site_picker') }}</span>
             </a>
 
             <flux:navlist variant="outline">
                 <flux:navlist.group heading="Platform" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    @php $uuid = request()->route()->site->uuid ?? request()->route()->site; @endphp
+                    @if(isset($uuid))
+                        <flux:navlist.item icon="home" :href="route('dashboard', $uuid)" :current="request()->routeIs('dashboard', $uuid)" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="question-mark-circle" :href="route('manager.question', $uuid  )" :current="request()->routeIs('manager.question', $uuid)" wire:navigate>{{ __('Question-Manager') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
             </flux:navlist>
 
             <!-- Desktop User Menu -->
@@ -76,7 +74,7 @@
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
+        <flux:header class="lg:hidden {{request()->routeIs('site.picker') ? 'hidden' : ''}}">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <flux:spacer />
@@ -128,5 +126,6 @@
         {{ $slot }}
 
         @fluxScripts
+
     </body>
 </html>

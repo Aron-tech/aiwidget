@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Hidehalo\Nanoid\Client;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Str;
 
 class Site extends Model
 {
@@ -24,15 +24,21 @@ class Site extends Model
         'settings',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            if (empty($model->uuid)) {
-                $model->uuid = (string) Str::uuid();
-            }
-        });
-    }
+        public function getRouteKeyName(): string
+        {
+            return 'uuid';
+        }
+
+        protected static function boot()
+        {
+            parent::boot();
+            static::creating(function ($model) {
+                if (empty($model->uuid)) {
+                    $nano = new Client();
+                    $model->uuid = $nano->generateId(24); // 24 karakter hosszú Nano ID
+                }
+            });
+        }
 
     protected $casts = [
         'settings' => 'json',
