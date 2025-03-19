@@ -13,11 +13,8 @@ class UserManager extends Component
     use WithPagination, WithoutUrlPagination;
 
     public $site;
-
     public $search = '';
-
-    public $sort_by = 'token';
-    public $sort_direction = 'asc';
+    public $filter = 0; // 0: Összes, 1: Aktivált, 2: Nem aktivált
 
     public function mount(Site $site)
     {
@@ -28,6 +25,7 @@ class UserManager extends Component
     {
         $this->dispatch('createKey', $this->site->id);
     }
+
     public function delete($key_id)
     {
         $this->dispatch('deleteKey', $key_id, $this->site->id);
@@ -57,6 +55,12 @@ class UserManager extends Component
                         $query->where('name', 'like', '%' . $this->search . '%')
                             ->orWhere('email', 'like', '%' . $this->search . '%');
                     });
+            })
+            ->when($this->filter === '1', function($query) {
+                $query->whereNotNull('user_id');
+            })
+            ->when($this->filter === '2', function($query) {
+                $query->whereNull('user_id');
             })
             ->paginate(10);
 

@@ -53,6 +53,17 @@
             </flux:modal.trigger>
             <flux:button wire:click='reloadKeys()' class="ml-4" icon="arrow-path" variant="filled"></flux:button>
             <flux:button wire:click='create()' icon="plus">{{__('interface.add')}}</flux:button>
+            <flux:dropdown>
+                <flux:button icon-trailing="funnel"></flux:button>
+
+                <flux:menu>
+                    <flux:menu.radio.group wire:model.live='filter'>
+                        <flux:menu.radio value="0">{{ __('interface.all')}}</flux:menu.radio>
+                        <flux:menu.radio value="1">{{ __('interface.token_activated')}}</flux:menu.radio>
+                        <flux:menu.radio value="2">{{ __('interface.token_not_activated')}}</flux:menu.radio>
+                    </flux:menu.radio.group>
+                </flux:menu>
+            </flux:dropdown>
         </div>
     </div>
     <div class="grid grid-cols-4 gap-6">
