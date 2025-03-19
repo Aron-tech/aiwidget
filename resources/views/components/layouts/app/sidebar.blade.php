@@ -18,6 +18,7 @@
                     @if(isset($uuid))
                         <flux:navlist.item icon="home" :href="route('dashboard', $uuid)" :current="request()->routeIs('dashboard', $uuid)" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                         <flux:navlist.item icon="question-mark-circle" :href="route('manager.question', $uuid  )" :current="request()->routeIs('manager.question', $uuid)" wire:navigate>{{ __('Question-Manager') }}</flux:navlist.item>
+                        <flux:navlist.item icon="user-group" :href="route('manager.user', $uuid  )" :current="request()->routeIs('manager.user', $uuid)" wire:navigate>{{ __('User-Manager') }}</flux:navlist.item>
                     @endif
                 </flux:navlist.group>
             </flux:navlist>

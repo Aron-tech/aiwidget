@@ -23,7 +23,7 @@ Route::middleware(['auth', 'check_site_in_url'])->group(function () {
 Route::middleware(['auth', 'check_site_in_url'])->name('manager.')->group(function () {
     Volt::route('question-manager/{site}', QuestionManager::class)->name('question');
 
-    //Volt::route('user-manager/{site}', UserManager::class)->name('user');
+    Volt::route('user-manager/{site}', UserManager::class)->name('user');
 });
 
 Route::middleware(['auth'])->group(function () {
