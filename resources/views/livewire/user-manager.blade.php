@@ -59,8 +59,8 @@
                 <flux:menu>
                     <flux:menu.radio.group wire:model.live='filter'>
                         <flux:menu.radio value="0">{{ __('interface.all')}}</flux:menu.radio>
-                        <flux:menu.radio value="1">{{ __('interface.token_activated')}}</flux:menu.radio>
-                        <flux:menu.radio value="2">{{ __('interface.token_not_activated')}}</flux:menu.radio>
+                        <flux:menu.radio value="1">{{ __('interface.activated')}}</flux:menu.radio>
+                        <flux:menu.radio value="2">{{ __('interface.not_activated')}}</flux:menu.radio>
                     </flux:menu.radio.group>
                 </flux:menu>
             </flux:dropdown>
@@ -69,7 +69,7 @@
     <div class="grid grid-cols-4 gap-6">
         <!--Táblázat fejléc-->
         <div class="pb-3 dark:border-white/20 border-b-zinc-900/20 border-b-2">
-            <flux:heading size="lg">{{__('interface.token')}}</flux:heading>
+            <flux:heading size="lg">{{__('interface.token_enscrypted')}}</flux:heading>
         </div>
         <div class="pb-3 dark:border-white/20 border-b-zinc-900/20 border-b-2">
             <flux:heading size="lg">{{__('interface.name')}}</flux:heading>
