@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\UserManager;
 use App\Livewire\QuestionManager;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
@@ -12,13 +13,17 @@ Route::view('site-picker', 'site-picker')
     ->middleware(['auth', 'verified'])
     ->name('site.picker');
 
-Route::middleware(['auth', 'check_site_in_url'])->name('manager.')->group(function () {
 
+Route::middleware(['auth', 'check_site_in_url'])->group(function () {
     Route::get('dashboard/{site}', function ($site) {
         return view('dashboard', ['site' => $site]);
     })->name('dashboard');
+});
 
+Route::middleware(['auth', 'check_site_in_url'])->name('manager.')->group(function () {
     Volt::route('question-manager/{site}', QuestionManager::class)->name('question');
+
+    Volt::route('user-manager/{site}', UserManager::class)->name('user');
 });
 
 Route::middleware(['auth'])->group(function () {
