@@ -32,7 +32,7 @@ new class extends Component {
 
         $this->dispatch('reloadQuestions');
 
-        $this->dispatch('notify', 'warning', __('interface.delete_success'));
+        $this->dispatch('notify', 'success', __('interface.delete_success'));
     }
 };
 ?>

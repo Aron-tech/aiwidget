@@ -1,6 +1,6 @@
 <div>
     <!-- Értesítés megjelenítése -->
-    <div wire:poll.5000ms class="fixed top-3 sm:top-5 w-2/3 sm:left-1/2 transform sm:-translate-x-1/2 sm:w-1/4 z-50">
+    <div wire:key='notification' class="fixed top-3 sm:top-5 w-2/3 sm:left-1/2 transform sm:-translate-x-1/2 sm:w-1/4 z-50">
         @if(session()->has('success'))
             <flux:callout icon="check-circle" variant="success" inline x-data="{ visible: true }" x-show="visible">
                 <flux:callout.heading class="flex gap-2 @max-md:flex-col items-start">{{ session('success') }}</flux:callout.heading>
