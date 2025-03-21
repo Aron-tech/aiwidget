@@ -18,12 +18,15 @@ Route::middleware(['auth', 'check_site_in_url'])->group(function () {
     Route::get('dashboard/{site}', function ($site) {
         return view('dashboard', ['site' => $site]);
     })->name('dashboard');
+
+    Volt::route('generate-widget/{site}', 'generatewidget')->name('generate-widget');
 });
 
 Route::middleware(['auth', 'check_site_in_url'])->name('manager.')->group(function () {
     Volt::route('question-manager/{site}', QuestionManager::class)->name('question');
 
     Volt::route('user-manager/{site}', UserManager::class)->name('user');
+
 });
 
 Route::middleware(['auth'])->group(function () {

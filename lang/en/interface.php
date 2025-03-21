@@ -77,4 +77,5 @@ return [
     'add_new_key' => 'Add new key',
     'key_delete_message' => "Are you sure you want to delete the following user's key: ",
     'key_delete_title' => 'Delete key',
+    'generate_widget' => 'Generate widget',
 ];
