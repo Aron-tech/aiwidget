@@ -1,10 +1,10 @@
 (function() {
-    // Widget konfiguráció inicializálása alapértékekkel
     const defaultConfig = {
         apiUrl: 'https://szakdolgozat.test/api',
         containerId: 'conversiveai-widget-container',
         cssUrl: 'https://szakdolgozat.test/css/widget/default.css',
         siteId: null,
+        widgetName: 'ConversiveAI', // Alapértelmezett widget név
     };
 
     window.widgetConfig = Object.assign({}, defaultConfig, window.widgetConfig || {});
@@ -27,7 +27,7 @@
 
         // Kék gomb létrehozása a jobb alsó sarokban
         const toggleButton = document.createElement('div');
-        toggleButton.id = 'widget-toggle-button';
+        toggleButton.id = 'conversiveai-widget-toggle-button';
         toggleButton.innerHTML = '<img src="https://szakdolgozat.test/widget/icon1.png">';
         document.body.appendChild(toggleButton);
 
@@ -60,17 +60,17 @@
 
     // Chat ID lekérése a localStorage-ből
     function getChatId() {
-        return localStorage.getItem('chat_id');
+        return localStorage.getItem('conversiveai-chat_id');
     }
 
     // Chat ID mentése a localStorage-ba
     function saveChatId(chatId) {
-        localStorage.setItem('chat_id', chatId);
+        localStorage.setItem('conversiveai-chat_id', chatId);
     }
 
     // Chat ID törlése a localStorage-ból
     function clearChatId() {
-        localStorage.removeItem('chat_id');
+        localStorage.removeItem('conversiveai-chat_id');
     }
 
     // API hívás kezelése
@@ -148,28 +148,28 @@
     function renderStartChatForm() {
         const container = document.getElementById(widgetConfig.containerId);
         container.innerHTML = `
-            <div class="widget">
-                <button class="close-button" id="close-widget">×</button>
+            <div class="conversiveai-widget">
+                <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
                 <h2>Új beszélgetés indítása</h2>
-                <form id="start-chat-form">
-                    <input type="text" id="nickname" name="nickname" placeholder="Becenév" required>
-                    <input type="email" id="email" name="email" placeholder="Email cím" required>
-                    <textarea id="question" name="question" placeholder="Kérdésed" required></textarea>
+                <form id="conversiveai-start-chat-form">
+                    <input type="text" id="conversiveai-nickname" name="nickname" placeholder="Becenév" required>
+                    <input type="email" id="conversiveai-email" name="email" placeholder="Email cím" required>
+                    <textarea id="conversiveai-question" name="question" placeholder="Kérdésed" required></textarea>
                     <button type="submit">Küldés</button>
                 </form>
-                <div id="loading-animation" style="display: none;">Betöltés...</div>
+                <div id="conversiveai-loading-animation" style="display: none;">Betöltés...</div>
             </div>
         `;
 
-        const form = document.getElementById('start-chat-form');
-        const loadingAnimation = document.getElementById('loading-animation');
+        const form = document.getElementById('conversiveai-start-chat-form');
+        const loadingAnimation = document.getElementById('conversiveai-loading-animation');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const nickname = document.getElementById('nickname').value;
-            const email = document.getElementById('email').value;
-            const question = document.getElementById('question').value;
+            const nickname = document.getElementById('conversiveai-nickname').value;
+            const email = document.getElementById('conversiveai-email').value;
+            const question = document.getElementById('conversiveai-question').value;
 
             if (!nickname || !email || !question) {
                 console.error('Minden mezőt ki kell tölteni!');
@@ -187,7 +187,7 @@
             });
         });
 
-        const closeButton = document.getElementById('close-widget');
+        const closeButton = document.getElementById('conversiveai-close-widget');
         closeButton.addEventListener('click', () => {
             const chatId = getChatId();
             if (!chatId) {
@@ -202,23 +202,23 @@
     function renderChat(data) {
         const container = document.getElementById(widgetConfig.containerId);
         container.innerHTML = `
-            <div class="widget">
-                <button class="close-button" id="close-widget">×</button>
-                <h2>AI Chat Bot</h2>
-                <div class="chat-window" id="chat-window">
+            <div class="conversiveai-widget">
+                <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
+                <h2>${widgetConfig.widgetName}</h2>
+                <div class="conversiveai-chat-window" id="conversiveai-chat-window">
                     ${renderMessages(data.messages)}
                 </div>
-                <form id="continue-chat-form">
-                    <textarea id="new-question" name="question" placeholder="Új kérdés" required></textarea>
-                    <button id="send_continue" type="submit">Küldés</button>
+                <form id="conversiveai-continue-chat-form">
+                    <textarea id="conversiveai-new-question" name="question" placeholder="Új kérdés" required></textarea>
+                    <button id="conversiveai-send-continue" type="submit">Küldés</button>
                 </form>
-                <div id="loading-animation" style="display: none;">Betöltés...</div>
+                <div id="conversiveai-loading-animation" style="display: none;">Betöltés...</div>
             </div>
         `;
 
-        const form = document.getElementById('continue-chat-form');
-        const loadingAnimation = document.getElementById('loading-animation');
-        const textarea = document.getElementById('new-question');
+        const form = document.getElementById('conversiveai-continue-chat-form');
+        const loadingAnimation = document.getElementById('conversiveai-loading-animation');
+        const textarea = document.getElementById('conversiveai-new-question');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -243,21 +243,21 @@
             }
         });
 
-        const closeButton = document.getElementById('close-widget');
+        const closeButton = document.getElementById('conversiveai-close-widget');
         closeButton.addEventListener('click', () => {
             showCloseOptions();
         });
 
-        const chatWindow = document.getElementById('chat-window');
+        const chatWindow = document.getElementById('conversiveai-chat-window');
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
     // Üzenetek renderelése
     function renderMessages(messages) {
         return messages.map(message => `
-            <div class="message ${message.sender_role === 'bot' ? 'bot' : 'user'}">
+            <div class="conversiveai-message ${message.sender_role === 'bot' ? 'conversiveai-bot' : 'conversiveai-user'}">
                 <div>${message.message}</div>
-                <div class="timestamp">${new Date(message.created_at).toLocaleTimeString()}</div>
+                <div class="conversiveai-timestamp">${new Date(message.created_at).toLocaleTimeString()}</div>
             </div>
         `).join('');
     }
@@ -275,15 +275,15 @@
 
         // Ha van chat_id, megjelenítjük a bezárási lehetőségeket
         container.innerHTML = `
-            <div class="widget">
+            <div class="conversiveai-widget">
                 <h2>Bezárási lehetőségek</h2>
-                <button id="close-temporarily">Csak elrejtés</button>
-                <button id="close-permanently">Végleges bezárás</button>
+                <button id="conversiveai-close-temporarily">Csak elrejtés</button>
+                <button id="conversiveai-close-permanently">Végleges bezárás</button>
             </div>
         `;
 
-        const closeTemporarilyButton = document.getElementById('close-temporarily');
-        const closePermanentlyButton = document.getElementById('close-permanently');
+        const closeTemporarilyButton = document.getElementById('conversiveai-close-temporarily');
+        const closePermanentlyButton = document.getElementById('conversiveai-close-permanently');
 
         // Csak elrejtés gomb
         closeTemporarilyButton.addEventListener('click', () => {

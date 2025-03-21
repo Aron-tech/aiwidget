@@ -1,5 +1,5 @@
 /* public/css/widget.css */
-#widget-toggle-button {
+#conversiveai-widget-toggle-button {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -15,11 +15,11 @@
     z-index: 1000;
 }
 
-#widget-toggle-button:hover {
+#conversiveai-widget-toggle-button:hover {
     scale: 110%;
 }
 
-#widget-container {
+#conversiveai-widget-container {
     position: fixed;
     bottom: 100px;
     right: 20px;
@@ -34,20 +34,20 @@
     font-family: 'Arial', sans-serif;
 }
 
-.widget {
+.conversiveai-widget {
     display: flex;
     flex-direction: column;
     gap: 15px;
     height: 400px; /* Fix magasság */
 }
 
-.widget h2 {
+.conversiveai-widget h2 {
     margin: 0;
     font-size: 20px;
     color: #333;
 }
 
-.widget .chat-window {
+.conversiveai-widget .conversiveai-chat-window {
     flex: 1;
     overflow-y: auto; /* Görgethető tartomány */
     padding: 10px;
@@ -57,7 +57,7 @@
     margin-bottom: 10px;
 }
 
-.widget .message {
+.conversiveai-widget .conversiveai-message {
     max-width: 80%;
     padding: 10px;
     border-radius: 8px;
@@ -65,25 +65,25 @@
     position: relative;
 }
 
-.widget .message.user {
+.conversiveai-widget .conversiveai-message.conversiveai-user {
     background-color: #007bff;
     color: white;
     align-self: flex-end;
 }
 
-.widget .message.bot {
+.conversiveai-widget .conversiveai-message.conversiveai-bot {
     background-color: #e3f2fd;
     color: #333;
     align-self: flex-start;
 }
 
-.widget .message .timestamp {
+.conversiveai-widget .conversiveai-message .conversiveai-timestamp {
     font-size: 12px;
     color: #666;
     margin-top: 5px;
 }
 
-.widget input, .widget textarea {
+.conversiveai-widget input, .conversiveai-widget textarea {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -93,19 +93,17 @@
     transition: border-color 0.3s ease;
 }
 
-
-
-.widget input:focus, .widget textarea:focus {
+.conversiveai-widget input:focus, .conversiveai-widget textarea:focus {
     border-color: #007bff;
     outline: none;
 }
 
-#question {
+#conversiveai-question {
     height: 150px;
     resize: none; /* Textarea átméretezés letiltása */
 }
 
-.widget button {
+.conversiveai-widget button {
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
@@ -116,11 +114,11 @@
     transition: background-color 0.3s ease;
 }
 
-.widget button:hover {
+.conversiveai-widget button:hover {
     background-color: #0056b3;
 }
 
-.widget .close-button {
+.conversiveai-widget .conversiveai-close-button {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -132,11 +130,11 @@
     transition: color 0.3s ease;
 }
 
-.widget .close-button:hover {
+.conversiveai-widget .conversiveai-close-button:hover {
     color: #007bff;
 }
 
-#loading-animation {
+#conversiveai-loading-animation {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -145,7 +143,7 @@
     margin-top: 20px;
 }
 
-#loading-animation::after {
+#conversiveai-loading-animation::after {
     content: "";
     display: inline-block;
     width: 20px;
@@ -166,8 +164,7 @@
     }
 }
 
-
-#close-dialog {
+#conversiveai-close-dialog {
     position: fixed;
     top: 0;
     left: 0;
@@ -180,14 +177,14 @@
     z-index: 1000;
 }
 
-.dialog-content {
+.conversiveai-dialog-content {
     background: white;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
 }
 
-.dialog-content button {
+.conversiveai-dialog-content button {
     margin: 10px;
     padding: 10px 20px;
     border: none;
@@ -195,11 +192,11 @@
     cursor: pointer;
 }
 
-.widget button#close-temporarily {
+.conversiveai-widget button#conversiveai-close-temporarily {
     background: #54acff;
 }
 
-.widget button#close-permanently {
+.conversiveai-widget button#conversiveai-close-permanently {
     background: #ff4444;
     color: white;
 }
