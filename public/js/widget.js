@@ -1,12 +1,13 @@
 (function() {
-
-    // Widget konfiguráció
-    const widgetConfig = window.widgetConfig || {
+    // Widget konfiguráció inicializálása alapértékekkel
+    const defaultConfig = {
         apiUrl: 'https://szakdolgozat.test/api',
-        containerId: 'widget-container',
+        containerId: 'conversiveai-widget-container',
         cssUrl: 'https://szakdolgozat.test/css/widget/default.css',
         siteId: null,
     };
+
+    window.widgetConfig = Object.assign({}, defaultConfig, window.widgetConfig || {});
 
     // CSS fájl betöltése
     function loadCSS() {
