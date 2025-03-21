@@ -4,8 +4,9 @@
         containerId: 'conversiveai-widget-container',
         cssUrl: 'https://szakdolgozat.test/css/widget/default.css',
         siteId: null,
-        widgetName: 'ConversiveAI', // Alapértelmezett widget név
+        widgetName: 'ConversiveAI',
     };
+
 
     window.widgetConfig = Object.assign({}, defaultConfig, window.widgetConfig || {});
 
@@ -60,17 +61,17 @@
 
     // Chat ID lekérése a localStorage-ből
     function getChatId() {
-        return localStorage.getItem('conversiveai-chat_id');
+        return localStorage.getItem('chat_id');
     }
 
     // Chat ID mentése a localStorage-ba
     function saveChatId(chatId) {
-        localStorage.setItem('conversiveai-chat_id', chatId);
+        localStorage.setItem('chat_id', chatId);
     }
 
     // Chat ID törlése a localStorage-ból
     function clearChatId() {
-        localStorage.removeItem('conversiveai-chat_id');
+        localStorage.removeItem('chat_id');
     }
 
     // API hívás kezelése
@@ -210,7 +211,7 @@
                 </div>
                 <form id="conversiveai-continue-chat-form">
                     <textarea id="conversiveai-new-question" name="question" placeholder="Új kérdés" required></textarea>
-                    <button id="conversiveai-send-continue" type="submit">Küldés</button>
+                    <button id="conversiveai-send_continue" type="submit">Küldés</button>
                 </form>
                 <div id="conversiveai-loading-animation" style="display: none;">Betöltés...</div>
             </div>
@@ -255,7 +256,7 @@
     // Üzenetek renderelése
     function renderMessages(messages) {
         return messages.map(message => `
-            <div class="conversiveai-message ${message.sender_role === 'bot' ? 'conversiveai-bot' : 'conversiveai-user'}">
+            <div class="conversiveai-message ${message.sender_role === 'bot' ? 'bot' : 'user'}">
                 <div>${message.message}</div>
                 <div class="conversiveai-timestamp">${new Date(message.created_at).toLocaleTimeString()}</div>
             </div>
@@ -297,7 +298,6 @@
         });
     }
 
-    // CSS betöltése és widget inicializálása
     loadCSS();
     initWidget();
 })();

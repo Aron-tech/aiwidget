@@ -1,4 +1,3 @@
-/* public/css/widget.css */
 #conversiveai-widget-toggle-button {
     position: fixed;
     bottom: 20px;
@@ -65,13 +64,13 @@
     position: relative;
 }
 
-.conversiveai-widget .conversiveai-message.conversiveai-user {
+.conversiveai-widget .conversiveai-message.user {
     background-color: #007bff;
     color: white;
     align-self: flex-end;
 }
 
-.conversiveai-widget .conversiveai-message.conversiveai-bot {
+.conversiveai-widget .conversiveai-message.bot {
     background-color: #e3f2fd;
     color: #333;
     align-self: flex-start;
