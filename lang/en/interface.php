@@ -78,4 +78,13 @@ return [
     'key_delete_message' => "Are you sure you want to delete the following user's key: ",
     'key_delete_title' => 'Delete key',
     'generate_widget' => 'Generate widget',
+    'widget_name' => 'Widget name',
+    'select_widget_style' => 'Select widget style',
+    'default_style' => 'Default style',
+    'custom_style' => 'Custom style',
+    'widget' => 'Widget',
+    'widget_config' => 'Widget configuration',
+    'delete_widget' => 'Delete widget',
+    'widget_delete_message' => 'Are you sure you want to delete this widget: ',
+    'widget_delete_title' => 'Delete widget',
 ];
