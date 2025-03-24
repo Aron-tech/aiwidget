@@ -6,6 +6,8 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
 use App\Http\Middleware\CheckSiteInUrl;
+use \Illuminate\Auth\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\AppLang;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        RedirectIfAuthenticated::redirectUsing(fn() => route('site.picker'));
+        $middleware->web(append: [
+            AppLang::class
+        ]);
         $middleware->append(HandleCors::class);
         $middleware->prepend(HandleCors::class, [
             'paths' => ['api/*'],

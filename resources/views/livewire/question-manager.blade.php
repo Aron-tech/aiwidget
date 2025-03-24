@@ -1,36 +1,5 @@
 <div>
-    <!-- Értesítés megjelenítése -->
-    <div wire:key='notification' class="fixed top-3 sm:top-5 w-2/3 sm:left-1/2 transform sm:-translate-x-1/2 sm:w-1/4 z-50">
-        @if(session()->has('success'))
-            <flux:callout icon="check-circle" variant="success" inline x-data="{ visible: true }" x-show="visible">
-                <flux:callout.heading class="flex gap-2 @max-md:flex-col items-start">{{ session('success') }}</flux:callout.heading>
-                <x-slot name="controls">
-                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
-                </x-slot>
-            </flux:callout>
-        @elseif(session()->has('warning'))
-            <flux:callout icon="exclamation-triangle" variant="warning" inline x-data="{ visible: true }" x-show="visible">
-                <flux:callout.heading class="flex gap-2 @max-md:flex-col items-start">{{ session('warning') }}</flux:callout.heading>
-                <x-slot name="controls">
-                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
-                </x-slot>
-            </flux:callout>
-        @elseif(session()->has('danger'))
-            <flux:callout icon="exclamation-triangle" variant="danger" inline x-data="{ visible: true }" x-show="visible">
-                <flux:callout.heading class="flex gap-2 @max-md:flex-col items-start">{{ session('danger') }}</flux:callout.heading>
-                <x-slot name="controls">
-                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
-                </x-slot>
-            </flux:callout>
-        @elseif(session()->has('info'))
-            <flux:callout icon="exclamation-triangle" variant="info" inline x-data="{ visible: true }" x-show="visible">
-                <flux:callout.heading class="flex gap-2 @max-md:flex-col items-start">{{ session('info') }}</flux:callout.heading>
-                <x-slot name="controls">
-                    <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
-                </x-slot>
-            </flux:callout>
-        @endif
-    </div>
+    <x-notification.panel :notifications="session()->all()"/>
     <div class="sm:block hidden mb-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{route('dashboard', $site->uuid)}}" icon="home" />
