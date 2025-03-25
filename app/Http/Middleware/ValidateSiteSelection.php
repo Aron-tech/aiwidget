@@ -17,7 +17,7 @@ class ValidateSiteSelection
     {
         $site_selector = app(SiteSelector::class);
 
-        if (!$site_selector->getSite() && !$site_selector) {
+        if (!$site_selector->hasSite() && !$site_selector) {
             return redirect()->route('site.picker');
         }
 
