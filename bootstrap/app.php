@@ -8,6 +8,7 @@ use Illuminate\Http\Middleware\HandleCors;
 use App\Http\Middleware\CheckSiteInUrl;
 use \Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\AppLang;
+use App\Http\Middleware\ValidateSiteSelection;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -34,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'verify.referer' => VerifyReferer::class,
             'check_site_in_url' => CheckSiteInUrl::class,
+            'validate_site_selection' => ValidateSiteSelection::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

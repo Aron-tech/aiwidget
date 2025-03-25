@@ -9,10 +9,12 @@ use Livewire\Attributes\On;
 use Livewire\WithoutUrlPagination;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\QuestionAnswerExport;
+use App\Livewire\Traits\GlobalNotifyEvent;
+use App\Models\SiteSelector;
 
 class QuestionManager extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, GlobalNotifyEvent;
 
     public $site;
 
@@ -21,9 +23,13 @@ class QuestionManager extends Component
     public $sort_by = 'question';
     public $sort_direction = 'asc';
 
-    public function mount(Site $site)
+    public function mount(SiteSelector $site_selector)
     {
-        $this->site = $site;
+        if (!$site_selector->hasSite()) {
+            return redirect()->route('site.picker')->with('error', __('interface.missing_site'));
+        }
+        $this->site = $site_selector->getSite();
+
     }
 
     public function edit($question_id)
@@ -42,12 +48,6 @@ class QuestionManager extends Component
             $this->notify('danger', __('interface.missing_site'));
 
         return Excel::download(new QuestionAnswerExport($this->site->id), 'question_answers.xlsx');
-    }
-
-    #[On("notify")]
-    public function notify($type, $message)
-    {
-        session()->flash($type,$message);
     }
 
     #[On("reloadQuestions")]
