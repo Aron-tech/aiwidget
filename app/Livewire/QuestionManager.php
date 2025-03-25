@@ -9,10 +9,11 @@ use Livewire\Attributes\On;
 use Livewire\WithoutUrlPagination;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\QuestionAnswerExport;
+use App\Livewire\Traits\GlobalNotifyEvent;
 
 class QuestionManager extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, GlobalNotifyEvent;
 
     public $site;
 
@@ -42,12 +43,6 @@ class QuestionManager extends Component
             $this->notify('danger', __('interface.missing_site'));
 
         return Excel::download(new QuestionAnswerExport($this->site->id), 'question_answers.xlsx');
-    }
-
-    #[On("notify")]
-    public function notify($type, $message)
-    {
-        session()->flash($type,$message);
     }
 
     #[On("reloadQuestions")]
