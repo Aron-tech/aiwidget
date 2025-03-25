@@ -5,7 +5,7 @@ use App\Livewire\QuestionManager;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::redirect('/', 'login');
+Route::redirect('/', 'login')->name('home');
 
 Route::view('site-picker', 'site-picker')
     ->middleware(['auth', 'verified'])
