@@ -5,9 +5,12 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Auth;
+use App\Livewire\Traits\GlobalNotifyEvent;
 
 class SitePicker extends Component
 {
+    use GlobalNotifyEvent;
+
     public $auth_user = null;
 
     public $auth_key = null;
@@ -39,12 +42,6 @@ class SitePicker extends Component
     {
         $this->auth_user = Auth::user();
         $this->sites = $this->getSitesWithOwner();
-    }
-
-    #[On("notify")]
-    public function notify($type, $message)
-    {
-        session()->flash($type, $message);
     }
 
     #[On("reloadSites")]

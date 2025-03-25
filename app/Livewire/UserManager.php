@@ -7,10 +7,12 @@ use Livewire\WithPagination;
 use App\Models\Site;
 use Livewire\Attributes\On;
 use Livewire\WithoutUrlPagination;
+use App\Livewire\Traits\GlobalNotifyEvent;
+
 
 class UserManager extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, GlobalNotifyEvent;
 
     public $site;
     public $search = '';
@@ -29,12 +31,6 @@ class UserManager extends Component
     public function delete($key_id)
     {
         $this->dispatch('deleteKey', $key_id, $this->site->id);
-    }
-
-    #[On("notify")]
-    public function notify($type, $message)
-    {
-        session()->flash($type, $message);
     }
 
     #[On("reloadKeys")]
