@@ -8,7 +8,7 @@ use App\Models\Site;
 use Livewire\Attributes\On;
 use Livewire\WithoutUrlPagination;
 use App\Livewire\Traits\GlobalNotifyEvent;
-
+use App\Models\SiteSelector;
 
 class UserManager extends Component
 {
@@ -18,9 +18,13 @@ class UserManager extends Component
     public $search = '';
     public $filter = 0; // 0: Összes, 1: Aktivált, 2: Nem aktivált
 
-    public function mount(Site $site)
+    public function mount(SiteSelector $site_selector)
     {
-        $this->site = $site;
+        if (!$site_selector->hasSite()) {
+            return redirect()->route('site.picker')->with('error', __('interface.missing_site'));
+        }
+
+        $this->site = $site_selector->getSite();
     }
 
     public function create()
