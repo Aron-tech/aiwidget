@@ -6,6 +6,8 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\GlobalNotifyEvent;
+use App\Models\Site;
+use App\Models\SiteSelector;
 
 class SitePicker extends Component
 {
@@ -28,6 +30,14 @@ class SitePicker extends Component
         }])->get();
     }
 
+    public function select($site_id)
+    {
+        $site = Site::findOrFail($site_id);
+        $site_selector = new SiteSelector();
+        $site_selector->setSite($site);
+
+        return redirect()->route('dashboard');
+    }
     public function edit($site_id)
     {
         $this->dispatch('editSite', $site_id);
