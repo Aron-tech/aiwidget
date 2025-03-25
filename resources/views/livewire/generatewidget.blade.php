@@ -3,13 +3,15 @@
 use Livewire\Volt\Component;
 use App\Models\Site;
 use App\Models\SiteSelector;
+use App\Livewire\Traits\GlobalNotifyEvent;
 
 new class extends Component {
+
+    use GlobalNotifyEvent;
 
     public ?Site $site = null;
 
     public $style = null;
-
     public $name = null;
 
     public $widget_config = null;
@@ -26,25 +28,27 @@ new class extends Component {
 
     public function generateWidgetConfig()
     {
-        $this->widget_config = "window.widgetConfig = {
-            siteId: '{$this->site->uuid}',";
+        $config = "window.widgetConfig = {\n";
+        $config .= "     siteId: '{$this->site->uuid}',\n";
 
         if ($this->style) {
-            $this->widget_config .= " cssUrl: 'https://szakdolgozat.test/css/widget/{$this->style}',";
+            $config .= "     cssUrl: 'https://szakdolgozat.test/css/widget/{$this->style}',\n";
         }
 
         if ($this->name) {
-            $this->widget_config .= " widgetName: '{$this->name}',";
+            $config .= "     widgetName: '{$this->name}',\n";
         }
 
-        $this->widget_config .= "};";
+        $config .= "};\n";
+
+        $this->widget_config = "<div id=\"conversiveai-widget-container\"></div>\n<script>\n{$config}</script>\n<script src=\"https://szakdolgozat.test/js/widget.js\"></script>";
     }
 
     public function updated()
     {
         $this->generateWidgetConfig();
     }
-}; ?>
+};?>
 
 <div>
     <div class="sm:block hidden mb-4">
@@ -53,11 +57,12 @@ new class extends Component {
             <flux:breadcrumbs.item>{{__('interface.generate_widget')}}</flux:breadcrumbs.item>
         </flux:breadcrumbs>
     </div>
+    <x-notification.panel :notifications="session()->all()"/>
     <div class="grid grid-cols-2 gap-6 p-10 justify-items-center">
         <x-widget-style.panel/>
         <div class="space-y-14 w-full">
             <div class="w-full">
-                <flux:input wire:model.live.debounce.1250ms="name" label="{{ __('interface.widget_name') }}"/>
+                <flux:input wire:model.live.debounce.750ms="name" label="{{ __('interface.widget_name') }}"/>
             </div>
             <div>
                 <flux:radio.group wire:model.live="style" label="{{ __('interface.select_widget_style') }}" variant="segmented" size="lg">
@@ -66,57 +71,19 @@ new class extends Component {
                     <flux:radio value="1" label="{{ __('interface.custom_style') }}" />
                 </flux:radio.group>
             </div>
-            <div class="mt-10">
-                <flux:textarea readonly resize="none" rows="10">
-                    <div id="conversiveai-widget-container"></div>
-                    <script>
-                        {!! $widget_config !!}
-                    </script>
-                    <script src="https://szakdolgozat.test/js/widget.js"></script>
+            <div class="mt-10 flex flex-col gap-4">
+                <flux:textarea x-ref="widgetTextarea" readonly resize="none" rows="10">
+                    {{ $widget_config }}
                 </flux:textarea>
+
+                <x-copy-to-clipboard
+                    ref="widgetTextarea"
+                    notify-event="notify"
+                    notify-type="info"
+                    notify-message="{{ __('interface.widget_config_copied_to_clipboard') }}"
+                />
+            </div>
             </div>
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    document.addEventListener('livewire:init', () => {
-        let splideInstance = null;
-
-        const initSplide = () => {
-            const splideEl = document.querySelector('.splide.widget-styles');
-            if (!splideEl) return;
-
-            // Ha már létezik példány, először töröljük
-            if (splideInstance) {
-                splideInstance.destroy();
-            }
-
-            // Új Splide példány létrehozása
-            splideInstance = new Splide(splideEl, {
-                type: 'loop',
-                perPage: 1,
-                gap: '1rem',
-                pagination: false,
-                arrows: false,
-                width: '100%'
-            }).mount();
-
-            // Gombok eseménykezelői
-            document.querySelector('.widget-style-prev')?.addEventListener('click', () => splideInstance.go('-1'));
-            document.querySelector('.widget-style-next')?.addEventListener('click', () => splideInstance.go('+1'));
-        };
-
-        // Kezdeti inicializálás
-        initSplide();
-
-        // Minden Livewire frissítés után újrainicializáljuk
-        Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
-            succeed(() => {
-                setTimeout(initSplide, 50); // Kis késleltetés a DOM frissüléséhez
-            });
-        });
-    });
-</script>
-@endpush

@@ -87,4 +87,6 @@ return [
     'delete_widget' => 'Delete widget',
     'widget_delete_message' => 'Are you sure you want to delete this widget: ',
     'widget_delete_title' => 'Delete widget',
+    'widget_config_copied_to_clipboard' => 'Widget configuration copied to clipboard!',
+    'copy' => 'Copy',
 ];
