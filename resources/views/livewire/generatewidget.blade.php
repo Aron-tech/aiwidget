@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use App\Models\Site;
+use App\Models\SiteSelector;
 
 new class extends Component {
 
@@ -13,9 +14,13 @@ new class extends Component {
 
     public $widget_config = null;
 
-    public function mount(Site $site)
+    public function mount(SiteSelector $site_selector)
     {
-        $this->site = $site;
+        if (!$site_selector->hasSite()) {
+            return redirect()->route('site.picker')->with('error', __('interface.missing_site'));
+        }
+
+        $this->site = $site_selector->getSite();
         $this->generateWidgetConfig();
     }
 
