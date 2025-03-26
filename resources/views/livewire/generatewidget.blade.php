@@ -6,15 +6,12 @@ use App\Models\SiteSelector;
 use App\Livewire\Traits\GlobalNotifyEvent;
 
 new class extends Component {
-
     use GlobalNotifyEvent;
 
     public ?Site $site = null;
-
     public $style = null;
     public $name = null;
-
-    public $widget_config = null;
+    public $widget_config = '';
 
     public function mount(SiteSelector $site_selector)
     {
@@ -32,14 +29,14 @@ new class extends Component {
         $config .= "     siteId: '{$this->site->uuid}',\n";
 
         if ($this->style) {
-            $config .= "     cssUrl: 'https://szakdolgozat.test/css/widget/{$this->style}',\n";
+            $config .= "     cssUrl: '" . config('app.url') . "/css/widget/{$this->style}.css',\n";
         }
 
         if ($this->name) {
             $config .= "     widgetName: '{$this->name}',\n";
         }
 
-        $config .= "};\n";
+        $config .= "     };\n";
 
         $this->widget_config = "<div id=\"conversiveai-widget-container\"></div>\n<script>\n{$config}</script>\n<script src=\"https://szakdolgozat.test/js/widget.js\"></script>";
     }
@@ -77,10 +74,9 @@ new class extends Component {
                 </flux:textarea>
 
                 <x-copy-to-clipboard
-                    ref="widgetTextarea"
-                    notify-event="notify"
-                    notify-type="info"
-                    notify-message="{{ __('interface.widget_config_copied_to_clipboard') }}"
+                    :text="$widget_config"
+                    :type="'info'"
+                    :message="'interface.widget_config_copied_to_clipboard'"
                 />
             </div>
             </div>
