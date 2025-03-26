@@ -16,7 +16,6 @@ class MessageController extends Controller
 {
     public function findBestAnswer($user_question, $site_id)
     {
-
         $exact_match = QuestionAnswer::where('site_id', $site_id)
             ->where('question', $user_question)
             ->first();
@@ -34,7 +33,12 @@ class MessageController extends Controller
 
         foreach ($questions as $question) {
             $question_embedding = json_decode($question->embedding, true);
-            $similarity_score = $this->cosineSimilarity($user_embedding, $question_embedding);
+
+            if(!empty($question_embedding) && !empty($user_embedding)) {
+                $similarity_score = $this->cosineSimilarity($user_embedding, $question_embedding);
+            }else{
+                $similarity_score = 0;
+            }
 
             if ($similarity_score > $highest_score) {
                 $highest_score = $similarity_score;
@@ -47,7 +51,7 @@ class MessageController extends Controller
 
                 Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
                 $optimalized_result = Prism::text()
-                    ->using(Provider::OpenAI, 'gpt-3.5-turbo')
+                    ->using(Provider::OpenAI, 'gpt-4o-mini')
                     ->withPrompt(
                         'Felhasználó kérdése: ' . $user_question . ' ' .
                         'Rendszer kérdés:' . $best_match->question . ' ' .
@@ -64,7 +68,7 @@ class MessageController extends Controller
                     return $optimalized_result->text;
             }
 
-            return false; // Nincs megfelelő válasz
+            return false;
     }
 
     private function getEmbedding($text)
@@ -72,11 +76,6 @@ class MessageController extends Controller
         $cacheKey = 'embedding_' . md5($text);
 
         return Cache::remember($cacheKey, now()->addHours(24), function () use ($text) {
-            /*$response = OpenAI::embeddings()->create([
-                'model' => 'text-embedding-3-large',
-                'input' => $text,
-                'timeout' => 60,
-            ]);*/
 
             $response = Prism::embeddings()
                 ->using(Provider::OpenAI, 'text-embedding-3-large')
@@ -90,7 +89,6 @@ class MessageController extends Controller
             }
 
             return $response->embeddings;
-            //return $response['data'][0]['embedding'];
         });
     }
 
@@ -113,8 +111,8 @@ class MessageController extends Controller
         $magnitude1 = sqrt($magnitude1);
         $magnitude2 = sqrt($magnitude2);
 
-        if ($magnitude1 * $magnitude2 == 0) {
-            return 0; // Ha valamelyik vektor nullvektor, a hasonlóság 0
+        if ($magnitude1 * $magnitude2 === 0) {
+            return 0;
         }
 
         return $dotProduct / ($magnitude1 * $magnitude2);
