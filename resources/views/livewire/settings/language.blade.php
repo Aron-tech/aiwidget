@@ -13,6 +13,7 @@ new class extends Component {
     public function updatedLanguage()
     {
         session()->put('locale', $this->language);
+        app()->setLocale(session()->get('locale', 'en'));
         return redirect()->route('settings.language')->with('success', __('language.updated'));
     }
 }; ?>
