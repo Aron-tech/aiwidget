@@ -15,6 +15,8 @@ Route::view('site-picker', 'site-picker')
 Route::middleware(['auth','validate_site_selection'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
+    Volt::route('generate-widget', 'generatewidget')->name('generate-widget');
+
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
