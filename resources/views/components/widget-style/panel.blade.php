@@ -1,4 +1,7 @@
-<div class="splide widget-styles flex flex-col items-center justify-center" aria-labelledby="carousel-heading" wire:ignore>
+<div class="splide widget-styles flex flex-col items-center justify-center"
+     id="widget-styles-slider"
+     aria-labelledby="carousel-heading"
+     wire:ignore>
     <div class="splide__track w-full max-w-md">
         <ul class="splide__list">
             <li class="splide__slide flex justify-center">
