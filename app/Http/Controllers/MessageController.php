@@ -53,15 +53,15 @@ class MessageController extends Controller
                 $optimalized_result = Prism::text()
                     ->using(Provider::OpenAI, 'gpt-4o-mini')
                     ->withPrompt(
-                        'Felhasználó kérdése: ' . $user_question . ' ' .
-                        'Rendszer kérdés:' . $best_match->question . ' ' .
-                        'Rendszer válasz: ' . $best_match->answer . '. ' .
-                        'Kérlek, formázd át a választ úgy, hogy pontosan illeszkedjen a felhasználó kérdéséhez, viszont csakis a Rendszer kérdés és válaszából használhatsz információt.' .
-                        'Csak a Rendszer kérdésében és válaszában szereplő információkat használd fel, és semmi mást. ' .
-                        'Ne adj hozzá semmilyen extra információt, és ne változtasd meg a Rendszer kérdés és válasz tartalmát. ' .
-                        'Csak egy egész mondatban add vissza a választ.'
-
+                        "User question: " . $user_question . " " .
+                        "System question: " . $best_match->question . " " .
+                        "System answer: " . $best_match->answer . ". " .
+                        "Please reformat the answer so that it precisely matches the user's question, but you may only use information from the System question and answer. " .
+                        "Use only the information contained in the System question and answer, and nothing else. " .
+                        "Do not add any extra information, and do not change the content of the System question and answer, maximum change answer language. " .
+                        "The answer must always be in the same language as the user's question."
                     )
+
                     ->generate();
 
                 if (isset($optimalized_result->text))
