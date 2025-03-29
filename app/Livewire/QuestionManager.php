@@ -16,7 +16,7 @@ class QuestionManager extends Component
 {
     use WithPagination, WithoutUrlPagination, GlobalNotifyEvent;
 
-    public $site;
+    public ?Site $site;
 
     public $search = '';
 
@@ -66,14 +66,19 @@ class QuestionManager extends Component
         }
     }
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $questions = $this->site->questionAnswers()
-            ->select('id', 'question', 'answer', 'embedding')
             ->where(function ($query) {
                 $query->where('question', 'like', '%' . $this->search . '%')
                       ->orWhere('answer', 'like', '%' . $this->search . '%');
             })
+            ->select('id', 'question', 'answer', 'embedding')
             ->orderBy($this->sort_by, $this->sort_direction)
             ->paginate(10);
 

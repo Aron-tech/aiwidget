@@ -14,7 +14,7 @@ class UserManager extends Component
 {
     use WithPagination, WithoutUrlPagination, GlobalNotifyEvent;
 
-    public $site;
+    public ?Site $site;
     public $search = '';
     public $filter = 0; // 0: Összes, 1: Aktivált, 2: Nem aktivált
 
@@ -39,6 +39,11 @@ class UserManager extends Component
 
     #[On("reloadKeys")]
     public function reloadKeys()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
     {
         $this->resetPage();
     }
