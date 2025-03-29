@@ -19,8 +19,6 @@ class SitePicker extends Component
 
     public $sites = null;
 
-    public $site = null;
-
     private function getSitesWithOwner()
     {
         return $this->auth_user->sites()
