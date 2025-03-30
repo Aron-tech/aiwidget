@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use Illuminate\Http\Request;
 use App\Models\Site;
+use App\Enums\ChatStatusEnum;
 
 class ChatController extends Controller
 {
@@ -15,7 +17,7 @@ class ChatController extends Controller
 
         $chat = $site->chats()
             ->where('id', $validated['chat_id'])
-            ->whereIn('status', [1, 2])
+            ->whereIn('status', [ChatStatusEnum::OPEN, ChatStatusEnum::WAITING])
             ->first();
 
         if(empty($chat)) {
@@ -32,6 +34,23 @@ class ChatController extends Controller
         ],
         200);
 
+    }
+
+    public function close(Request $request, Site $site) {
+        $validated = $request->validate([
+            'chat_id' => 'required|exists:chats,id',
+        ]);
+
+        if(empty($site))
+            return response()->json([
+                'error' => 'A webhely nem található!',
+            ], 404);
+
+        $chat = $site->chats()->where('id', $validated['chat_id'])->firstOrFail();
+
+        $chat->update([
+            'status' => ChatStatusEnum::CLOSED,
+        ]);
     }
 
     public function delete(Request $request, Site $site) {

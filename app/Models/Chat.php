@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ChatStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,10 @@ class Chat extends Model
         'visitor_email',
         'status',
         'site_id',
+    ];
+
+    protected $casts = [
+        'status' => ChatStatusEnum::class,
     ];
 
     public function site(): BelongsTo
