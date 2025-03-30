@@ -256,7 +256,7 @@
     // Üzenetek renderelése
     function renderMessages(messages) {
         return messages.map(message => `
-            <div class="conversiveai-message ${message.sender_role === 'bot' ? 'bot' : 'user'}">
+            <div class="conversiveai-message ${message.sender_role === 'user' ? 'user' : 'bot'}">
                 <div>${message.message}</div>
                 <div class="conversiveai-timestamp">${new Date(message.created_at).toLocaleTimeString()}</div>
             </div>

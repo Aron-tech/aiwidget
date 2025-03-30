@@ -11,6 +11,8 @@ use EchoLabs\Prism\Prism;
 use EchoLabs\Prism\Enums\Provider;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use App\Enums\ChatStatusEnum;
+use App\Enums\MessageSenderRolesEnum;
 
 class MessageController extends Controller
 {
@@ -162,7 +164,7 @@ class MessageController extends Controller
 
         if($answer === false ){
             $answer = "A kérdésedre nem sikerült helyes választ találni, hamarosan megválaszolja egy munkatárs a kérdésedet.";
-            $chat->status = 2;
+            $chat->status = ChatStatusEnum::WAITING;
             $chat->save();
         }
 
@@ -171,7 +173,7 @@ class MessageController extends Controller
         $bot_message = Message::create([
             'chat_id' => $chat_id,
             'message' => $answer,
-            'sender_role' => 'bot',
+            'sender_role' => MessageSenderRolesEnum::BOT,
         ]);
 
         //Log::info("Bot üzenet mentése adatbázisba: $bot_message->id");

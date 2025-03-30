@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\MessageSenderRolesEnum;
 
 class Message extends Model
 {
@@ -17,6 +18,10 @@ class Message extends Model
         'chat_id',
         'message',
         'sender_role',
+    ];
+
+    protected $casts = [
+        'sender_role' => MessageSenderRolesEnum::class,
     ];
 
     public function chat(): BelongsTo
