@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Enums\KeyTypesEnum;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Key;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,8 +18,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Papp Áron',
+            'email' => 'admin@paron.hu',
+            'password' => bcrypt('password'),
+        ]);
+
+        Key::factory()->create([
+            'user_id' => 1,
+            'site_id' => null,
+            'token' => hash('sha256', 'key'),
+            'type' => KeyTypesEnum::DEVELOPER->value,
+            'expiration_time' => now()->addYear(),
         ]);
     }
 }

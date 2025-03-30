@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\Site;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use App\Enums\KeyTypesEnum;
 
 new class extends Component {
 
@@ -34,7 +35,7 @@ new class extends Component {
         $this->site->keys()->create([
             'token' => $this->token,
             'expiration_time' => now()->addDays(360),
-            'type' => 0
+            'type' => KeyTypesEnum::MODERATOR,
         ]);
 
         Flux::modal('create-key')->close();

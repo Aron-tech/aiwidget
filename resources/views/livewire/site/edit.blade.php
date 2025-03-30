@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use App\Models\Site;
 use Livewire\Attributes\On;
+use App\Enums\KeyTypesEnum;
 
 new class extends Component {
 
@@ -18,16 +19,17 @@ new class extends Component {
 
         $this->site = Site::find($site_id);
 
-        if(!isset($this->site->keys[0]) && auth()->user()->id !== $this->site->keys[0]->user_id)
-        {
-            $this->dispatch('notify','danger',__('interface.missing_permission'));
-            return;
-        }
-
-
         if(empty($this->site))
         {
             $this->dispatch('notify','warning',__('interface.missing_site'));
+        }
+
+        $owner_key_exists = $this->site->keys()->where('user_id', auth()->user()->id)->where('type', KeyTypesEnum::OWNER)->exists();
+
+        if(!$owner_key_exists)
+        {
+            $this->dispatch('notify','danger',__('interface.missing_permission'));
+            return;
         }
 
         $this->new_site_name = $this->site->name;
@@ -81,7 +83,7 @@ new class extends Component {
         <div class="flex">
             <flux:spacer />
 
-            <flux:button wire:click='updateSite' type="submit" variant="primary">Save changes</flux:button>
+            <flux:button wire:click='updateSite' type="submit" variant="primary">{{__('interface.save_changes')}}</flux:button>
         </div>
     </div>
 </flux:modal>

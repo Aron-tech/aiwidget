@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\Site;
 use Livewire\Attributes\On;
 use App\Models\User;
+use App\Enums\KeyTypesEnum;
 
 new class extends Component {
 
@@ -30,10 +31,10 @@ new class extends Component {
     {
         $user_key = $this->auth_user->sites()->where('site_id', $this->site->id)->first()->keys[0];
 
-        if($user_key->type === 1){
+        if($user_key->type === KeyTypesEnum::OWNER){
 
             $this->site->keys()
-                ->where('type', 0)
+                ->where('type', KeyTypesEnum::MODERATOR)
                 ->delete();
 
                $this->site->delete();
@@ -42,7 +43,7 @@ new class extends Component {
                     'site_id' => null,
                     'user_id' => null,
                 ]);
-        }else if ($user_key->type === 0) {
+        }else if ($user_key->type === KeyTypesEnum::MODERATOR){
             $user_key->delete();
         }
 

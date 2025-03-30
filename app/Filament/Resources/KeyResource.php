@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\KeyTypesEnum;
 use App\Filament\Resources\KeyResource\Pages;
 use App\Filament\Resources\KeyResource\RelationManagers;
 use App\Models\Key;
@@ -50,22 +51,18 @@ class KeyResource extends Resource
                             })
                     ),
                 Select::make('type')
+                    ->options(KeyTypesEnum::options())
                     ->required()
-                    ->options([
-                        '0' => 'Moderátor kulcs',
-                        '1' => 'Tulajdonosi kulcs',
-                        '2' => 'Fejlesztő kulcs',
-                    ])
                     ->live(),
                 Select::make('site_id')
                     ->relationship('site', 'name')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->name)
                     ->requiredIf('type', '0')
-                    ->hidden(fn ($get) => $get('type') !== '0'),
+                    ->hidden(fn ($get) => $get('type') !== KeyTypesEnum::MODERATOR->value),
                 DatePicker::make('expiration_time')
                     ->label('Lejárati dátum')
                     ->requiredIf('type', '!=', '0')
-                    ->hidden(fn ($get) => $get('type') === '0' || $get('type') === '2')
+                    ->hidden(fn ($get) => $get('type') === KeyTypesEnum::MODERATOR->value || $get('type') === KeyTypesEnum::DEVELOPER->value)
                     ->displayFormat('Y-m-d H:i:s')
                     ->timezone('UTC'),
             ]);
@@ -89,12 +86,8 @@ class KeyResource extends Resource
                     ->searchable()
                     ->sortable(),
                 SelectColumn::make('type')
+                    ->options(KeyTypesEnum::options())
                     ->label('Típus')
-                    ->options([
-                        '0' => 'Moderátor kulcs',
-                        '1' => 'Tulajdonosi kulcs',
-                        '2' => 'Fejlesztő kulcs',
-                    ])
                     ->sortable(),
                 TextColumn::make('expiration_time')
                     ->label('Lejárati dátum')
@@ -106,10 +99,8 @@ class KeyResource extends Resource
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('type')
+                    ->options(KeyTypesEnum::options())
                     ->multiple()
-                    ->options([
-                        0 => 'Moderátor', 1 => 'Tulajdonos', 2 => 'Superadmin'
-                    ])
                     ->label('Kulcs típusa'),
                 TernaryFilter::make('activated')
                     ->trueLabel('Aktíválva')

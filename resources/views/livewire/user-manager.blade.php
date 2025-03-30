@@ -83,7 +83,6 @@
 
         <!--Táblázat adatok-->
         @foreach ($keys as $key)
-            @if($key->type === 0)
                 <div class="overflow-hidden">
                     <flux:heading>{{$key?->token}}</flux:heading>
                 </div>
@@ -96,7 +95,6 @@
                 <div class="flex justify-center space-x-4">
                     <flux:button wire:click='delete({{ $key?->id }})' icon="trash" variant="danger"></flux:button>
                 </div>
-            @endif
         @endforeach
         <div class="col-span-full">
             {{ $keys->links() }}

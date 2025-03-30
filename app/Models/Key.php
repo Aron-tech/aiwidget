@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\KeyTypesEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,11 @@ class Key extends Model
         'user_id',
         'type',
         'expiration_time',
+    ];
+
+    protected $casts = [
+        'type' => KeyTypesEnum::class,
+        'expiration_time' => 'datetime',
     ];
 
     public function setTokenAttribute($value)

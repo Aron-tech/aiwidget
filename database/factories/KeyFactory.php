@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\KeyTypesEnum;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Key>
@@ -17,9 +18,9 @@ class KeyFactory extends Factory
     public function definition(): array
     {
         return [
-            'site_id' => \App\Models\Site::factory(),
-            'key' => $this->faker->uuid(),
-            'value' => $this->faker->sentence(),
+            'token' => $this->faker->uuid(),
+            'type' => $this->faker->randomElement([KeyTypesEnum::MODERATOR->value, KeyTypesEnum::OWNER->value]),
+            'expiration_time' => now()->addYear(),
         ];
     }
 }

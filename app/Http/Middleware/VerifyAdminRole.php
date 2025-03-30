@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Enums\KeyTypesEnum;
 
 class VerifyAdminRole
 {
@@ -16,8 +17,8 @@ class VerifyAdminRole
     public function handle(Request $request, Closure $next): Response
     {
         $type = auth()->user()->keys()->first()->type ?? null;
-
-        if(empty($type) || $type < 2) {
+        
+        if(empty($type) || KeyTypesEnum::DEVELOPER !== $type) {
             return redirect()->route('dashboard');
         }
 

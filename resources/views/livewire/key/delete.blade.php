@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use App\Models\Key;
 use Livewire\Attributes\On;
+use App\Enums\KeyTypesEnum;
 
 new class extends Component {
 
@@ -21,7 +22,7 @@ new class extends Component {
 
     public function destroy()
     {
-        if(auth()->user()->keys()->where('site_id', $this->site_id)->select('type')->first()->type >= 1){
+        if(auth()->user()->keys()->where('site_id', $this->site_id)->select('type')->first()->type !== KeyTypesEnum::MODERATOR){
                 $this->key->delete();
                 $this->dispatch('notify','success', __('interface.delete_success'));
         }

@@ -5,6 +5,7 @@ use App\Models\Key;
 use Illuminate\Support\Facades\Auth;
 use Flux\Flux;
 use App\Models\User;
+use App\Enums\KeyTypesEnum;
 
 new class extends Component {
 
@@ -34,11 +35,11 @@ new class extends Component {
             return;
         }
 
-        if($this->key->type === 1)
+        if($this->key->type === KeyTypesEnum::OWNER)
         {
             Flux::modal('create-site')->show();
 
-        }else if($this->key->type === 2 || $this->key->type === 0){
+        }else if($this->key->type === KeyTypesEnum::MODERATOR || $this->key->type === KeyTypesEnum::DEVELOPER){
             $this->key->update([
                 'user_id' => $this->auth_user->id,
                 ]);

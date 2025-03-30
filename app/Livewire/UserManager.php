@@ -9,6 +9,7 @@ use Livewire\Attributes\On;
 use Livewire\WithoutUrlPagination;
 use App\Livewire\Traits\GlobalNotifyEvent;
 use App\Models\SiteSelector;
+use App\Enums\KeyTypesEnum;
 
 class UserManager extends Component
 {
@@ -54,6 +55,7 @@ class UserManager extends Component
             ->with(['user' => function($query) {
                 $query->select('id', 'name', 'email');
             }])
+            ->where('keys.type', KeyTypesEnum::MODERATOR)
             ->where(function($query) {
                 $query->where('token', 'like', '%' . $this->search . '%')
                     ->orWhereHas('user', function($query) {

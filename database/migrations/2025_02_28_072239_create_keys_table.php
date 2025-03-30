@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Site;
 use App\Models\User;
+use App\Enums\KeyTypesEnum;
 
 return new class extends Migration
 {
@@ -15,10 +16,10 @@ return new class extends Migration
     {
         Schema::create('keys', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Site::class)->nullable();  // Ha Site törlődik, akkor a hozzá tartozó Key is törlődik
+            $table->foreignIdFor(Site::class)->nullable();
             $table->foreignIdFor(User::class)->nullable();
             $table->string('token')->unique();
-            $table->smallInteger('type')->default(0); /// 0 = moderator, 1 = owner, 2 = superadmin
+            $table->enum('type', array_column(KeyTypesEnum::cases(), 'value'))->default(KeyTypesEnum::MODERATOR->value);
             $table->datetime('expiration_time');
             $table->timestamps();
         });

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Livewire\Traits\GlobalNotifyEvent;
 use App\Models\Site;
 use App\Models\SiteSelector;
+use App\Enums\KeyTypesEnum;
 
 class SitePicker extends Component
 {
@@ -24,7 +25,7 @@ class SitePicker extends Component
         return $this->auth_user->sites()
             ->select('sites.id','sites.uuid', 'sites.domain', 'sites.name')
             ->with(['keys' => function ($query) {
-            $query->where('type', 1)->select('user_id', 'site_id');
+            $query->where('type', KeyTypesEnum::OWNER)->select('user_id', 'site_id');
         }])->get();
     }
 
