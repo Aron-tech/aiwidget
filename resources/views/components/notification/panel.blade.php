@@ -18,7 +18,7 @@
             :icon="
                 $type === 'success' ? 'check-circle' :
                 ($type === 'warning' ? 'exclamation-circle' :
-                ($type === 'danger' ? 'exclamation-triangle' :
+                ($type === 'danger' ? 'x-circle' :
                 ($type === 'info' ? 'information-circle' : '')))
             "
             :variant="$type"
