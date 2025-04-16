@@ -56,12 +56,12 @@ class UserManager extends Component
                 $query->select('id', 'name', 'email');
             }])
             ->where('keys.type', KeyTypesEnum::MODERATOR)
-            ->where(function($query) {
-                $query->where('token', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('user', function($query) {
-                        $query->where('name', 'like', '%' . $this->search . '%')
-                            ->orWhere('email', 'like', '%' . $this->search . '%');
-                    });
+            ->when($this->search, function($query) {
+                $query->where(function ($query) {
+                    $query->search($this->search);
+                })->orWhereHas('user', function ($query) {
+                    $query->search($this->search);
+                });
             })
             ->when($this->filter === '1', function($query) {
                 $query->whereNotNull('user_id');
