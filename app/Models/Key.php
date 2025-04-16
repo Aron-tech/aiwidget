@@ -6,11 +6,13 @@ use App\Enums\KeyTypesEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Traits\Searchable;
 
 class Key extends Model
 {
-    /** @use HasFactory<\Database\Factories\KeyFactory> */
-    use HasFactory;
+    use HasFactory, Searchable;
+
+    protected array $searchable = ['token'];
 
     protected $guarded = ['id'];
 

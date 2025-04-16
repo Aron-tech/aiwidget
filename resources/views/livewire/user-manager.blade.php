@@ -1,5 +1,4 @@
 <div>
-    <!-- Értesítés megjelenítése -->
     <x-notification.panel :notifications="session()->all()"/>
     <div class="sm:block hidden mb-4">
         <flux:breadcrumbs>
@@ -53,7 +52,7 @@
 
         <!--Táblázat adatok-->
         @foreach ($keys as $key)
-            @if($key->type === 0)
+            @if($key->type === App\Enums\KeyTypesEnum::MODERATOR)
                 <div class="overflow-hidden">
                     <flux:heading>{{$key?->token}}</flux:heading>
                 </div>

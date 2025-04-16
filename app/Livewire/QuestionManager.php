@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\QuestionAnswerExport;
 use App\Livewire\Traits\GlobalNotifyEvent;
 use App\Models\SiteSelector;
-
 class QuestionManager extends Component
 {
     use WithPagination, WithoutUrlPagination, GlobalNotifyEvent;
@@ -74,9 +73,8 @@ class QuestionManager extends Component
     public function render()
     {
         $questions = $this->site->questionAnswers()
-            ->where(function ($query) {
-                $query->where('question', 'like', '%' . $this->search . '%')
-                      ->orWhere('answer', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($query) {
+                $query->search($this->search);
             })
             ->select('id', 'question', 'answer', 'embedding')
             ->orderBy($this->sort_by, $this->sort_direction)

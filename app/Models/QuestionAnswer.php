@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Jobs\GenerateEmbedding;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Traits\Searchable;
 
 class QuestionAnswer extends Model
 {
-    /** @use HasFactory<\Database\Factories\QuestionAnswerFactory> */
-    use HasFactory;
+    use HasFactory, Searchable;
+
+    protected array $searchable = ['question', 'answer'];
 
     protected $guarded = ['id'];
 
