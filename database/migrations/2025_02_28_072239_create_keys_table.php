@@ -16,8 +16,8 @@ return new class extends Migration
     {
         Schema::create('keys', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Site::class)->nullable();
-            $table->foreignIdFor(User::class)->nullable();
+            $table->foreignIdFor(Site::class)->nullable()->constrained();
+            $table->foreignIdFor(User::class)->nullable()->constrained();
             $table->string('token')->unique();
             $table->enum('type', array_column(KeyTypesEnum::cases(), 'value'))->default(KeyTypesEnum::MODERATOR->value);
             $table->datetime('expiration_time');

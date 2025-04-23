@@ -37,12 +37,13 @@ new class extends Component {
                 ->where('type', KeyTypesEnum::MODERATOR)
                 ->delete();
 
-               $this->site->delete();
-
             $user_key->update([
                     'site_id' => null,
                     'user_id' => null,
                 ]);
+
+            $this->site->delete();
+
         }else if ($user_key->type === KeyTypesEnum::MODERATOR){
             $user_key->delete();
         }
