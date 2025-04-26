@@ -5,11 +5,14 @@ use App\Models\Site;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\QuestionAnswerImport;
+use App\Livewire\Traits\RequiresPermission;
+use App\Enums\PermissionTypesEnum;
+use Livewire\Attributes\On;
 
 
 new class extends Component {
 
-    use WithFileUploads;
+    use WithFileUploads, RequiresPermission;
 
     public ?Site $site = null;
 
@@ -23,9 +26,17 @@ new class extends Component {
         ];
     }
 
-    public function mount(Site $site)
+    #[On("importQuestions")]
+    public function openImportQuestionModal($site_id)
     {
-        $this->site = $site;
+        $this->site = Site::find($site_id);
+
+        if(empty($this->site))
+            $this->dispatch('notify', 'warning', __('interface.missing_site'));
+        else if(!$this->hasPermission(PermissionTypesEnum::IMPORT_QUESTIONS))
+            return;
+        else
+            Flux::modal('import-question')->show();
     }
 
     public function import()

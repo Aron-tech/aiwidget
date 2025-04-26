@@ -5,12 +5,25 @@ use App\Models\Site;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Enums\KeyTypesEnum;
+use App\Livewire\Traits\RequiresPermission;
+use App\Enums\PermissionTypesEnum;
+use App\Models\Key;
 
 new class extends Component {
+
+    use RequiresPermission;
 
     public $token = '';
 
     public ?Site $site = null;
+
+    public array $permissions = [];
+
+    private function clearForm()
+    {
+        $this->token = '';
+        $this->permissions = [];
+    }
 
     #[On("createKey")]
     public function openCreateKeyModal($site_id)
@@ -23,6 +36,8 @@ new class extends Component {
             $this->dispatch('notify', 'warning', __('interface.missing_site'));
         else if(empty($this->token))
             $this->dispatch('notify', 'warning', __('interface.missing_token'));
+        else if(!$this->hasPermission(PermissionTypesEnum::CREATE_KEYS))
+                return;
         else
             Flux::modal('create-key')->show();
     }
@@ -32,11 +47,19 @@ new class extends Component {
         if(empty($this->site))
             $this->dispatch('notify', 'warning', __('interface.missing_site'));
 
-        $this->site->keys()->create([
+        $key = $this->site->keys()->create([
             'token' => $this->token,
             'expiration_time' => now()->addDays(360),
             'type' => KeyTypesEnum::MODERATOR,
         ]);
+
+        $key->assignMultiplePermissions(
+            collect($this->permissions)
+                ->filter()
+                ->keys()
+                ->map(fn($permission) => PermissionTypesEnum::from($permission))
+                ->toArray()
+        );
 
         Flux::modal('create-key')->close();
 
@@ -44,7 +67,7 @@ new class extends Component {
 
         $this->dispatch('reloadKeys');
 
-        $this->token = null;
+        $this->clearForm();
     }
 }; ?>
 
@@ -59,6 +82,16 @@ new class extends Component {
             <div class="mt-4">
                 <flux:input wire:model="token" icon="key" id="token" label="{{ __('interface.token') }}" type="token" name="token" required autocomplete="token" placeholder="key-token" readonly copyable />
             </div>
+
+            <flux:fieldset>
+                <flux:legend>{{ __('interface.permissions') }}</flux:legend>
+
+                <div class="space-y-4">
+                    @foreach (App\Enums\PermissionTypesEnum::cases() as $permission)
+                        <flux:switch wire:model="permissions.{{ $permission->value }}" label="{{ $permission->getLabel() }}"/>
+                    @endforeach
+                </div>
+            </flux:fieldset>
 
             <div class="flex">
                 <flux:spacer />

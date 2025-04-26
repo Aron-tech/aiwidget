@@ -20,16 +20,12 @@
             <flux:button wire:click='export()' icon="arrow-down-tray">{{__('interface.download')}}</flux:button>
             <flux:button wire:click='reloadQuestions()' icon="arrow-path" variant="filled"></flux:button>
                 <flux:button.group>
-                    <flux:modal.trigger name="create-question">
-                        <flux:button icon="plus">{{__('interface.add')}}</flux:button>
-                    </flux:modal.trigger>
+                    <flux:button wire:click='create()' icon="plus">{{__('interface.add')}}</flux:button>
                     <flux:dropdown>
                         <flux:button icon-trailing="chevron-down"></flux:button>
 
                         <flux:menu>
-                            <flux:modal.trigger name="import-question">
-                                <flux:menu.item icon="table-cells">{{__('interface.import_excel')}}</flux:menu.item>
-                            </flux:modal.trigger>
+                            <flux:menu.item wire:click='import()' icon="table-cells">{{__('interface.import_excel')}}</flux:menu.item>
                         </flux:menu>
                     </flux:dropdown>
                 </flux:button.group>
@@ -78,8 +74,8 @@
     </div>
 
     <!--Livewire komponensek-->
-    @livewire('question.import', ['site' => $site])
-    @livewire('question.create', ['site' => $site])
+    @livewire('question.import')
+    @livewire('question.create')
     @livewire('question.edit')
     @livewire('question.delete')
 </div>

@@ -5,6 +5,7 @@ use App\Models\Site;
 use Livewire\Attributes\On;
 use App\Models\User;
 use App\Enums\KeyTypesEnum;
+use Illuminate\Support\Facades\DB;
 
 new class extends Component {
 
@@ -29,22 +30,26 @@ new class extends Component {
 
     public function deleteSite()
     {
-        $user_key = $this->auth_user->sites()->where('site_id', $this->site->id)->first()->keys[0];
+        $user_key = $this->auth_user->keys()->where('site_id', $this->site->id)->first();
 
         if($user_key->type === KeyTypesEnum::OWNER){
+
+            DB::table('keys_permissions')
+                ->whereIn('key_id', $this->site->keys->pluck('id'))
+                ->delete();
 
             $this->site->keys()
                 ->where('type', KeyTypesEnum::MODERATOR)
                 ->delete();
 
+               $this->site->delete();
+
             $user_key->update([
                     'site_id' => null,
                     'user_id' => null,
                 ]);
-
-            $this->site->delete();
-
         }else if ($user_key->type === KeyTypesEnum::MODERATOR){
+            $user_key->permissions()->detach();
             $user_key->delete();
         }
 

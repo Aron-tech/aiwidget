@@ -3,8 +3,13 @@
 use Livewire\Volt\Component;
 use App\Models\Site;
 use Livewire\Attributes\Validate;
+use App\Livewire\Traits\RequiresPermission;
+use App\Enums\PermissionTypesEnum;
+use Livewire\Attributes\On;
 
 new class extends Component {
+
+    use RequiresPermission;
 
     public ?Site $site = null;
 
@@ -20,10 +25,17 @@ new class extends Component {
         ];
     }
 
-
-    public function mount(Site $site)
+    #[On("createQuestion")]
+    public function openCreateQuestionModal($site_id)
     {
-        $this->site = $site;
+        $this->site = Site::find($site_id);
+
+        if(empty($this->site))
+            $this->dispatch('notify', 'warning', __('interface.missing_site'));
+        else if(!$this->hasPermission(PermissionTypesEnum::CREATE_QUESTIONS))
+            return;
+        else
+            Flux::modal('create-question')->show();
     }
 
     private  function resetForm()

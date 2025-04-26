@@ -54,16 +54,17 @@
         @foreach ($keys as $key)
             @if($key->type === App\Enums\KeyTypesEnum::MODERATOR)
                 <div class="overflow-hidden">
-                    <flux:heading>{{$key?->token}}</flux:heading>
+                    <flux:heading>{{$key->token}}</flux:heading>
                 </div>
                 <div>
-                    <flux:heading>{{$key?->user?->name}}</flux:heading>
+                    <flux:heading>{{$key->user?->name}}</flux:heading>
                 </div>
                 <div>
-                    <flux:heading>{{$key?->user?->email}}</flux:heading>
+                    <flux:heading>{{$key->user?->email}}</flux:heading>
                 </div>
                 <div class="flex justify-center space-x-4">
-                    <flux:button wire:click='delete({{ $key?->id }})' icon="trash" variant="danger"></flux:button>
+                    <flux:button wire:click='edit({{ $key->id }})' icon="pencil-square" variant="filled"></flux:button>
+                    <flux:button wire:click='delete({{ $key->id }})' icon="trash" variant="danger"></flux:button>
                 </div>
             @endif
         @endforeach
@@ -74,6 +75,7 @@
 
     <!--Livewire komponensek-->
     @livewire('key.create')
+    @livewire('key.edit')
     @livewire('key.delete')
     @livewire('key.info')
 </div>

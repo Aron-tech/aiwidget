@@ -1,0 +1,19 @@
+<?php
+
+return [
+    // KeyTypesEnum
+    'moderator' => 'Moderator',
+    'owner' => 'Owner',
+    'developer' => 'Developer',
+
+    // PermissionTypesEnum
+    'read_keys' => 'Read keys',
+    'create_keys' => 'Create keys',
+    'update_keys' => 'Update keys',
+    'delete_keys' => 'Delete keys',
+    'read_questions' => 'Read questions and answers',
+    'create_questions' => 'Create questions and answers',
+    'update_questions' => 'Update questions and answers',
+    'delete_questions' => 'Delete questions and answers',
+    'read_widget_export' => 'Read widget export',
+];
