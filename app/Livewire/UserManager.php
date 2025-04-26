@@ -33,6 +33,11 @@ class UserManager extends Component
         $this->dispatch('createKey', $this->site->id);
     }
 
+    public function edit($key_id)
+    {
+        $this->dispatch('editKey', $key_id, $this->site->id);
+    }
+
     public function delete($key_id)
     {
         $this->dispatch('deleteKey', $key_id, $this->site->id);
