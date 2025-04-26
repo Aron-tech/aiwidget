@@ -16,10 +16,8 @@ class VerifyAdminRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $type = auth()->user()->keys()->first()->type ?? null;
-        
-        if(empty($type) || KeyTypesEnum::DEVELOPER !== $type) {
-            return redirect()->route('dashboard');
+        if(!auth()->user()->keys()->where('type', KeyTypesEnum::DEVELOPER)->exists()) {
+            return redirect()->route('site.picker');
         }
 
         return $next($request);
