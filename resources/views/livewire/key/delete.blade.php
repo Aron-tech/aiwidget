@@ -30,6 +30,7 @@ new class extends Component {
     public function destroy()
     {
         if(auth()->user()->keys()->where('site_id', $this->site_id)->select('type')->first()->type !== KeyTypesEnum::MODERATOR){
+                $this->key->permissions()->detach();
                 $this->key->delete();
                 $this->dispatch('notify','success', __('interface.delete_success'));
         }
