@@ -31,6 +31,16 @@ class QuestionManager extends Component
 
     }
 
+    public function create()
+    {
+        $this->dispatch('createQuestion', $this->site->id);
+    }
+
+    public function import()
+    {
+        $this->dispatch('importQuestions', $this->site->id);
+    }
+
     public function edit($question_id)
     {
         $this->dispatch('editQuestion', $question_id, $this->site->id);

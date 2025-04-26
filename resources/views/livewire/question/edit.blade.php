@@ -5,9 +5,13 @@ use App\Models\Site;
 use Livewire\Attributes\On;
 use App\Models\QuestionAnswer;
 use Livewire\Attributes\Validate;
+use App\Livewire\Traits\RequiresPermission;
+use App\Enums\PermissionTypesEnum;
 
 
 new class extends Component {
+
+    use RequiresPermission;
 
     public ?Site $site = null;
 
@@ -39,6 +43,9 @@ new class extends Component {
 
         $this->question = $this->question_answer->question;
         $this->answer = $this->question_answer->answer;
+
+        if(!$this->hasPermission(PermissionTypesEnum::EDIT_QUESTIONS))
+            return;
 
         Flux::modal('edit-question')->show();
     }
