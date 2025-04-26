@@ -89,4 +89,6 @@ return [
     'widget_delete_title' => 'Delete widget',
     'widget_config_copied_to_clipboard' => 'Widget configuration copied to clipboard!',
     'copy' => 'Copy',
+    'no_permission' => 'You do not have permission for this action.',
+    'permissions' => 'Permissions'
 ];
