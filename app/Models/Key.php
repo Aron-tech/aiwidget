@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Traits\Searchable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Enums\PermissionTypesEnum;
 
 class Key extends Model
 {
@@ -44,6 +46,11 @@ class Key extends Model
         });
     }
 
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'keys_permissions');
+    }
+
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
@@ -52,5 +59,20 @@ class Key extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function assignPermission(PermissionTypesEnum $permission): void
+    {
+        $permission_id = Permission::where('value', $permission->value)->pluck('id')->first();
+        $this->permissions()->syncWithoutDetaching([$permission_id]);
+    }
+
+    public function assignMultiplePermissions(array $permissions): void
+    {
+        $permission_ids = Permission::whereIn('value',
+            array_map(fn($type) => $type->value, $permissions)
+        )->pluck('id');
+
+        $this->permissions()->syncWithoutDetaching($permission_ids);
     }
 }
