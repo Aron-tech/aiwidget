@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Gates;
+
 use App\Enums\PermissionTypesEnum;
 use App\Enums\KeyTypesEnum;
 use App\Models\SiteSelector;
@@ -13,7 +15,7 @@ class PermissionGate
         Gate::define('hasPermission', function (User $user, PermissionTypesEnum $permission) {
             $site = SiteSelector::getSite()
                 ->load(['keys' => function ($query) use ($user) {
-                    $query->where('user_id', $user->id())
+                    $query->where('user_id', $user->id)
                         ->with('permissions');
                 }]);
 
@@ -24,7 +26,9 @@ class PermissionGate
 
             if (empty($key))
                 return false;
+
             if(empty($key->permissions))
+                return false;
 
             if ($key->type === KeyTypesEnum::OWNER || $key->type === KeyTypesEnum::DEVELOPER)
                 return true;
