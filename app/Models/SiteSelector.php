@@ -9,7 +9,7 @@ class SiteSelector extends Model
 {
     const SESSION_KEY = 'selected_site';
 
-    public function setSite(Site $site)
+    public static function setSite(Site $site)
     {
         if (!auth()->user()->sites()->where('sites.id', $site->id)->exists()) {
             throw new \Exception('Unauthorized site selection attempt');
@@ -18,7 +18,7 @@ class SiteSelector extends Model
         Session::put(self::SESSION_KEY, $site->uuid);
     }
 
-    public function getSite(): ?Site
+    public static function getSite(): ?Site
     {
         return once(function () {
             $site_uuid = Session::get(self::SESSION_KEY);
@@ -27,13 +27,13 @@ class SiteSelector extends Model
         });
     }
 
-    public function clearSite(): void
+    public static function clearSite(): void
     {
         Session::forget(self::SESSION_KEY);
         Session::save();
     }
 
-    public function hasSite(): bool
+    public static function hasSite(): bool
     {
         return Session::has(self::SESSION_KEY);
     }
