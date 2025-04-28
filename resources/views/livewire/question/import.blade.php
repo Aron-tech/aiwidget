@@ -5,14 +5,12 @@ use App\Models\Site;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\QuestionAnswerImport;
-use App\Livewire\Traits\RequiresPermission;
 use App\Enums\PermissionTypesEnum;
 use Livewire\Attributes\On;
 
-
 new class extends Component {
 
-    use WithFileUploads, RequiresPermission;
+    use WithFileUploads;
 
     public ?Site $site = null;
 
@@ -33,8 +31,8 @@ new class extends Component {
 
         if(empty($this->site))
             $this->dispatch('notify', 'warning', __('interface.missing_site'));
-        else if(!$this->hasPermission(PermissionTypesEnum::IMPORT_QUESTIONS))
-            return;
+        else if(auth()->user()->cannot('hasPermission', PermissionTypesEnum::IMPORT_QUESTIONS))
+            return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
         else
             Flux::modal('import-question')->show();
     }

@@ -5,13 +5,10 @@ use App\Models\Site;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Enums\KeyTypesEnum;
-use App\Livewire\Traits\RequiresPermission;
 use App\Enums\PermissionTypesEnum;
 use App\Models\Key;
 
 new class extends Component {
-
-    use RequiresPermission;
 
     public $token = '';
 
@@ -36,8 +33,8 @@ new class extends Component {
             $this->dispatch('notify', 'warning', __('interface.missing_site'));
         else if(empty($this->token))
             $this->dispatch('notify', 'warning', __('interface.missing_token'));
-        else if(!$this->hasPermission(PermissionTypesEnum::CREATE_KEYS))
-                return;
+        else if(auth()->user()->cannot('hasPermission', PermissionTypesEnum::CREATE_KEYS))
+                return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
         else
             Flux::modal('create-key')->show();
     }

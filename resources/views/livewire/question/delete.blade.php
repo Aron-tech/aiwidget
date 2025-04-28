@@ -4,12 +4,9 @@ use Livewire\Volt\Component;
 use App\Models\QuestionAnswer;
 use Livewire\Attributes\On;
 use App\Models\User;
-use App\Livewire\Traits\RequiresPermission;
 use App\Enums\PermissionTypesEnum;
 
 new class extends Component {
-
-    use RequiresPermission;
 
     public ?User $auth_user = null;
     public ?QuestionAnswer $question_answer = null;
@@ -19,8 +16,8 @@ new class extends Component {
     {
         $this->question_answer = QuestionAnswer::where('site_id', $site_id)->findOrFail($question_id);
 
-        if(!$this->hasPermission(PermissionTypesEnum::DELETE_QUESTIONS))
-            return;
+        if(auth()->user()->cannot('hasPermission', PermissionTypesEnum::DELETE_QUESTIONS))
+            return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
 
         Flux::modal('delete-question-answer')->show();
     }

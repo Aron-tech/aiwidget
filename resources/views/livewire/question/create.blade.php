@@ -3,13 +3,10 @@
 use Livewire\Volt\Component;
 use App\Models\Site;
 use Livewire\Attributes\Validate;
-use App\Livewire\Traits\RequiresPermission;
 use App\Enums\PermissionTypesEnum;
 use Livewire\Attributes\On;
 
 new class extends Component {
-
-    use RequiresPermission;
 
     public ?Site $site = null;
 
@@ -32,8 +29,8 @@ new class extends Component {
 
         if(empty($this->site))
             $this->dispatch('notify', 'warning', __('interface.missing_site'));
-        else if(!$this->hasPermission(PermissionTypesEnum::CREATE_QUESTIONS))
-            return;
+        else if(auth()->user()->cannot('hasPermission', PermissionTypesEnum::CREATE_QUESTIONS))
+            return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
         else
             Flux::modal('create-question')->show();
     }

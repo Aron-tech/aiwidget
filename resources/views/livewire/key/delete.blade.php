@@ -4,12 +4,9 @@ use Livewire\Volt\Component;
 use App\Models\Key;
 use Livewire\Attributes\On;
 use App\Enums\KeyTypesEnum;
-use App\Livewire\Traits\RequiresPermission;
 use App\Enums\PermissionTypesEnum;
 
 new class extends Component {
-
-    use RequiresPermission;
 
     public ?Key $key = null;
 
@@ -21,8 +18,8 @@ new class extends Component {
         $this->key = Key::findOrFail($key_id);
         $this->site_id = $site_id;
 
-        if(!$this->hasPermission(PermissionTypesEnum::DELETE_KEYS))
-            return;
+        if(auth()->user()->cannot(PermissionTypesEnum::DELETE_KEYS))
+            return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
 
         Flux::modal('delete-key')->show();
     }

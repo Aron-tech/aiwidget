@@ -5,14 +5,9 @@ use App\Models\Site;
 use App\Models\Key;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
-use App\Livewire\Traits\RequiresPermission;
 use App\Enums\PermissionTypesEnum;
 
-
-
 new class extends Component {
-
-    use RequiresPermission;
 
     public ?Site $site = null;
 
@@ -23,8 +18,8 @@ new class extends Component {
     #[On("editKey")]
     public function editKey($key_id, $site_id)
     {
-        if(!$this->hasPermission(PermissionTypesEnum::EDIT_KEYS))
-            return;
+        if(auth()->user()->cannot('hasPermission', PermissionTypesEnum::EDIT_KEYS))
+            return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
 
         $this->key = Site::find($site_id)->keys()->with('permissions')->findOrFail($key_id);
 
