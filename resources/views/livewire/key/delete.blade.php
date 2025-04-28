@@ -18,7 +18,7 @@ new class extends Component {
         $this->key = Key::findOrFail($key_id);
         $this->site_id = $site_id;
 
-        if(auth()->user()->cannot(PermissionTypesEnum::DELETE_KEYS))
+        if(auth()->user()->cannot('hasPermission', PermissionTypesEnum::DELETE_KEYS))
             return $this->dispatch('notify', 'danger', __('interface.missing_permission'));
 
         Flux::modal('delete-key')->show();
