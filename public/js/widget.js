@@ -7,7 +7,6 @@
         widgetName: 'ConversiveAI',
     };
 
-
     window.widgetConfig = Object.assign({}, defaultConfig, window.widgetConfig || {});
 
     // CSS fájl betöltése
@@ -15,7 +14,30 @@
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = widgetConfig.cssUrl;
+        link.onerror = () => showError('Nem sikerült betölteni a stíluslapot. A widget nem fog megfelelően megjelenni.');
         document.head.appendChild(link);
+    }
+
+    // Hibaüzenet megjelenítése
+    function showError(message) {
+        const container = document.getElementById(widgetConfig.containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="conversiveai-widget conversiveai-error">
+                <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
+                <h2>Hiba történt</h2>
+                <div class="conversiveai-error-message">${message}</div>
+                <button id="conversiveai-retry-button">Újrapróbálkozás</button>
+            </div>
+        `;
+
+        document.getElementById('conversiveai-retry-button').addEventListener('click', initWidget);
+        document.getElementById('conversiveai-close-widget').addEventListener('click', () => {
+            container.style.display = 'none';
+        });
+
+        container.style.display = 'block';
     }
 
     // Widget inicializálása
@@ -37,9 +59,9 @@
             if (container.style.display === 'none') {
                 const chatId = getChatId();
                 if (chatId) {
-                    loadChat(chatId); // Ha van chat_id, betöltjük a chatet
+                    loadChat(chatId);
                 } else {
-                    renderStartChatForm(); // Ha nincs chat_id, az űrlapot jelenítjük meg
+                    renderStartChatForm();
                 }
                 container.style.display = 'block';
             } else {
@@ -83,75 +105,115 @@
                     ...options.headers,
                 },
             });
+
             if (!response.ok) {
                 throw new Error(`Hiba a kérés során: ${response.statusText}`);
             }
-            const responseData = await response.json();
-            return responseData;
+
+            return await response.json();
         } catch (error) {
             console.error('Hiba történt:', error);
-            return null;
+            throw error;
         }
     }
 
     // Beszélgetés betöltése
     async function loadChat(chatId) {
-        const data = await fetchData(`${widgetConfig.apiUrl}/messages/${widgetConfig.siteId}?chat_id=${chatId}`);
-        if (data) {
+        try {
+            const container = document.getElementById(widgetConfig.containerId);
+            container.innerHTML = `
+                <div class="conversiveai-widget">
+                    <div id="conversiveai-loading-animation">Betöltés...</div>
+                </div>
+            `;
+
+            const data = await fetchData(`${widgetConfig.apiUrl}/messages/${widgetConfig.siteId}?chat_id=${chatId}`);
             renderChat(data);
+        } catch (error) {
+            showError('Nem sikerült betölteni a beszélgetést. Kérjük, próbálja újra később.');
         }
     }
 
     // Új beszélgetés indítása
     async function startChat(nickname, email, question) {
-        const data = await fetchData(`${widgetConfig.apiUrl}/submit-message/${widgetConfig.siteId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nickname, email, message: question }),
-        });
+        try {
+            const data = await fetchData(`${widgetConfig.apiUrl}/submit-message/${widgetConfig.siteId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nickname, email, message: question }),
+            });
 
-        if (data && data.data && data.data.chat_id) {
-            saveChatId(data.data.chat_id);
-            loadChat(data.data.chat_id);
-        } else {
-            console.error('Hiba: Nem sikerült létrehozni a beszélgetést.', data);
+            if (data && data.data && data.data.chat_id) {
+                saveChatId(data.data.chat_id);
+                loadChat(data.data.chat_id);
+            } else {
+                throw new Error('Nem sikerült létrehozni a beszélgetést.');
+            }
+        } catch (error) {
+            showError('Nem sikerült elindítani a beszélgetést. Kérjük, ellenőrizze az adatokat és próbálja újra.');
+            // Visszaállítjuk a formot
+            const form = document.getElementById('conversiveai-start-chat-form');
+            const loadingAnimation = document.getElementById('conversiveai-loading-animation');
+            if (form) form.style.display = 'block';
+            if (loadingAnimation) loadingAnimation.style.display = 'none';
         }
     }
 
     // Chat törlése
     async function closeChat(chatId) {
-        const data = await fetchData(`${widgetConfig.apiUrl}/messages/close/${widgetConfig.siteId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: chatId }),
-        });
+        try {
+            const data = await fetchData(`${widgetConfig.apiUrl}/messages/close/${widgetConfig.siteId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId }),
+            });
 
-        if (data) {
-            clearChatId();
-            renderStartChatForm();
+            if (data) {
+                clearChatId();
+                renderStartChatForm();
+            }
+        } catch (error) {
+            showError('Nem sikerült lezárni a beszélgetést. Kérjük, próbálja újra.');
         }
     }
 
     // Kérdés frissítése
     async function continueChat(chatId, question) {
-        const data = await fetchData(`${widgetConfig.apiUrl}/submit-message/${widgetConfig.siteId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: chatId, message: question }),
-        });
+        try {
+            const data = await fetchData(`${widgetConfig.apiUrl}/submit-message/${widgetConfig.siteId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, message: question }),
+            });
 
-        if (data) {
-            loadChat(chatId);
+            if (data) {
+                loadChat(chatId);
+            }
+        } catch (error) {
+            showError('Nem sikerült elküldeni az üzenetet. Kérjük, próbálja újra.');
+            // Visszaállítjuk a formot
+            const form = document.getElementById('conversiveai-continue-chat-form');
+            const loadingAnimation = document.getElementById('conversiveai-loading-animation');
+            if (form) form.style.display = 'block';
+            if (loadingAnimation) loadingAnimation.style.display = 'none';
         }
     }
 
     // Beszélgetés űrlap renderelése
     function renderStartChatForm() {
         const container = document.getElementById(widgetConfig.containerId);
+
+        // Először távolítsuk el a régi eseményfigyelőket
+        const oldForm = document.getElementById('conversiveai-start-chat-form');
+        if (oldForm) {
+            oldForm.replaceWith(oldForm.cloneNode(true));
+        }
+
         container.innerHTML = `
             <div class="conversiveai-widget">
                 <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
-                <h2>Új beszélgetés indítása</h2>
+                <h2>${widgetConfig.widgetName}</h2>
+                <h3>Új beszélgetés indítása</h3>
                 <form id="conversiveai-start-chat-form">
                     <input type="text" id="conversiveai-nickname" name="nickname" placeholder="Becenév" required>
                     <input type="email" id="conversiveai-email" name="email" placeholder="Email cím" required>
@@ -159,11 +221,13 @@
                     <button type="submit">Küldés</button>
                 </form>
                 <div id="conversiveai-loading-animation" style="display: none;">Betöltés...</div>
+                <div id="conversiveai-error-message" class="conversiveai-error-message" style="display: none;"></div>
             </div>
         `;
 
         const form = document.getElementById('conversiveai-start-chat-form');
         const loadingAnimation = document.getElementById('conversiveai-loading-animation');
+        const errorMessage = document.getElementById('conversiveai-error-message');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -173,28 +237,26 @@
             const question = document.getElementById('conversiveai-question').value;
 
             if (!nickname || !email || !question) {
-                console.error('Minden mezőt ki kell tölteni!');
+                errorMessage.textContent = 'Minden mezőt ki kell tölteni!';
+                errorMessage.style.display = 'block';
                 return;
             }
 
             // Form elrejtése és animáció megjelenítése
             form.style.display = 'none';
             loadingAnimation.style.display = 'block';
+            errorMessage.style.display = 'none';
 
-            startChat(nickname, email, question).then(() => {
-                // Válasz érkezése után animáció elrejtése és form visszaállítása
-                form.style.display = 'block';
-                loadingAnimation.style.display = 'none';
-            });
+            startChat(nickname, email, question);
         });
 
         const closeButton = document.getElementById('conversiveai-close-widget');
         closeButton.addEventListener('click', () => {
             const chatId = getChatId();
             if (!chatId) {
-                container.style.display = 'none'; // Ha nincs chat_id, csak elrejtjük
+                container.style.display = 'none';
             } else {
-                showCloseOptions(); // Ha van chat_id, bezárási lehetőségeket mutatunk
+                showCloseOptions();
             }
         });
     }
@@ -202,6 +264,13 @@
     // Beszélgetés renderelése
     function renderChat(data) {
         const container = document.getElementById(widgetConfig.containerId);
+
+        // Először távolítsuk el a régi eseményfigyelőket
+        const oldForm = document.getElementById('conversiveai-continue-chat-form');
+        if (oldForm) {
+            oldForm.replaceWith(oldForm.cloneNode(true));
+        }
+
         container.innerHTML = `
             <div class="conversiveai-widget">
                 <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
@@ -214,27 +283,31 @@
                     <button id="conversiveai-send_continue" type="submit">Küldés</button>
                 </form>
                 <div id="conversiveai-loading-animation" style="display: none;">Betöltés...</div>
+                <div id="conversiveai-error-message" class="conversiveai-error-message" style="display: none;"></div>
             </div>
         `;
 
         const form = document.getElementById('conversiveai-continue-chat-form');
         const loadingAnimation = document.getElementById('conversiveai-loading-animation');
+        const errorMessage = document.getElementById('conversiveai-error-message');
         const textarea = document.getElementById('conversiveai-new-question');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            const question = textarea.value;
-            if (question.trim() === '') return;
+            const question = textarea.value.trim();
+
+            if (question === '') {
+                errorMessage.textContent = 'Kérjük, írjon be egy üzenetet!';
+                errorMessage.style.display = 'block';
+                return;
+            }
 
             // Form elrejtése és animáció megjelenítése
             form.style.display = 'none';
             loadingAnimation.style.display = 'block';
+            errorMessage.style.display = 'none';
 
-            continueChat(data.chat_id, question).then(() => {
-                // Válasz érkezése után animáció elrejtése és form visszaállítása
-                form.style.display = 'block';
-                loadingAnimation.style.display = 'none';
-            });
+            continueChat(data.chat_id, question);
         });
 
         textarea.addEventListener('keydown', function(e) {
@@ -258,7 +331,9 @@
         return messages.map(message => `
             <div class="conversiveai-message ${message.sender_role === 'user' ? 'user' : 'bot'}">
                 <div>${message.message}</div>
-                <div class="conversiveai-timestamp">${new Date(message.created_at).toLocaleTimeString()}</div>
+                <div class="conversiveai-timestamp">
+                    ${new Date(message.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
             </div>
         `).join('');
     }
@@ -268,36 +343,55 @@
         const container = document.getElementById(widgetConfig.containerId);
         const chatId = getChatId();
 
-        // Ha nincs chat_id, csak elrejtjük az ablakot
         if (!chatId) {
             container.style.display = 'none';
             return;
         }
 
-        // Ha van chat_id, megjelenítjük a bezárási lehetőségeket
         container.innerHTML = `
             <div class="conversiveai-widget">
                 <h2>Bezárási lehetőségek</h2>
-                <button id="conversiveai-close-temporarily">Csak elrejtés</button>
+                <button id="conversiveai-return-back">Vissza a beszélgetéshez</button>
+                <button id="conversiveai-close-temporarily">Beszélgetés elrejtése</button>
                 <button id="conversiveai-close-permanently">Végleges bezárás</button>
+                <div id="conversiveai-error-message" class="conversiveai-error-message" style="display: none;"></div>
             </div>
         `;
 
+        const returnBackButton = document.getElementById('conversiveai-return-back');
         const closeTemporarilyButton = document.getElementById('conversiveai-close-temporarily');
         const closePermanentlyButton = document.getElementById('conversiveai-close-permanently');
+        const errorMessage = document.getElementById('conversiveai-error-message');
 
-        // Csak elrejtés gomb
+        returnBackButton.addEventListener('click', () => {
+            const chatId = getChatId();
+            if (chatId) {
+                loadChat(chatId);
+            } else {
+                showError('Nem található aktív beszélgetés.');
+            }
+        })
+
         closeTemporarilyButton.addEventListener('click', () => {
             container.style.display = 'none';
         });
 
-        // Végleges bezárás gomb
-        closePermanentlyButton.addEventListener('click', () => {
-            closeChat(chatId);
-            container.style.display = 'none';
+        closePermanentlyButton.addEventListener('click', async () => {
+            try {
+                closeTemporarilyButton.disabled = true;
+                closePermanentlyButton.disabled = true;
+                await closeChat(chatId);
+                container.style.display = 'none';
+            } catch (error) {
+                errorMessage.textContent = 'Hiba történt a beszélgetés lezárása közben.';
+                errorMessage.style.display = 'block';
+                closeTemporarilyButton.disabled = false;
+                closePermanentlyButton.disabled = false;
+            }
         });
     }
 
+    // Inicializálás
     loadCSS();
     initWidget();
 })();
