@@ -29,7 +29,7 @@
         // Kék gomb létrehozása a jobb alsó sarokban
         const toggleButton = document.createElement('div');
         toggleButton.id = 'conversiveai-widget-toggle-button';
-        toggleButton.innerHTML = '<img src="https://szakdolgozat.test/widget/icon1.png">';
+        toggleButton.innerHTML = '<img src="https://szakdolgozat.test/widget/default.svg">';
         document.body.appendChild(toggleButton);
 
         // Gomb eseménykezelője
