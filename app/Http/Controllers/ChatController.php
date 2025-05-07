@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chat;
 use Illuminate\Http\Request;
 use App\Models\Site;
 use App\Enums\ChatStatusEnum;
@@ -22,7 +21,7 @@ class ChatController extends Controller
 
         if(empty($chat)) {
             return response()->json([
-                'error' => 'A beszélgetés betöltése sikertelen volt. A beszélgetés nem létezik!',
+                'error' => __('widget.missing_chat'),
             ], 404);
         }
 
@@ -32,7 +31,7 @@ class ChatController extends Controller
             'chat_id' => $chat->id,
             'messages' => $messages,
         ],
-        200);
+            200);
 
     }
 
@@ -41,9 +40,9 @@ class ChatController extends Controller
             'chat_id' => 'required|exists:chats,id',
         ]);
 
-        if(empty($site))
+        if(empty($site) || empty($validated['widget_id']))
             return response()->json([
-                'error' => 'A webhely nem található!',
+                'error' => __('widget.missing_site'),
             ], 404);
 
         $chat = $site->chats()->where('id', $validated['chat_id'])->firstOrFail();
@@ -51,6 +50,11 @@ class ChatController extends Controller
         $chat->update([
             'status' => ChatStatusEnum::CLOSED,
         ]);
+
+        return response()->json([
+            'message' => __('widget.chat_closed'),
+        ],
+            200);
     }
 
     /*public function delete(Request $request, Site $site) {
@@ -60,7 +64,7 @@ class ChatController extends Controller
 
         if(empty($site))
             return response()->json([
-                'error' => 'A webhely nem található!',
+                'error' => __('widget.missing_site'),
             ], 404);
 
         $chat = $site->chats()->where('id', $validated['chat_id'])->firstOrFail();
@@ -68,7 +72,7 @@ class ChatController extends Controller
         $chat->delete();
 
         return response()->json([
-            'message' => 'Chat sikeresen törölve.',
+            'message' => __('widget.chat_delete'),
         ],
         200);
     }*/
