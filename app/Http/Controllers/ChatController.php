@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChatRequest;
 use Illuminate\Http\Request;
 use App\Models\Site;
 use App\Enums\ChatStatusEnum;
 
 class ChatController extends Controller
 {
-    public function show(Request $request, Site $site) {
+    public function show(Site $site, ChatRequest $request) {
 
-        $validated = $request->validate([
-            'chat_id' => 'required|exists:chats,id',
-        ]);
+        $validated = $request->validated();
 
         $chat = $site->chats()
             ->where('id', $validated['chat_id'])
@@ -35,10 +34,8 @@ class ChatController extends Controller
 
     }
 
-    public function close(Site $site, Request $request) {
-        $validated = $request->validate([
-            'chat_id' => 'required|exists:chats,id',
-        ]);
+    public function close(Site $site, ChatRequest $request) {
+        $validated = $request->validated();
 
         if(empty($site) || empty($validated['chat_id']))
             return response()->json([
@@ -57,10 +54,8 @@ class ChatController extends Controller
             200);
     }
 
-    /*public function delete(Request $request, Site $site) {
-        $validated = $request->validate([
-            'chat_id' => 'required|exists:chats,id',
-        ]);
+    /*public function delete(Site $site, ChatRequest $request) {
+        $validated = $request->validated();
 
         if(empty($site))
             return response()->json([
