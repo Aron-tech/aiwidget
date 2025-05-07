@@ -119,9 +119,9 @@
     }
 
     // Chat törlése
-    async function deleteChat(chatId) {
-        const data = await fetchData(`${widgetConfig.apiUrl}/messages/delete/${widgetConfig.siteId}`, {
-            method: 'DELETE',
+    async function closeChat(chatId) {
+        const data = await fetchData(`${widgetConfig.apiUrl}/messages/close/${widgetConfig.siteId}`, {
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: chatId }),
         });
@@ -293,7 +293,7 @@
 
         // Végleges bezárás gomb
         closePermanentlyButton.addEventListener('click', () => {
-            deleteChat(chatId);
+            closeChat(chatId);
             container.style.display = 'none';
         });
     }

@@ -53,7 +53,7 @@ class ChatController extends Controller
         ]);
     }
 
-    public function delete(Request $request, Site $site) {
+    /*public function delete(Request $request, Site $site) {
         $validated = $request->validate([
             'chat_id' => 'required|exists:chats,id',
         ]);
@@ -71,5 +71,5 @@ class ChatController extends Controller
             'message' => 'Chat sikeresen törölve.',
         ],
         200);
-    }
+    }*/
 }
