@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\ChatStatusEnum;
 use App\Enums\MessageSenderRolesEnum;
+use LanguageDetector\LanguageDetector;
 
 class MessageController extends Controller
 {
@@ -51,26 +52,32 @@ class MessageController extends Controller
 
         if ($best_match && $highest_score > 0.5) {
 
-                Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
-                $optimalized_result = Prism::text()
-                    ->using(Provider::OpenAI, 'gpt-4o-mini')
-                    ->withPrompt(
-                        "User question: " . $user_question . " " .
-                        "System question: " . $best_match->question . " " .
-                        "System answer: " . $best_match->answer . ". " .
-                        "Please reformat the answer so that it precisely matches the user's question, but you may only use information from the System question and answer. " .
-                        "Use only the information contained in the System question and answer, and nothing else. " .
-                        "Do not add any extra information, and do not change the content of the System question and answer, maximum change answer language. " .
-                        "The answer must always be in the same language as the user's question."
-                    )
+            Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
 
-                    ->generate();
+            $detector = new LanguageDetector(null, ['en', 'hu', 'de']);
+            $language = $detector->evaluate($user_question);
 
-                if (isset($optimalized_result->text))
-                    return $optimalized_result->text;
-            }
+            Log::info('Felhasználó kérdés nyelve: ' . $language);
 
-            return false;
+            $optimalized_result = Prism::text()
+                ->using(Provider::OpenAI, 'gpt-4o-mini')
+                ->withSystemPrompt('You are a translation and phrasing expert.')
+                ->withPrompt(
+                    "User question: " . $user_question . " " .
+                    "System question: " . $best_match->question . " " .
+                    "System answer: " . $best_match->answer . ". " .
+                    "The answer must be translated to the language: " . $language . ". ".
+                    "Use only the information contained in the System question and answer, and nothing else. " .
+                    "Do not add any extra information, and do not change the content of the System question and answer."
+                )
+                ->generate();
+            Log::info('Optimalizált válasz: ' . $optimalized_result->text);
+
+            if (isset($optimalized_result->text))
+                return $optimalized_result->text;
+        }
+
+        return false;
     }
 
     private function getEmbedding($text)
@@ -129,11 +136,11 @@ class MessageController extends Controller
         $site_id = $site->id;
 
         $validated = $request->validate([
-                    'nickname' => 'nullable|string|max:255',
-                    'email' => 'nullable|email|max:255',
-                    'message' => 'required|min:6|string',
-                    'chat_id' => 'nullable|max:255',
-                ]);
+            'nickname' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'message' => 'required|min:6|string',
+            'chat_id' => 'nullable|max:255',
+        ]);
 
         $chat_id = $validated['chat_id'] ?? null;
 
@@ -154,13 +161,12 @@ class MessageController extends Controller
             }
         }
 
-        $message = Message::create([
+        Message::create([
             'chat_id' => $chat_id,
             'message' => $validated['message'],
         ]);
 
         $answer = $this->findBestAnswer($validated['message'], $site_id);
-
 
         if($answer === false ){
             $answer = "A kérdésedre nem sikerült helyes választ találni, hamarosan megválaszolja egy munkatárs a kérdésedet.";
@@ -170,7 +176,7 @@ class MessageController extends Controller
 
         Log::info("Bot válasz lekérdezés után: $answer");
 
-        $bot_message = Message::create([
+        Message::create([
             'chat_id' => $chat_id,
             'message' => $answer,
             'sender_role' => MessageSenderRolesEnum::BOT,
