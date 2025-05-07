@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ChatRequest;
-use Illuminate\Http\Request;
 use App\Models\Site;
 use App\Enums\ChatStatusEnum;
 
@@ -37,7 +36,7 @@ class ChatController extends Controller
     public function close(Site $site, ChatRequest $request) {
         $validated = $request->validated();
 
-        if(empty($site) || empty($validated['chat_id']))
+        if(empty($validated['chat_id']))
             return response()->json([
                 'error' => __('widget.missing_site'),
             ], 404);

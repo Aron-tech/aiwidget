@@ -127,7 +127,7 @@ class MessageController extends Controller
         return $dotProduct / ($magnitude1 * $magnitude2);
     }
 
-    public function storeUserMessage(Site $site, Request $request)
+    public function store(Site $site, Request $request)
     {
         if (!$site) {
             return response()->json(['error' => 'A webhely nem található'], 404);
