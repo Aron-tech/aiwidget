@@ -35,12 +35,12 @@ class ChatController extends Controller
 
     }
 
-    public function close(Request $request, Site $site) {
+    public function close(Site $site, Request $request) {
         $validated = $request->validate([
             'chat_id' => 'required|exists:chats,id',
         ]);
 
-        if(empty($site) || empty($validated['widget_id']))
+        if(empty($site) || empty($validated['chat_id']))
             return response()->json([
                 'error' => __('widget.missing_site'),
             ], 404);
