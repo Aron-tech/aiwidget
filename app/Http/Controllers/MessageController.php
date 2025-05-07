@@ -72,12 +72,13 @@ class MessageController extends Controller
                 ->withSystemPrompt('You are a translation and phrasing expert.')
                 ->withClientOptions(['timeout' => 15])
                 ->withPrompt(
-                    "User question: " . $user_question . " " .
-                    "System question: " . $best_match->question . " " .
-                    "System answer: " . $best_match->answer . ". " .
-                    "The answer must be translated to the language: " . $language . ". ".
-                    "Use only the information contained in the System question and answer, and nothing else. " .
-                    "Do not add any extra information, and do not change the content of the System question and answer."
+                    "You are given a user question, a system question, and a system answer.\n\n" .
+                    "Your task is to translate ONLY the system answer into " . $language . ".\n" .
+                    "Do NOT return or rephrase the user question or system question.\n" .
+                    "Do NOT add any explanation or extra text — return only the translated answer.\n\n" .
+                    "User question: " . $user_question . "\n" .
+                    "System question: " . $best_match->question . "\n" .
+                    "System answer: " . $best_match->answer
                 )
                 ->generate();
             //Log::info('Optimalizált válasz: ' . $optimized_result->text);
