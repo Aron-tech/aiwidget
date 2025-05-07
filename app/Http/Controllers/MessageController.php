@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Chat;
 use App\Models\Site;
@@ -17,7 +18,7 @@ use LanguageDetector\LanguageDetector;
 
 class MessageController extends Controller
 {
-    public function findBestAnswer($user_question, $site_id)
+    public function findBestAnswer($user_question, $site_id): ?string
     {
         $exact_match = QuestionAnswer::where('site_id', $site_id)
             ->where('question', $user_question)
@@ -48,18 +49,18 @@ class MessageController extends Controller
                 $best_match = $question;
             }
         }
-        Log::info($highest_score);
+        //Log::info($highest_score);
 
-        if ($best_match && $highest_score > 0.5) {
+        if ($best_match && $highest_score > 0.5){
 
-            Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
+            //Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
 
             $detector = new LanguageDetector(null, ['en', 'hu', 'de']);
             $language = $detector->evaluate($user_question);
 
-            Log::info('Felhasználó kérdés nyelve: ' . $language);
+            //Log::info('Felhasználó kérdés nyelve: ' . $language);
 
-            $optimalized_result = Prism::text()
+            $optimized_result = Prism::text()
                 ->using(Provider::OpenAI, 'gpt-4o-mini')
                 ->withSystemPrompt('You are a translation and phrasing expert.')
                 ->withPrompt(
@@ -71,20 +72,20 @@ class MessageController extends Controller
                     "Do not add any extra information, and do not change the content of the System question and answer."
                 )
                 ->generate();
-            Log::info('Optimalizált válasz: ' . $optimalized_result->text);
+            //Log::info('Optimalizált válasz: ' . $optimized_result->text);
 
-            if (isset($optimalized_result->text))
-                return $optimalized_result->text;
+            if (isset($optimized_result->text))
+                return $optimized_result->text;
         }
 
-        return false;
+        return null;
     }
 
-    private function getEmbedding($text)
+    private function getEmbedding($text): ?array
     {
-        $cacheKey = 'embedding_' . md5($text);
+        $cache_key = 'embedding_' . md5($text);
 
-        return Cache::remember($cacheKey, now()->addHours(24), function () use ($text) {
+        return Cache::remember($cache_key, now()->addMinutes(5), function () use ($text) {
 
             $response = Prism::embeddings()
                 ->using(Provider::OpenAI, 'text-embedding-3-large')
@@ -101,38 +102,23 @@ class MessageController extends Controller
         });
     }
 
-    private function cosineSimilarity($embedding1, $embedding2)
+    private function cosineSimilarity(array $a, array $b): float
     {
-        if (count($embedding1) !== count($embedding2)) {
-            throw new \Exception("A beágyazás vektorok mérete nem egyezik. Várható: " . count($embedding1) . ", kapott: " . count($embedding2));
+        $sum = 0;
+        $a_sum = 0;
+        $b_sum = 0;
+
+        for ($i = 0, $n = count($a); $i < $n; $i++) {
+            $sum += $a[$i] * $b[$i];
+            $a_sum += $a[$i] * $a[$i];
+            $b_sum += $b[$i] * $b[$i];
         }
 
-        $dotProduct = 0;
-        $magnitude1 = 0;
-        $magnitude2 = 0;
-
-        for ($i = 0; $i < count($embedding1); $i++) {
-            $dotProduct += $embedding1[$i] * $embedding2[$i];
-            $magnitude1 += $embedding1[$i] * $embedding1[$i];
-            $magnitude2 += $embedding2[$i] * $embedding2[$i];
-        }
-
-        $magnitude1 = sqrt($magnitude1);
-        $magnitude2 = sqrt($magnitude2);
-
-        if ($magnitude1 * $magnitude2 === 0) {
-            return 0;
-        }
-
-        return $dotProduct / ($magnitude1 * $magnitude2);
+        return $sum / (sqrt($a_sum) * sqrt($b_sum) ?: 1);
     }
 
-    public function store(Site $site, Request $request)
+    public function store(Site $site, Request $request): JsonResponse
     {
-        if (!$site) {
-            return response()->json(['error' => 'A webhely nem található'], 404);
-        }
-
         $site_id = $site->id;
 
         $validated = $request->validate([
@@ -168,7 +154,7 @@ class MessageController extends Controller
 
         $answer = $this->findBestAnswer($validated['message'], $site_id);
 
-        if($answer === false ){
+        if(!$answer){
             $answer = "A kérdésedre nem sikerült helyes választ találni, hamarosan megválaszolja egy munkatárs a kérdésedet.";
             $chat->status = ChatStatusEnum::WAITING;
             $chat->save();

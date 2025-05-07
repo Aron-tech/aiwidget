@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChatRequest;
 use App\Models\Site;
 use App\Enums\ChatStatusEnum;
+use Illuminate\Http\JsonResponse;
 
 class ChatController extends Controller
 {
-    public function show(Site $site, ChatRequest $request) {
+    public function show(Site $site, ChatRequest $request): JsonResponse
+    {
 
         $validated = $request->validated();
 
@@ -33,7 +35,8 @@ class ChatController extends Controller
 
     }
 
-    public function close(Site $site, ChatRequest $request) {
+    public function close(Site $site, ChatRequest $request): JsonResponse
+    {
         $validated = $request->validated();
 
         if(empty($validated['chat_id']))
@@ -53,7 +56,8 @@ class ChatController extends Controller
             200);
     }
 
-    /*public function delete(Site $site, ChatRequest $request) {
+    /*public function delete(Site $site, ChatRequest $request): JsonResponse
+    {
         $validated = $request->validated();
 
         if(empty($site))
