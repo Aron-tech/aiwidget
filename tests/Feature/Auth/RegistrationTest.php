@@ -31,7 +31,7 @@ class RegistrationTest extends TestCase
         // Ellenőrizzük, hogy nincsenek hibák, és átirányít a dashboardra
         $response
             ->assertHasNoErrors()
-            ->assertRedirect(route('dashboard', absolute: false));
+            ->assertRedirect(route('site.picker', absolute: false));
 
         // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
         $this->assertAuthenticated();

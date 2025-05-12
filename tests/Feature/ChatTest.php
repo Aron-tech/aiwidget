@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ChatStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Site;
 use Tests\TestCase;
@@ -16,7 +17,7 @@ class ChatTest extends TestCase
         $chat = $site->chats()->create([
             'visitor_name' => 'Teszt Felhasználó',
             'visitor_email' => 'teszt@gmail.com',
-            'status' => 1,
+            'status' => ChatStatusEnum::OPEN,
         ]);
         $message = $chat->messages()->create([
             'message' => 'Test message',
@@ -38,25 +39,28 @@ class ChatTest extends TestCase
         ]);
     }
 
-    public function test_delete_chat()
+    public function test_close_chat()
     {
         $site = Site::factory()->create();
         $chat = $site->chats()->create([
             'visitor_name' => 'Teszt Felhasználó',
             'visitor_email' => 'teszt@gmail.com',
-            'status' => 1,
+            'status' => ChatStatusEnum::OPEN,
         ]);
 
         $response = $this->withHeaders([
             'Referer' => $site->domain,
-        ])->deleteJson(route('widget.delete', ['site' => $site->uuid, 'chat_id' => $chat->id]));
+        ])->patchJson(route('widget.close', ['site' => $site->uuid, 'chat_id' => $chat->id]));
 
         $response->assertStatus(200);
 
         $response->assertJson([
-            'message' => 'Chat sikeresen törölve.',
+            'message' => __('widget.chat_closed'),
         ]);
 
-        $this->assertDatabaseMissing('chats', ['id' => $chat->id]);
+        $this->assertDatabaseHas('chats', [
+            'id' => $chat->id,
+            'status' => ChatStatusEnum::CLOSED,
+        ]);
     }
 }
