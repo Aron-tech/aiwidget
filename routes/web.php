@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\ChatManager;
 use App\Livewire\UserManager;
 use App\Livewire\QuestionManager;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ Route::middleware(['auth','validate_site_selection'])->group(function () {
 
 Route::middleware(['auth', 'validate_site_selection'])->name('manager.')->group(function () {
     Volt::route('question-manager', QuestionManager::class)->name('question');
+
+    Volt::route('chat-manager', ChatManager::class)->name('chat');
 
     Volt::route('user-manager', UserManager::class)->name('user');
 
