@@ -15,6 +15,7 @@
             <flux:navlist variant="outline">
                 <flux:navlist.group heading="Platform" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    <flux:navlist.item icon="chat-bubble-bottom-center" :href="route('manager.chat')" :current="request()->routeIs('manager.chat')" wire:navigate>{{ __('Chat-Manager') }}</flux:navlist.item>
                     <flux:navlist.item icon="question-mark-circle" :href="route('manager.question')" :current="request()->routeIs('manager.question')" wire:navigate>{{ __('Question-Manager') }}</flux:navlist.item>
                     <flux:navlist.item icon="user-group" :href="route('manager.user')" :current="request()->routeIs('manager.user')" wire:navigate>{{ __('User-Manager') }}</flux:navlist.item>
                     <flux:navlist.item icon="cog-6-tooth" :href="route('generate-widget')" :current="request()->routeIs('generate-widget')" wire:navigate>{{ __('interface.generate_widget') }}</flux:navlist.item>
