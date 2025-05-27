@@ -15,6 +15,8 @@ enum PermissionTypesEnum : string
     case DELETE_QUESTIONS = 'delete_questions';
     case READ_WIDGET_EXPORT = 'read_widget_export';
 
+    case CLOSE_CHAT = 'close_chat';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -28,6 +30,7 @@ enum PermissionTypesEnum : string
             PermissionTypesEnum::DELETE_QUESTIONS => __('enum.delete_questions'),
             PermissionTypesEnum::READ_WIDGET_EXPORT => __('enum.read_widget_export'),
             PermissionTypesEnum::IMPORT_QUESTIONS => __('enum.import_questions'),
+            PermissionTypesEnum::CLOSE_CHAT => __('enum.close_chat'),
         };
     }
 

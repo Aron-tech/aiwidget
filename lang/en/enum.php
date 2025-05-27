@@ -16,4 +16,5 @@ return [
     'update_questions' => 'Update questions and answers',
     'delete_questions' => 'Delete questions and answers',
     'read_widget_export' => 'Read widget export',
+    'close_chat' => 'Close chat',
 ];
