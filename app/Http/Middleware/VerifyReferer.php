@@ -25,10 +25,8 @@ class VerifyReferer
 
         $site = Site::where('uuid', $uuid)->firstOrFail();
 
-        if ($referer !== $site->domain) {
-            return abort(403, 'Érvénytelen azonosító!');
-            //Log::error('Hozzários megtagadva, mert a referer nem egyezik a webhely URL-jelvel: ' . $referer . ' != ' . $site->domain);
-        }
+        if ($referer !== $site->domain)
+            abort(403, 'Érvénytelen azonosító!');
 
         return $next($request);
     }
