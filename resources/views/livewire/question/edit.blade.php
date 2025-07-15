@@ -75,11 +75,11 @@ new class extends Component {
             </div>
 
             <div class="mt-4">
-                <flux:input wire:model="question" id="question" label="{{ __('interface.question') }}" type="text" name="question" required autofocus autocomplete="question" placeholder="How many?" clearable />
+                <flux:textarea wire:model="question" id="question" label="{{ __('interface.question') }}" name="question" autocomplete="question" placeholder="How many?"/>
             </div>
 
             <div class="mt-4">
-                <flux:input wire:model="answer" id="answer" label="{{ __('interface.answer') }}" type="text" name="answer" required autofocus autocomplete="answer" placeholder="My website name" clearable />
+                <flux:textarea wire:model="answer" id="answer" label="{{ __('interface.answer') }}" name="answer" autocomplete="answer" placeholder="My website name"/>
             </div>
 
             <div class="flex">
