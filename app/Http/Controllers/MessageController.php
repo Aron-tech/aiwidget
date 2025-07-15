@@ -130,7 +130,7 @@ class MessageController extends Controller
     {
         $validated = $request->validated();
 
-        if (!$validated['chat_id']) {
+        if (!isset($validated['chat_id'])) {
             $chat = Chat::create([
                 'site_id' => $site->id,
                 'visitor_name' => $validated['nickname'],
