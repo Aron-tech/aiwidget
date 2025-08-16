@@ -61,7 +61,7 @@
             @if($selected_chat)
                 <div class="border-b  px-4 py-3 flex items-center justify-between rounded-t-lg">
                     <div>
-                        <h3 class="text-lg font-medium dark:text-white">{{ $selected_chat->visitor_name }}</h3>
+                        <h3 class="text-lg font-medium dark:text-white">#{{$selected_chat->id}} - {{ $selected_chat->visitor_name }}</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-300">{{ $selected_chat->visitor_email }}</p>
                     </div>
                     @if($selected_chat->status === \App\Enums\ChatStatusEnum::OPEN || $selected_chat->status === \App\Enums\ChatStatusEnum::WAITING)
@@ -119,7 +119,7 @@
                                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ $chat->visitor_email }}</p>
                                 </div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                    {{ $chat->status }}
+                                    {{ $chat->status->getLabel() }}
                                 </span>
                             </div>
                         </flux:navlist.item>
