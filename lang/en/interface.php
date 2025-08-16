@@ -94,5 +94,6 @@ return [
     'permissions' => 'Permissions',
     'key_subheading' => 'Please select the permissions you want to add to the key.',
     'edit_key' => 'Edit key',
-    'attached to the website' => 'You are already connected to the given website.'
+    'attached to the website' => 'You are already connected to the given website.',
+    'invalid_token' => 'The provided token is invalid or has expired. Please check the token and try again.',
 ];

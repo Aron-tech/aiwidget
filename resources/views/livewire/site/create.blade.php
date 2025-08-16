@@ -27,11 +27,12 @@ new class extends Component {
 
         $this->key = Key::where('token', $hashed_token)
             ->where('user_id', null)
+            ->where('expiration_time', '>', now())
             ->first();
 
         if(empty($this->key))
         {
-            $this->addError('token', 'Érvénytelen token.');
+            $this->addError('token', __('interface.invalid_token'));
             return;
         }
 
