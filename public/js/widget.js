@@ -118,7 +118,22 @@
             });
 
             if (!response.ok) {
-                throw new Error(`Hiba a kérés során: ${response.statusText}`);
+                // Próbáljuk meg feldolgozni a JSON válasz hibaüzenetét
+                let errorMessage = `Hiba a kérés során: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorMessage = errorData.message;
+                    } else if (errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                } catch (jsonError) {
+                    // Ha nem JSON a válasz, használjuk az alapértelmezett hibaüzenetet
+                }
+
+                const error = new Error(errorMessage);
+                error.status = response.status;
+                throw error;
             }
 
             return await response.json();
@@ -159,10 +174,48 @@
             }
         } catch (error) {
             console.error('Hiba történt a beszélgetés betöltésekor:', error);
+
+            // Ha 404-es hiba, akkor töröljük a chat_id-t és jelenítsük meg az új chat formot
+            if (error.status === 404) {
+                clearChatId();
+                stopPolling();
+                if (initialLoad) {
+                    showChatNotFoundError(error.message);
+                }
+                return;
+            }
+
             if (initialLoad) {
-                showError('Nem sikerült betölteni a beszélgetést. Kérjük, próbálja újra később.');
+                showError(`Nem sikerült betölteni a beszélgetést: ${error.message}`);
             }
         }
+    }
+
+    // Chat nem található hiba megjelenítése
+    function showChatNotFoundError(message) {
+        const container = document.getElementById(widgetConfig.containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="conversiveai-widget conversiveai-error">
+                <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
+                <h2>Beszélgetés nem található</h2>
+                <div class="conversiveai-error-message">${message}</div>
+                <button id="conversiveai-start-new-chat">Új beszélgetés indítása</button>
+            </div>
+        `;
+
+        document.getElementById('conversiveai-start-new-chat').addEventListener('click', () => {
+            renderStartChatForm();
+        });
+
+        document.getElementById('conversiveai-close-widget').addEventListener('click', () => {
+            container.style.display = 'none';
+            isWidgetOpen = false;
+        });
+
+        container.style.display = 'block';
+        isWidgetOpen = true;
     }
 
     // Polling indítása
@@ -212,7 +265,7 @@
                 throw new Error('Nem sikerült létrehozni a beszélgetést.');
             }
         } catch (error) {
-            showError('Nem sikerült elindítani a beszélgetést. Kérjük, ellenőrizze az adatokat és próbálja újra.');
+            showError(`Nem sikerült elindítani a beszélgetést: ${error.message}`);
             // Visszaállítjuk a formot
             const form = document.getElementById('conversiveai-start-chat-form');
             const loadingAnimation = document.getElementById('conversiveai-loading-animation');
@@ -236,7 +289,7 @@
                 renderStartChatForm();
             }
         } catch (error) {
-            showError('Nem sikerült lezárni a beszélgetést. Kérjük, próbálja újra.');
+            showError(`Nem sikerült lezárni a beszélgetést: ${error.message}`);
         }
     }
 
@@ -258,7 +311,7 @@
                 }
             }
         } catch (error) {
-            showError('Nem sikerült elküldeni az üzenetet. Kérjük, próbálja újra.');
+            showError(`Nem sikerült elküldeni az üzenetet: ${error.message}`);
             // Visszaállítjuk a formot
             const form = document.getElementById('conversiveai-continue-chat-form');
             const loadingAnimation = document.getElementById('conversiveai-loading-animation');
