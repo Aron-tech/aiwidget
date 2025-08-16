@@ -29,13 +29,31 @@ class SitePicker extends Component
         }])->get();
     }
 
-    public function select($site_id)
+    public function select($site_id): void
     {
+        $auth_user_key = $this->auth_user->keys()->where('site_id', $site_id)->first();
+
+        //Ha nincs token, akkor nem engedjük tovább
+        if(!$auth_user_key) {
+            $this->notify('danger', __('interface.invalid_token'));
+            return;
+        }
+
+        //Ha több mint 3 napja lejárt a token, akkor nem engedjük tovább
+        if($auth_user_key->expiration_time <= now()->subDays(3)) {
+            if($auth_user_key->type === KeyTypesEnum::OWNER) {
+                $this->notify('danger', __('interface.invalid_token'));
+            }else {
+                $this->notify('warning', __('interface.invalid_token_contact_owner'));
+            }
+            return;
+        }
+
         $site = Site::findOrFail($site_id);
         $site_selector = new SiteSelector();
         $site_selector->setSite($site);
 
-        return redirect()->route('dashboard');
+        redirect()->route('dashboard');
     }
     public function edit($site_id)
     {

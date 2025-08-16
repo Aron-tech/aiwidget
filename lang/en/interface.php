@@ -96,4 +96,5 @@ return [
     'edit_key' => 'Edit key',
     'attached to the website' => 'You are already connected to the given website.',
     'invalid_token' => 'The provided token is invalid or has expired. Please check the token and try again.',
+    'invalid_token_contact_owner' => 'The provided token is invalid or has expired. Please contact the owner of the website for a new token.',
 ];
