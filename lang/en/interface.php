@@ -107,4 +107,6 @@ return [
     'close_chat' => 'Close chat',
     'select_chat_to_start' => 'Select chat to start',
     'closed_success' => 'Successfully closed',
+    'message' => 'Message',
+    'inactive' => 'Inactive',
 ];

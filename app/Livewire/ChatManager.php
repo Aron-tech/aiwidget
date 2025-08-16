@@ -46,6 +46,7 @@ class ChatManager extends Component
             0 => [ChatStatusEnum::OPEN, ChatStatusEnum::WAITING],
             1 => [ChatStatusEnum::OPEN],
             2 => [ChatStatusEnum::WAITING],
+            3 => [ChatStatusEnum::CLOSED],
             default => null,
         };
     }

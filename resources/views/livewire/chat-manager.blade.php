@@ -26,6 +26,7 @@
                         <flux:menu.radio value="0">{{ __('interface.all')}}</flux:menu.radio>
                         <flux:menu.radio value="1">{{ __('interface.opened')}}</flux:menu.radio>
                         <flux:menu.radio value="2">{{ __('interface.waiting')}}</flux:menu.radio>
+                        <flux:menu.radio value="3">{{ __('interface.closed')}}</flux:menu.radio>
                     </flux:menu.radio.group>
                 </flux:menu>
             </flux:dropdown>
@@ -43,7 +44,7 @@
                             @if($order_by === 1) ({{ strtoupper($order) }}) @endif
                         </flux:menu.radio>
                         <flux:menu.radio value="2">
-                            {{ __('interface.order_by_status') }}
+                            {{ __('interface.sort_by_status') }}
                         </flux:menu.radio>
                         <flux:menu.radio value="3" wire:click="toggleOrderDirection">
                             {{ __('interface.sort_by_id') }}
@@ -63,11 +64,13 @@
                         <h3 class="text-lg font-medium dark:text-white">{{ $selected_chat->visitor_name }}</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-300">{{ $selected_chat->visitor_email }}</p>
                     </div>
-                    <div class="flex space-x-2">
-                        <flux:tooltip content="{{__('interface.close_chat')}}">
-                            <flux:button icon="lock-closed" wire:click="closeChat({{$selected_chat->id}})"/>
-                        </flux:tooltip>
-                    </div>
+                    @if($selected_chat->status === \App\Enums\ChatStatusEnum::OPEN || $selected_chat->status === \App\Enums\ChatStatusEnum::WAITING)
+                        <div class="flex space-x-2">
+                            <flux:tooltip content="{{__('interface.close_chat')}}">
+                                <flux:button icon="lock-closed" wire:click="closeChat({{$selected_chat->id}})"/>
+                            </flux:tooltip>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="h-132 overflow-y-auto p-4 space-y-4" id="messages-container">
@@ -84,8 +87,10 @@
                 <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-3">
                     <div class="flex space-x-2">
                         <form wire:submit.prevent="sendMessage" class="flex space-x-4 items-center w-full">
-                            <flux:input wire:model="new_message" placeholder="{{__('interface.')}}" clearable />
-                            <flux:button icon="paper-airplane" type="submit"/>
+                            <flux:input wire:model="new_message" placeholder="{{__('interface.message')}}" clearable />
+                            @if($selected_chat->status === \App\Enums\ChatStatusEnum::OPEN || $selected_chat->status === \App\Enums\ChatStatusEnum::WAITING)
+                                <flux:button icon="paper-airplane" type="submit"/>
+                            @endif
                         </form>
                     </div>
                 </div>
