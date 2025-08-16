@@ -61,7 +61,7 @@ class ChatManager extends Component
         $query = Chat::where('site_id', $this->site->id)
             ->whereIn('status', $this->getFilter())
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
+                $query->where('id', $this->search)->orWhere(function ($q) {
                     $q->where('visitor_name', 'like', '%'.$this->search.'%')
                         ->orWhere('visitor_email', 'like', '%'.$this->search.'%');
                 });
