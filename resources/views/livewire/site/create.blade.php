@@ -40,6 +40,12 @@ new class extends Component {
             Flux::modal('create-site')->show();
 
         }else if($this->key->type === KeyTypesEnum::MODERATOR || $this->key->type === KeyTypesEnum::DEVELOPER){
+
+            if(Key::where('user_id', $this->auth_user->id)->where('site_id', $this->key->site_id)->exists()){
+                $this->addError('token', __('interface.attached_to_the_website'));
+                return;
+            }
+
             $this->key->update([
                 'user_id' => $this->auth_user->id,
                 ]);

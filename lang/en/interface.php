@@ -94,4 +94,5 @@ return [
     'permissions' => 'Permissions',
     'key_subheading' => 'Please select the permissions you want to add to the key.',
     'edit_key' => 'Edit key',
+    'attached to the website' => 'You are already connected to the given website.'
 ];
