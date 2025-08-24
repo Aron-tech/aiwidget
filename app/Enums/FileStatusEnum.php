@@ -6,6 +6,6 @@ enum FileStatusEnum : string
 {
     case UPLOADED = 'uploaded';
     case PROCESSING = 'processing';
-    case INDEXED = 'indexed';
+    case COMPLETED = 'completed';
     case FAILED = 'failed';
 }
