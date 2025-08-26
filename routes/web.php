@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\ViewFileAction;
+use App\Livewire\DocumentManager;
 use App\Livewire\UserManager;
 use App\Livewire\QuestionManager;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +19,8 @@ Route::middleware(['auth','validate_site_selection'])->group(function () {
 
     Volt::route('generate-widget', 'generatewidget')->name('generate-widget');
 
+    Route::get('view-file', ViewFileAction::class)->name('view-file');
+
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
@@ -29,6 +33,8 @@ Route::middleware(['auth', 'validate_site_selection'])->name('manager.')->group(
     Volt::route('question-manager', QuestionManager::class)->name('question');
 
     Volt::route('user-manager', UserManager::class)->name('user');
+
+    Volt::route('document-manager', DocumentManager::class)->name('document');
 
     //Volt::route('chat-manager', ChatManager::class)->name('chat');
 });
