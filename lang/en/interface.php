@@ -106,4 +106,7 @@ return [
     'upload_file' => 'Upload file',
     'document_manager' => 'Document manager',
     'add_new_document' => 'Add new document',
+    'document_not_found' => 'Document not found',
+    'document_delete_title' => 'Delete this document?',
+    'document_delete_message' => 'Are you sure you want to delete this document: ',
 ];
