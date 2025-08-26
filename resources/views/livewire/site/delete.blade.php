@@ -38,6 +38,12 @@ new class extends Component {
                 ->whereIn('key_id', $this->site->keys->pluck('id'))
                 ->delete();
 
+            DB::table('document_chunks')
+                ->whereIn('document_id', $this->site->documents->pluck('id'))
+                ->delete();
+
+            $this->site->documents()->forceDelete();
+
             $this->site->keys()
                 ->where('type', KeyTypesEnum::MODERATOR)
                 ->delete();
