@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Actions\UploadFileAction;
 use App\Enums\FileStatusEnum;
+use App\Enums\PermissionTypesEnum;
 use App\Jobs\ProcessDocumentJob;
 use App\Livewire\Traits\FileHandlerTrait;
 use App\Livewire\Traits\GlobalNotifyEvent;
@@ -43,6 +44,8 @@ class DocumentManager extends Component
     public ?Site $site = null;
     public $debugInfo = [];
 
+    public ?Document $selected_document = null;
+
     public function mount(SiteSelector $site_selector): void
     {
         if (!$site_selector->hasSite()) {
@@ -61,6 +64,11 @@ class DocumentManager extends Component
 
     public function download(int $id): ?StreamedResponse
     {
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DOWNLOAD_DOCUMENTS)){
+            $this->dispatch('notify', 'danger', __('interface.missing_permission'));
+            return null;
+        }
+
         $document = $this->site->documents()->find($id);
 
         if($document){
@@ -72,6 +80,11 @@ class DocumentManager extends Component
     }
     public function downloadFolder(): ?BinaryFileResponse
     {
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DOWNLOAD_DOCUMENTS_FOLDER)){
+            $this->dispatch('notify', 'danger', __('interface.missing_permission'));
+            return null;
+        }
+
         $documents = $this->site->documents()->get();
 
         if ($documents->isEmpty()) {
@@ -103,6 +116,11 @@ class DocumentManager extends Component
 
     public function save(): void
     {
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::UPLOAD_DOCUMENTS)){
+            $this->dispatch('notify', 'danger', __('interface.missing_permission'));
+            return;
+        }
+
         $this->validate();
 
         if ($path = (new UploadFileAction())->execute($this->site_id, $this->file)) {
@@ -123,20 +141,30 @@ class DocumentManager extends Component
         }
     }
 
-    public function destroy(int $document_id): void
+    public function delete(int $document_id): void
     {
-        $document = $this->site->documents()->find($document_id);
+        $this->selected_document = $this->site->documents()->find($document_id);
 
-        if(empty($document)) {
+        if(!$this->selected_document){
+            $this->notify('danger', __('interface.document_not_found'));
+            return;
+        }
+
+        Flux::modal('delete-document')->show();
+    }
+
+    public function destroy(): void
+    {
+        if(empty($this->selected_document)) {
             $this->notify('error', __('interface.document_not_found'));
             return;
         }
 
-        $document->chunks()->delete();
-        $document->delete();
+        $this->selected_document->chunks()->delete();
+        $this->selected_document->delete();
 
         $this->notify('success', __('interface.delete_success'));
-        Flux::modal('add-document')->close();
+        Flux::modal('delete-document')->close();
     }
 
     public function reloadDocuments(): void

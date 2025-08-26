@@ -70,7 +70,7 @@
                     <flux:button variant="filled" icon="eye"/>
                 </a>
                 <flux:button wire:click="download({{ $document->id }})" icon="arrow-down-tray"/>
-                <flux:button wire:click='destroy({{ $document->id }})' icon="trash" variant="danger"/>
+                <flux:button wire:click='delete({{ $document->id }})' icon="trash" variant="danger"/>
             </div>
         @endforeach
         <div class="col-span-full">
@@ -98,6 +98,30 @@
                     </flux:button>
                 </div>
             </form>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="delete-document" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{__('interface.document_delete_title')}}</flux:heading>
+                <flux:subheading>
+                    <p>{{__('interface.document_delete_message') . $selected_document?->title}}</p>
+                    <p class="font-medium">{{__('interface.irreversible')}}</p>
+                </flux:subheading>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost">{{__('interface.cancel')}}</flux:button>
+                </flux:modal.close>
+
+                <flux:button wire:click='destroy()' type="submit" variant="danger">
+                    {{__('interface.delete')}}
+                </flux:button>
+            </div>
         </div>
     </flux:modal>
 </div>
