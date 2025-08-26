@@ -11,6 +11,9 @@ enum FileTypeEnum: string
     case TXT = 'txt';
 
     case HTML = 'html';
+    case RTF = 'rtf';
+    case ODT = 'odt';
+    case HTM = 'htm';
 
     case MD = 'md';
 }
