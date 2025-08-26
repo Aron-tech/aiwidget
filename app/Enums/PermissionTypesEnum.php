@@ -15,6 +15,13 @@ enum PermissionTypesEnum : string
     case DELETE_QUESTIONS = 'delete_questions';
     case READ_WIDGET_EXPORT = 'read_widget_export';
 
+    case READ_DOCUMENTS = 'read_documents';
+    case UPLOAD_DOCUMENTS = 'upload_documents';
+    case DOWNLOAD_DOCUMENTS = 'download_documents';
+    case DOWNLOAD_DOCUMENTS_FOLDER = 'download_documents_folder';
+    case DELETE_DOCUMENTS = 'delete_documents';
+
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -28,6 +35,11 @@ enum PermissionTypesEnum : string
             PermissionTypesEnum::DELETE_QUESTIONS => __('enum.delete_questions'),
             PermissionTypesEnum::READ_WIDGET_EXPORT => __('enum.read_widget_export'),
             PermissionTypesEnum::IMPORT_QUESTIONS => __('enum.import_questions'),
+            PermissionTypesEnum::READ_DOCUMENTS => __('enum.read_documents'),
+            PermissionTypesEnum::UPLOAD_DOCUMENTS => __('enum.upload_documents'),
+            PermissionTypesEnum::DOWNLOAD_DOCUMENTS => __('enum.download_documents'),
+            PermissionTypesEnum::DOWNLOAD_DOCUMENTS_FOLDER => __('enum.download_documents_folder'),
+            PermissionTypesEnum::DELETE_DOCUMENTS => __('enum.delete_documents'),
         };
     }
 

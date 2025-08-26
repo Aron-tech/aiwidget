@@ -16,4 +16,9 @@ return [
     'update_questions' => 'Update questions and answers',
     'delete_questions' => 'Delete questions and answers',
     'read_widget_export' => 'Read widget export',
+    'read_documents' => 'Read documents',
+    'upload_documents' => 'Upload document file',
+    'download_documents' => 'Download documents',
+    'download_documents_folder' => 'Download documents folder',
+    'delete_documents' => 'Delete documents',
 ];
