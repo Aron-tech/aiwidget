@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Models\DocumentChunk;
 use EchoLabs\Prism\Prism;
 use EchoLabs\Prism\Enums\Provider;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +27,9 @@ class StoreEmbeddingsAction
         $this->qdrant_url = rtrim(config('qdrant.url', 'http://localhost:6333'), '/');
     }
 
+    /**
+     * @throws Exception
+     */
     public function execute(array $chunks, int $site_id, int $document_id): void
     {
         $points = [];
@@ -74,9 +78,9 @@ class StoreEmbeddingsAction
                     'text_length' => strlen($text)
                 ]);
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error("Failed to create embedding for chunk {$i}: " . $e->getMessage());
-                throw new \Exception("Failed to create embedding for chunk {$i}: " . $e->getMessage());
+                throw new Exception("Failed to create embedding for chunk {$i}: " . $e->getMessage());
             }
         }
 
@@ -86,6 +90,7 @@ class StoreEmbeddingsAction
 
     /**
      * Pointok batch feltöltése Qdrant-ba
+     * @throws Exception
      */
     private function upsertPoints(array $points): void
     {
@@ -103,12 +108,12 @@ class StoreEmbeddingsAction
 
             $statusCode = $response->getStatusCode();
             if ($statusCode < 200 || $statusCode >= 300) {
-                throw new \Exception("Qdrant returned status code: {$statusCode}");
+                throw new Exception("Qdrant returned status code: {$statusCode}");
             }
 
             $result = json_decode($response->getBody(), true);
             if (isset($result['status']) && $result['status'] === 'error') {
-                throw new \Exception("Qdrant error: " . ($result['error'] ?? 'Unknown error'));
+                throw new Exception("Qdrant error: " . ($result['error'] ?? 'Unknown error'));
             }
 
             Log::info("Successfully upserted " . count($points) . " points to Qdrant");
@@ -123,6 +128,7 @@ class StoreEmbeddingsAction
 
     /**
      * Fallback: pointok egyenkénti feltöltése
+     * @throws Exception
      */
     private function upsertPointsIndividually(array $points): void
     {
@@ -164,12 +170,13 @@ class StoreEmbeddingsAction
         ]);
 
         if ($successful === 0) {
-            throw new \Exception("All individual upserts failed");
+            throw new Exception("All individual upserts failed");
         }
     }
 
     /**
      * Kollekció létrehozása
+     * @throws Exception
      */
     public function createCollection(): array
     {
@@ -194,7 +201,7 @@ class StoreEmbeddingsAction
 
         } catch (GuzzleException $e) {
             Log::error('Qdrant collection creation failed: ' . $e->getMessage());
-            throw new \Exception('Failed to create Qdrant collection: ' . $e->getMessage());
+            throw new Exception('Failed to create Qdrant collection: ' . $e->getMessage());
         }
     }
 
@@ -213,6 +220,7 @@ class StoreEmbeddingsAction
 
     /**
      * Kollekció létrehozása ha nem létezik
+     * @throws Exception
      */
     public function ensureCollectionExists(): void
     {
