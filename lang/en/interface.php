@@ -109,4 +109,10 @@ return [
     'document_not_found' => 'Document not found',
     'document_delete_title' => 'Delete this document?',
     'document_delete_message' => 'Are you sure you want to delete this document: ',
+    'save_failed' => 'Save failed',
+    'must_select_one' => 'You must select at least one knowledge base.',
+    'document_database' => 'Document database',
+    'question_database' => 'Question database',
+    'knowledge_base' => 'Knowledge base',
+    'knowledge_base_description' => 'Choose which knowledge base you use to find answers.',
 ];
