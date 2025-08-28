@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\ChatManager;
 use App\Actions\ViewFileAction;
 use App\Livewire\DocumentManager;
 use App\Livewire\UserManager;
@@ -32,11 +33,11 @@ Route::middleware(['auth','validate_site_selection'])->group(function () {
 Route::middleware(['auth', 'validate_site_selection'])->name('manager.')->group(function () {
     Volt::route('question-manager', QuestionManager::class)->name('question');
 
+    Volt::route('chat-manager', ChatManager::class)->name('chat');
+
     Volt::route('user-manager', UserManager::class)->name('user');
 
     Volt::route('document-manager', DocumentManager::class)->name('document');
-
-    //Volt::route('chat-manager', ChatManager::class)->name('chat');
 });
 
 require __DIR__.'/auth.php';

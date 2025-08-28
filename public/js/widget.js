@@ -5,9 +5,15 @@
         cssUrl: 'https://szakdolgozat.test/css/widget/default.css',
         siteId: null,
         widgetName: 'ConversiveAI',
+        pollingInterval: 10000 // 10 másodperces polling alapértelmezett
     };
 
     window.widgetConfig = Object.assign({}, defaultConfig, window.widgetConfig || {});
+
+    // Globális változók a pollinghoz
+    let pollingInterval = null;
+    let lastMessageId = null;
+    let isWidgetOpen = false;
 
     // CSS fájl betöltése
     function loadCSS() {
@@ -35,9 +41,11 @@
         document.getElementById('conversiveai-retry-button').addEventListener('click', initWidget);
         document.getElementById('conversiveai-close-widget').addEventListener('click', () => {
             container.style.display = 'none';
+            isWidgetOpen = false;
         });
 
         container.style.display = 'block';
+        isWidgetOpen = true;
     }
 
     // Widget inicializálása
@@ -56,7 +64,7 @@
 
         // Gomb eseménykezelője
         toggleButton.addEventListener('click', () => {
-            if (container.style.display === 'none') {
+            if (!isWidgetOpen) {
                 const chatId = getChatId();
                 if (chatId) {
                     loadChat(chatId);
@@ -64,20 +72,23 @@
                     renderStartChatForm();
                 }
                 container.style.display = 'block';
+                isWidgetOpen = true;
             } else {
                 container.style.display = 'none';
+                isWidgetOpen = false;
             }
         });
 
         // Alapértelmezett állapot: elrejtve
         container.style.display = 'none';
+        isWidgetOpen = false;
 
         // Chat ID betöltése a localStorage-ből
         const chatId = getChatId();
         if (chatId) {
-            loadChat(chatId);
+            // Csak betöltjük a chatet ha a widget megnyílik
         } else {
-            renderStartChatForm();
+            // Kezdeti űrlapot előkészítjük
         }
     }
 
@@ -107,7 +118,22 @@
             });
 
             if (!response.ok) {
-                throw new Error(`Hiba a kérés során: ${response.statusText}`);
+                // Próbáljuk meg feldolgozni a JSON válasz hibaüzenetét
+                let errorMessage = `Hiba a kérés során: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorMessage = errorData.message;
+                    } else if (errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                } catch (jsonError) {
+                    // Ha nem JSON a válasz, használjuk az alapértelmezett hibaüzenetet
+                }
+
+                const error = new Error(errorMessage);
+                error.status = response.status;
+                throw error;
             }
 
             return await response.json();
@@ -118,20 +144,108 @@
     }
 
     // Beszélgetés betöltése
-    async function loadChat(chatId) {
+    async function loadChat(chatId, initialLoad = true) {
         try {
-            const container = document.getElementById(widgetConfig.containerId);
-            container.innerHTML = `
-                <div class="conversiveai-widget">
-                    <div id="conversiveai-loading-animation">Betöltés...</div>
-                </div>
-            `;
+            if (initialLoad) {
+                const container = document.getElementById(widgetConfig.containerId);
+                container.innerHTML = `
+                    <div class="conversiveai-widget">
+                        <div id="conversiveai-loading-animation">Betöltés...</div>
+                    </div>
+                `;
+            }
 
             const data = await fetchData(`${widgetConfig.apiUrl}/messages/${widgetConfig.siteId}?chat_id=${chatId}`);
-            renderChat(data);
+
+            // Frissítjük az utolsó üzenet ID-ját
+            if (data.messages && data.messages.length > 0) {
+                const newLastMessageId = data.messages[data.messages.length - 1].id;
+                if (newLastMessageId !== lastMessageId) {
+                    renderChat(data);
+                    lastMessageId = newLastMessageId;
+                }
+            } else {
+                renderChat(data);
+            }
+
+            // Indítsuk a pollingot, ha még nem fut és a widget nyitva van
+            if (!pollingInterval && chatId && isWidgetOpen) {
+                startPolling(chatId);
+            }
         } catch (error) {
-            showError('Nem sikerült betölteni a beszélgetést. Kérjük, próbálja újra később.');
+            console.error('Hiba történt a beszélgetés betöltésekor:', error);
+
+            // Ha 404-es hiba, akkor töröljük a chat_id-t és jelenítsük meg az új chat formot
+            if (error.status === 404) {
+                clearChatId();
+                stopPolling();
+                if (initialLoad) {
+                    showChatNotFoundError(error.message);
+                }
+                return;
+            }
+
+            if (initialLoad) {
+                showError(`Nem sikerült betölteni a beszélgetést: ${error.message}`);
+            }
         }
+    }
+
+    // Chat nem található hiba megjelenítése
+    function showChatNotFoundError(message) {
+        const container = document.getElementById(widgetConfig.containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="conversiveai-widget conversiveai-error">
+                <button class="conversiveai-close-button" id="conversiveai-close-widget">×</button>
+                <h2>Beszélgetés nem található</h2>
+                <div class="conversiveai-error-message">${message}</div>
+                <button id="conversiveai-start-new-chat">Új beszélgetés indítása</button>
+            </div>
+        `;
+
+        document.getElementById('conversiveai-start-new-chat').addEventListener('click', () => {
+            renderStartChatForm();
+        });
+
+        document.getElementById('conversiveai-close-widget').addEventListener('click', () => {
+            container.style.display = 'none';
+            isWidgetOpen = false;
+        });
+
+        container.style.display = 'block';
+        isWidgetOpen = true;
+    }
+
+    // Polling indítása
+    function startPolling(chatId) {
+        // Leállítjuk az előző pollingt ha van
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+
+        // Azonnali ellenőrzés
+        loadChat(chatId, false);
+
+        // Új polling indítása
+        pollingInterval = setInterval(() => {
+            if (isWidgetOpen) {
+                loadChat(chatId, false);
+            }
+        }, widgetConfig.pollingInterval);
+
+        // Az oldal elhagyásakor leállítjuk a pollingot
+        window.addEventListener('beforeunload', stopPolling);
+    }
+
+    // Polling leállítása
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+        lastMessageId = null;
     }
 
     // Új beszélgetés indítása
@@ -146,11 +260,12 @@
             if (data && data.data && data.data.chat_id) {
                 saveChatId(data.data.chat_id);
                 loadChat(data.data.chat_id);
+                startPolling(data.data.chat_id);
             } else {
                 throw new Error('Nem sikerült létrehozni a beszélgetést.');
             }
         } catch (error) {
-            showError('Nem sikerült elindítani a beszélgetést. Kérjük, ellenőrizze az adatokat és próbálja újra.');
+            showError(`Nem sikerült elindítani a beszélgetést: ${error.message}`);
             // Visszaállítjuk a formot
             const form = document.getElementById('conversiveai-start-chat-form');
             const loadingAnimation = document.getElementById('conversiveai-loading-animation');
@@ -170,10 +285,11 @@
 
             if (data) {
                 clearChatId();
+                stopPolling();
                 renderStartChatForm();
             }
         } catch (error) {
-            showError('Nem sikerült lezárni a beszélgetést. Kérjük, próbálja újra.');
+            showError(`Nem sikerült lezárni a beszélgetést: ${error.message}`);
         }
     }
 
@@ -187,10 +303,15 @@
             });
 
             if (data) {
-                loadChat(chatId);
+                // Azonnal frissítjük a chatet
+                await loadChat(chatId, false);
+                // Újraindítjuk a pollingot ha leállt
+                if (!pollingInterval) {
+                    startPolling(chatId);
+                }
             }
         } catch (error) {
-            showError('Nem sikerült elküldeni az üzenetet. Kérjük, próbálja újra.');
+            showError(`Nem sikerült elküldeni az üzenetet: ${error.message}`);
             // Visszaállítjuk a formot
             const form = document.getElementById('conversiveai-continue-chat-form');
             const loadingAnimation = document.getElementById('conversiveai-loading-animation');
@@ -202,12 +323,7 @@
     // Beszélgetés űrlap renderelése
     function renderStartChatForm() {
         const container = document.getElementById(widgetConfig.containerId);
-
-        // Először távolítsuk el a régi eseményfigyelőket
-        const oldForm = document.getElementById('conversiveai-start-chat-form');
-        if (oldForm) {
-            oldForm.replaceWith(oldForm.cloneNode(true));
-        }
+        stopPolling();
 
         container.innerHTML = `
             <div class="conversiveai-widget">
@@ -255,6 +371,7 @@
             const chatId = getChatId();
             if (!chatId) {
                 container.style.display = 'none';
+                isWidgetOpen = false;
             } else {
                 showCloseOptions();
             }
@@ -264,12 +381,7 @@
     // Beszélgetés renderelése
     function renderChat(data) {
         const container = document.getElementById(widgetConfig.containerId);
-
-        // Először távolítsuk el a régi eseményfigyelőket
-        const oldForm = document.getElementById('conversiveai-continue-chat-form');
-        if (oldForm) {
-            oldForm.replaceWith(oldForm.cloneNode(true));
-        }
+        const wasScrolledToBottom = isScrolledToBottom('conversiveai-chat-window');
 
         container.innerHTML = `
             <div class="conversiveai-widget">
@@ -323,7 +435,9 @@
         });
 
         const chatWindow = document.getElementById('conversiveai-chat-window');
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        if (wasScrolledToBottom || chatWindow.scrollHeight - chatWindow.clientHeight < 50) {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
     }
 
     // Üzenetek renderelése
@@ -338,6 +452,13 @@
         `).join('');
     }
 
+    // Segédfüggvény: a chat ablak alján vagyunk-e
+    function isScrolledToBottom(elementId) {
+        const element = document.getElementById(elementId);
+        if (!element) return false;
+        return Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 10;
+    }
+
     // Bezárási lehetőségek megjelenítése
     function showCloseOptions() {
         const container = document.getElementById(widgetConfig.containerId);
@@ -345,6 +466,7 @@
 
         if (!chatId) {
             container.style.display = 'none';
+            isWidgetOpen = false;
             return;
         }
 
@@ -370,10 +492,11 @@
             } else {
                 showError('Nem található aktív beszélgetés.');
             }
-        })
+        });
 
         closeTemporarilyButton.addEventListener('click', () => {
             container.style.display = 'none';
+            isWidgetOpen = false;
         });
 
         closePermanentlyButton.addEventListener('click', async () => {
@@ -382,6 +505,7 @@
                 closePermanentlyButton.disabled = true;
                 await closeChat(chatId);
                 container.style.display = 'none';
+                isWidgetOpen = false;
             } catch (error) {
                 errorMessage.textContent = 'Hiba történt a beszélgetés lezárása közben.';
                 errorMessage.style.display = 'block';

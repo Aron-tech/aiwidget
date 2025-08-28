@@ -22,6 +22,8 @@ enum PermissionTypesEnum : string
     case DELETE_DOCUMENTS = 'delete_documents';
 
 
+    case CLOSE_CHAT = 'close_chat';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -40,6 +42,7 @@ enum PermissionTypesEnum : string
             PermissionTypesEnum::DOWNLOAD_DOCUMENTS => __('enum.download_documents'),
             PermissionTypesEnum::DOWNLOAD_DOCUMENTS_FOLDER => __('enum.download_documents_folder'),
             PermissionTypesEnum::DELETE_DOCUMENTS => __('enum.delete_documents'),
+            PermissionTypesEnum::CLOSE_CHAT => __('enum.close_chat'),
         };
     }
 

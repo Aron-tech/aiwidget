@@ -1,3 +1,4 @@
+
 <?php
 
 return [
@@ -115,4 +116,19 @@ return [
     'knowledge_base' => 'Knowledge base',
     'knowledge_base_description' => 'Choose which knowledge base you use to find answers.',
     'could_not_process_request' => 'Your request could not be processed, please try again later.'
+    'opened' => 'Opened',
+    'closed' => 'Closed',
+    'created_at' => 'Created at',
+    'updated_at' => 'Updated at',
+    'status' => 'Status',
+    'sort_by_created' => 'Sort by created',
+    'sort_by_updated' => 'Sort by updated',
+    'sort_by_status' => 'Sort by status',
+    'sort_by_id' => 'Sort by ID',
+    'chat' => 'Chat',
+    'close_chat' => 'Close chat',
+    'select_chat_to_start' => 'Select chat to start',
+    'closed_success' => 'Successfully closed',
+    'message' => 'Message',
+    'inactive' => 'Inactive',
 ];
