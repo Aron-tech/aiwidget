@@ -1,4 +1,3 @@
-
 <?php
 
 return [
@@ -115,4 +114,5 @@ return [
     'question_database' => 'Question database',
     'knowledge_base' => 'Knowledge base',
     'knowledge_base_description' => 'Choose which knowledge base you use to find answers.',
+    'could_not_process_request' => 'Your request could not be processed, please try again later.'
 ];

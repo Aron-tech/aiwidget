@@ -221,7 +221,7 @@ class SearchDocumentsAction
     /**
      * Válasz generálása AI-val a releváns kontextus alapján
      */
-    private function generateAnswer(string $query, array $enrichedResults): string
+    private function generateAnswer(string $query, array $enrichedResults): ?string
     {
         if (empty($enrichedResults)) {
             return 'Nem találtam releváns információt a kérdésedre a feltöltött dokumentumokban.';
@@ -250,9 +250,7 @@ class SearchDocumentsAction
                 ->withClientRetry(3, 1000)
                 ->generate();
 
-            dd($response->text); // Debugging purpose
-
-            return $response->text ?? 'Nem sikerült választ generálni.';
+            return $response->text ?? __('interface.could_not_process_request');
 
         } catch (\Exception $e) {
             Log::error('Answer generation failed', [
@@ -261,7 +259,7 @@ class SearchDocumentsAction
                 'error' => $e->getMessage()
             ]);
 
-            return 'Sajnálom, nem tudtam feldolgozni a válaszgenerálást. Kérlek próbáld újra később.';
+            return __('interface.could_not_process_request');
         }
     }
 
