@@ -3,7 +3,7 @@
     <div class="sm:block hidden mb-4">
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{route('dashboard', $site->uuid)}}" icon="home" />
-            <flux:breadcrumbs.item>{{__('interface.question_manager')}}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{__('interface.document_manager')}}</flux:breadcrumbs.item>
         </flux:breadcrumbs>
     </div>
     <div class="flex space-x-2">
