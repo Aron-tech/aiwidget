@@ -18,7 +18,8 @@
         "livewire/volt": "^1.6",
         "lorisleiva/laravel-actions": "^2.9",
         "maatwebsite/excel": "^3.1",
-        "predis/predis": "^2.3"
+        "predis/predis": "^2.3",
+        "ext-zip": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
