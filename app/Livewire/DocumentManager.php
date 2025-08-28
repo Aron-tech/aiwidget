@@ -64,23 +64,24 @@ class DocumentManager extends Component
 
     public function download(int $id): ?StreamedResponse
     {
-        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DOWNLOAD_DOCUMENTS)){
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DOWNLOAD_DOCUMENTS)) {
             $this->dispatch('notify', 'danger', __('interface.missing_permission'));
             return null;
         }
 
         $document = $this->site->documents()->find($id);
 
-        if($document){
+        if ($document) {
             return Storage::disk('public')->download($document->path, $document->title . '.' . $document->type->value);
-        }else{
+        } else {
             $this->notify('warning', __('interface.document_not_found'));
             return null;
         }
     }
+
     public function downloadFolder(): ?BinaryFileResponse
     {
-        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DOWNLOAD_DOCUMENTS_FOLDER)){
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DOWNLOAD_DOCUMENTS_FOLDER)) {
             $this->dispatch('notify', 'danger', __('interface.missing_permission'));
             return null;
         }
@@ -92,7 +93,7 @@ class DocumentManager extends Component
             return null;
         }
 
-        $zip = new \ZipArchive;
+        $zip = new ZipArchive;
         $zipFileName = "site_{$this->site->name}_documents.zip";
         $zipFilePath = storage_path("app/temp/{$zipFileName}");
 
@@ -116,7 +117,7 @@ class DocumentManager extends Component
 
     public function save(): void
     {
-        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::UPLOAD_DOCUMENTS)){
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::UPLOAD_DOCUMENTS)) {
             $this->dispatch('notify', 'danger', __('interface.missing_permission'));
             return;
         }
@@ -143,9 +144,14 @@ class DocumentManager extends Component
 
     public function delete(int $document_id): void
     {
+        if (auth()->user()->cannot('hasPermission', PermissionTypesEnum::DELETE_DOCUMENTS)) {
+            $this->dispatch('notify', 'danger', __('interface.missing_permission'));
+            return;
+        }
+
         $this->selected_document = $this->site->documents()->find($document_id);
 
-        if(!$this->selected_document){
+        if (!$this->selected_document) {
             $this->notify('danger', __('interface.document_not_found'));
             return;
         }
@@ -155,7 +161,7 @@ class DocumentManager extends Component
 
     public function destroy(): void
     {
-        if(empty($this->selected_document)) {
+        if (empty($this->selected_document)) {
             $this->notify('error', __('interface.document_not_found'));
             return;
         }
@@ -172,7 +178,7 @@ class DocumentManager extends Component
         $this->resetPage();
     }
 
-    public function sort($column)
+    public function sort($column): void
     {
         if ($this->sort_by === $column) {
             $this->sort_direction = $this->sort_direction === 'asc' ? 'desc' : 'asc';
@@ -186,8 +192,8 @@ class DocumentManager extends Component
     {
         $documents = $this->site->documents()
             ->when($this->search, function ($query) {
-                $query->where('title', 'like', '%'.$this->search.'%')
-                ->orWhere('type', 'like', '%'.$this->search.'%');
+                $query->where('title', 'like', '%' . $this->search . '%')
+                    ->orWhere('type', 'like', '%' . $this->search . '%');
             })
             ->select('id', 'title', 'path', 'type', 'status')
             ->orderBy($this->sort_by, $this->sort_direction)
