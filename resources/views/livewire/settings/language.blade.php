@@ -7,13 +7,14 @@ new class extends Component {
 
     public function mount()
     {
-        $this->language = session()->get('locale', 'en');
+        $this->language = getJsonValue(auth()->user(), 'other_data', 'locale', 'en');
     }
 
     public function updatedLanguage()
     {
         session()->put('locale', $this->language);
-        app()->setLocale(session()->get('locale', 'en'));
+        app()->setLocale($this->language);
+        setJsonValue(auth()->user(), 'other_data', 'locale', $this->language);
         return redirect()->route('settings.language')->with('success', __('language.updated'));
     }
 }; ?>

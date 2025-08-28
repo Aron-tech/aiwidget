@@ -69,6 +69,8 @@ class SitePicker extends Component
     {
         $this->auth_user = Auth::user();
         $this->sites = $this->getSitesWithOwner();
+        $language = getJsonValue(auth()->user(), 'other_data', 'locale', 'en');
+        session()->put('locale', $language);
     }
 
     #[On("reloadSites")]
