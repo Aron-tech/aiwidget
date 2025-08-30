@@ -29,25 +29,21 @@ class SearchDocumentsAction
     /**
      * Dokumentumokban való keresés és válasz generálás
      */
-    public function execute(string $query, int $site_id, int $top_k = 5): array
+    public function execute(string $query, int $site_id, int $top_k = 5, string $lang = 'en'): array
     {
         try {
 
             $token_count = 0;
-            // 1. Query embedding generálása
 
             $embedding_response = GenerateEmbeddingAction::run($query);
             $queryEmbedding = $embedding_response->embeddings;
             $token_count += $embedding_response->usage->tokens;
 
-            // 2. Releváns chunk-ok keresése Qdrant-ban
             $searchResults = $this->searchInQdrant($queryEmbedding, $site_id, $top_k);
 
-            // 3. Chunk-ok részleteinek lekérése az adatbázisból
             $enrichedResults = $this->enrichWithDatabaseData($searchResults);
 
-            // 4. Válasz generálása a releváns kontextus alapján
-            $answer = $this->generateAnswer($query, $enrichedResults);
+            $answer = $this->generateAnswer($query, $enrichedResults, $lang);
 
             return [
                 'token_count' => $token_count,
@@ -85,9 +81,9 @@ class SearchDocumentsAction
             $response = $this->http_client->post("{$this->qdrant_url}/collections/{$this->collection_name}/points/search", [
                 'json' => [
                     'vector' => $queryEmbedding,
-                    'limit' => $top_k * 2, // Több eredményt kérünk, hogy legyen választék
+                    'limit' => $top_k * 2,
                     'with_payload' => true,
-                    'score_threshold' => 0.3, // Minimum hasonlósági küszöb
+                    'score_threshold' => 0.3,
                     'filter' => [
                         'must' => [
                             [
@@ -115,7 +111,6 @@ class SearchDocumentsAction
         } catch (GuzzleException $e) {
             Log::error("Qdrant search failed: " . $e->getMessage());
 
-            // Fallback: keresés filter nélkül, majd manuális szűrés
             return $this->fallbackSearch($queryEmbedding, $site_id, $top_k);
         }
     }
@@ -162,12 +157,10 @@ class SearchDocumentsAction
             return [];
         }
 
-        // Chunk ID-k gyűjtése (a Qdrant-ban tárolt ID-k DocumentChunk ID-k)
         $chunkIds = array_map(function($result) {
             return $result['id'];
         }, $searchResults);
 
-        // Chunk-ok lekérése az adatbázisból kapcsolt adatokkal
         $chunks = DocumentChunk::with(['document'])
             ->whereIn('id', $chunkIds)
             ->get()
@@ -188,7 +181,6 @@ class SearchDocumentsAction
             }
         }
 
-        // Pontszám szerint rendezés (magas -> alacsony)
         usort($enrichedResults, function($a, $b) {
             return $b['score'] <=> $a['score'];
         });
@@ -199,13 +191,12 @@ class SearchDocumentsAction
     /**
      * Válasz generálása AI-val a releváns kontextus alapján
      */
-    private function generateAnswer(string $query, array $enrichedResults): ?string
+    private function generateAnswer(string $query, array $enrichedResults, string $language): ?string
     {
         if (empty($enrichedResults)) {
             return null;
         }
 
-        // Kontextus összeállítása
         $contexts = [];
         foreach (array_slice($enrichedResults, 0, 5) as $result) { // Max 5 legjobb eredmény
             $contexts[] = [
@@ -220,7 +211,7 @@ class SearchDocumentsAction
         }, $contexts));
 
         try {
-            $response = GenerateTextAction::run($this->getSystemPrompt(), "Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.");
+            $response = GenerateTextAction::run($this->getSystemPrompt($language), "Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.");
 
             return $response->text ?? null;
 
@@ -238,7 +229,7 @@ class SearchDocumentsAction
     /**
      * System prompt a válaszgeneráláshoz
      */
-    private function getSystemPrompt(): string
+    private function getSystemPrompt(string $language): string
     {
         return "Te egy hasznos asszisztens vagy, aki dokumentumok alapján válaszol kérdésekre.
 
@@ -246,7 +237,7 @@ class SearchDocumentsAction
         1. Alaposan olvasd el a megadott kontextust
         2. Válaszolj a kérdésre CSAK a kontextus alapján
         3. Ha a kontextusban nincs elegendő információ, akkor ezt közöld
-        4. Kérdés nyelvén(pl: magyar, angol) válaszolj, világosan és érthetően
+        4. A választ {$language} ISO kódú nyelv alapján fogalmazd meg érthetően.
 
         Szabályok:
         - NE találj ki információkat
@@ -277,7 +268,6 @@ class SearchDocumentsAction
                 $seenDocuments[$docId] = count($sources) - 1;
             } else {
                 $sources[$seenDocuments[$docId]]['chunk_count']++;
-                // Legjobb pontszámot tartjuk meg
                 $sources[$seenDocuments[$docId]]['relevance_score'] = max(
                     $sources[$seenDocuments[$docId]]['relevance_score'],
                     round($result['score'], 3)
@@ -285,7 +275,6 @@ class SearchDocumentsAction
             }
         }
 
-        // Relevancia szerint rendezés
         usort($sources, function($a, $b) {
             return $b['relevance_score'] <=> $a['relevance_score'];
         });
