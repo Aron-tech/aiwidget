@@ -2,28 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\GenerateEmbeddingAction;
+use App\Actions\GenerateTextAction;
 use App\Actions\SearchDocumentsAction;
 use App\Http\Requests\MessageRequest;
 use Illuminate\Http\JsonResponse;
 use App\Models\Chat;
 use App\Models\Site;
 use App\Models\Message;
-use App\Models\QuestionAnswer;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\ChatStatusEnum;
 use App\Enums\MessageSenderRolesEnum;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class MessageController extends Controller
 {
-    public function findBestAnswer(string $user_question, Site $site, int $chat_id): ?string
+    use AsAction;
+
+    public function findBestAnswer(string $user_question, Site $site, int $chat_id): array
     {
         $site_id = $site->id;
         $kb_setting = getJsonValue($site, 'settings', 'knowledge-databases', []);
         $highest_score = 0;
         $optimized_result_question = null;
         $optimized_result_document = null;
+
         if (in_array('question', $kb_setting)) {
             $exact_match = $site->questionAnswers()
                 ->where('question', $user_question)
@@ -34,6 +37,8 @@ class MessageController extends Controller
             }
 
             $user_embedding = $this->getEmbedding($user_question);
+            $user_embedding_response = GenerateEmbeddingAction::run($user_question);
+            $user_embedding = $user_embedding_response->embeddings;
 
             $best_match = null;
 
@@ -53,7 +58,6 @@ class MessageController extends Controller
                     $best_match = $question;
                 }
             }
-            //Log::info($highest_score);
 
             if ($best_match && $highest_score > 0.5) {
 
@@ -66,10 +70,23 @@ class MessageController extends Controller
                         ->withSystemPrompt('You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.')
                         ->withPrompt($user_question)
                         ->generate();
+                $language = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question, $embedding_token_count) {
+                    $language_result = GenerateTextAction::run(
+                        'You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.',
+                        $user_question,
+                        'gpt-3.5-turbo'
+                    );
                     return $language_result->text;
                 });
 
-                //Log::info('Nyelv: ' . $language->text);
+                $optimized_result_question = GenerateTextAction::run(
+                    'You are a translation and phrasing expert.',
+                    "Translate only the following system answer into {$language}.
+                                Use the user and system question only as context if needed.
+                                Return only the translated system answer, nothing else.
+                                User question: {$user_question}
+                                System question: {$best_match->question}
+                                System answer: {$best_match->answer}");
 
                 $optimized_result_question = Prism::text()
                     ->using(Provider::OpenAI, 'gpt-4o-mini')
@@ -90,10 +107,10 @@ class MessageController extends Controller
                 $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3);
             }
 
-            if(in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
+            if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
                 $is_better_document = false;
                 foreach ($optimized_result_document['search_results'] as $document_item) {
-                    if($highest_score < $document_item['score']) {
+                    if ($highest_score < $document_item['score']) {
                         $is_better_document = true;
                     }
                 }
@@ -101,12 +118,11 @@ class MessageController extends Controller
                     return $optimized_result_document['answer'];
                 }else {
                     return $optimized_result_question->text;
+                if ($is_better_document) {
+                } else {
                 }
             }
         }
-
-        return null;
-    }
 
     private function getEmbedding($text): ?array
     {
@@ -166,7 +182,9 @@ class MessageController extends Controller
             'message' => $validated['message'],
         ]);
 
-        $answer = $this->findBestAnswer($validated['message'], $site, $chat->id);
+        $answer_response = $this->findBestAnswer($validated['message'], $site, $chat->id);
+        $answer = $answer_response[0];
+        $used_token_count = $answer_response[1];
 
         if (!$answer) {
             $answer = "A kérdésedre nem sikerült helyes választ találni, hamarosan megválaszolja egy munkatárs a kérdésedet.";
@@ -175,15 +193,12 @@ class MessageController extends Controller
             ]);
         }
 
-        //Log::info("Bot válasz lekérdezés után: $answer");
-
         Message::create([
             'chat_id' => $chat->id,
             'message' => $answer,
             'sender_role' => MessageSenderRolesEnum::BOT,
+            'token_count' => $used_token_count,
         ]);
-
-        //Log::info("Bot üzenet mentése adatbázisba: $bot_message->id");
 
         return response()->json([
             'message' => 'Az üzenet sikeresen elküldve!',
