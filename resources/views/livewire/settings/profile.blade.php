@@ -1,14 +1,22 @@
 <?php
 
+use App\Livewire\Traits\ImageHandlerTrait;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
 new class extends Component {
+
+    use ImageHandlerTrait;
+
     public string $name = '';
     public string $email = '';
+
+    #[Validate('required|image|mimes:jpg,png,jpeg,webp|max:5120')]
+    public $profile_image;
 
     /**
      * Mount the component.
@@ -50,6 +58,14 @@ new class extends Component {
         $this->dispatch('profile-updated', name: $user->name);
     }
 
+    public function saveProfileImage()
+    {
+        $this->validate();
+        $this->saveImage(auth()->user(), 'image', $this->profile_image, 'avatars/'.auth()->id());
+        $this->profile_image = null;
+    }
+
+
     /**
      * Send an email verification notification to the current user.
      */
@@ -74,10 +90,12 @@ new class extends Component {
 
     <x-settings.layout heading="{{ __('Profile') }}" subheading="{{ __('Update your name and email address') }}">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" label="{{ __('Name') }}" type="text" name="name" required autofocus autocomplete="name" />
+            <flux:input wire:model="name" label="{{ __('Name') }}" type="text" name="name" required autofocus
+                        autocomplete="name"/>
 
             <div>
-                <flux:input wire:model="email" label="{{ __('Email') }}" type="email" name="email" required autocomplete="email" />
+                <flux:input wire:model="email" label="{{ __('Email') }}" type="email" name="email" required
+                            autocomplete="email"/>
 
                 @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
                     <div>
@@ -112,6 +130,14 @@ new class extends Component {
             </div>
         </form>
 
-        <livewire:settings.delete-user-form />
+        <div class="flex lg:flex-row flex-col my-10 gap-8">
+            <img src="{{ $profile_image?->temporaryUrl() ?? Storage::disk('public')->url(auth()->user()->image) }}" class="rounded-lg size-32" alt="{{auth()->user()->name}}">
+            <flux:input type="file" wire:model="profile_image" label="{{__('Change Profile Image')}}"/>
+        </div>
+        <flux:button class="self-end" variant="primary" wire:click="saveProfileImage()">{{ __('Save') }}</flux:button>
+
+
+        <livewire:settings.delete-user-form/>
+
     </x-settings.layout>
 </section>
