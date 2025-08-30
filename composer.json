@@ -7,6 +7,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-dom": "*",
+        "ext-zip": "*",
         "echolabsdev/prism": "^0.41.0",
         "filament/filament": "^3.3",
         "guzzlehttp/guzzle": "^7.9",
@@ -18,8 +20,10 @@
         "livewire/volt": "^1.6",
         "lorisleiva/laravel-actions": "^2.9",
         "maatwebsite/excel": "^3.1",
+        "phpoffice/phpword": "^1.4",
         "predis/predis": "^2.3",
-        "ext-zip": "*"
+        "smalot/pdfparser": "^2.12",
+        "soundasleep/html2text": "^2.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
