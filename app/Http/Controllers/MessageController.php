@@ -91,7 +91,7 @@ class MessageController extends Controller
         }
 
         if (in_array('document', $kb_setting)) {
-            $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3);
+            $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3, $language);
             $embedding_token_count += $optimized_result_document['token_count'];
         }
         if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
@@ -103,8 +103,8 @@ class MessageController extends Controller
             }
             if ($is_better_document) {
                 return [$optimized_result_document['answer'], $embedding_token_count];
-            } else {
-                return [$optimized_result_question->text, $embedding_token_count];
+            } elseif($highest_score>=0.1) {
+                return [$optimized_result_question?->text, $embedding_token_count];
             }
         }
 
