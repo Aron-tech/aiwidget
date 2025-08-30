@@ -202,7 +202,7 @@ class SearchDocumentsAction
     private function generateAnswer(string $query, array $enrichedResults): ?string
     {
         if (empty($enrichedResults)) {
-            return 'Nem találtam releváns információt a kérdésedre a feltöltött dokumentumokban.';
+            return null;
         }
 
         // Kontextus összeállítása
@@ -222,7 +222,7 @@ class SearchDocumentsAction
         try {
             $response = GenerateTextAction::run($this->getSystemPrompt(), "Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.");
 
-            return $response->text ?? __('interface.could_not_process_request');
+            return $response->text ?? null;
 
         } catch (\Exception $e) {
             Log::error('Answer generation failed', [
