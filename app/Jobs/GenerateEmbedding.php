@@ -24,7 +24,7 @@ class GenerateEmbedding implements ShouldQueue
     public function handle(): void
     {
         $embedding_response = GenerateEmbeddingAction::run($this->question_answer->question);
-        $this->question_answer->embedding = json_encode($embedding_response->embenddings);
+        $this->question_answer->embedding = json_encode($embedding_response->embeddings);
         $this->question_answer->token_count = $embedding_response->usage->tokens;
         $this->question_answer->save();
     }
