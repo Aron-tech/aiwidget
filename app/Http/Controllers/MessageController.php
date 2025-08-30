@@ -24,6 +24,7 @@ class MessageController extends Controller
         $site_id = $site->id;
         $kb_setting = getJsonValue($site, 'settings', 'knowledge-databases', []);
         $highest_score = 0;
+        $embedding_token_count = 0;
         $optimized_result_question = null;
         $optimized_result_document = null;
 
@@ -36,8 +37,8 @@ class MessageController extends Controller
                 return $exact_match->answer;
             }
 
-            $user_embedding = $this->getEmbedding($user_question);
             $user_embedding_response = GenerateEmbeddingAction::run($user_question);
+            $embedding_token_count = $user_embedding_response->usage->tokens;
             $user_embedding = $user_embedding_response->embeddings;
 
             $best_match = null;
@@ -63,19 +64,14 @@ class MessageController extends Controller
 
                 $language_cache = 'site_' . $site_id . '_chat_' . $chat_id . '_language';
 
-                //Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
-                $language = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question) {
-                    $language_result = Prism::text()
-                        ->using(Provider::OpenAI, 'gpt-3.5-turbo')
-                        ->withSystemPrompt('You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.')
-                        ->withPrompt($user_question)
-                        ->generate();
                 $language = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question, $embedding_token_count) {
                     $language_result = GenerateTextAction::run(
                         'You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.',
                         $user_question,
                         'gpt-3.5-turbo'
                     );
+                    $embedding_token_count += $language_result->usage->promptTokens;
+                    $embedding_token_count += $language_result->usage->completionTokens;
                     return $language_result->text;
                 });
 
@@ -88,23 +84,12 @@ class MessageController extends Controller
                                 System question: {$best_match->question}
                                 System answer: {$best_match->answer}");
 
-                $optimized_result_question = Prism::text()
-                    ->using(Provider::OpenAI, 'gpt-4o-mini')
-                    ->withSystemPrompt('You are a translation and phrasing expert.')
-                    ->withClientOptions(['timeout' => 15])
-                    ->withPrompt(
-                        "You are given a user question, a system question, and a system answer.\n\n" .
-                        "Your task is to translate ONLY the system answer into " . $language . ".\n" .
-                        "Do NOT return or rephrase the user question or system question.\n" .
-                        "Do NOT add any explanation or extra text — return only the translated answer.\n\n" .
-                        "User question: " . $user_question . "\n" .
-                        "System question: " . $best_match->question . "\n" .
-                        "System answer: " . $best_match->answer
-                    )
-                    ->generate();
+                $embedding_token_count += $optimized_result_question->usage->promptTokens;
+                $embedding_token_count += $optimized_result_question->usage->completionTokens;
             }
             if (in_array('document', $kb_setting)) {
                 $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3);
+                $embedding_token_count += $optimized_result_document['token_count'];
             }
 
             if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
@@ -114,35 +99,15 @@ class MessageController extends Controller
                         $is_better_document = true;
                     }
                 }
-                if($is_better_document) {
-                    return $optimized_result_document['answer'];
-                }else {
-                    return $optimized_result_question->text;
                 if ($is_better_document) {
+                    return [$optimized_result_document['answer'], $embedding_token_count];
                 } else {
+                    return [$optimized_result_question->text, $embedding_token_count];
                 }
             }
         }
 
-    private function getEmbedding($text): ?array
-    {
-        $cache_key = 'embedding_' . md5($text);
-
-        return Cache::remember($cache_key, now()->addHours(12), function () use ($text) {
-
-            $response = Prism::embeddings()
-                ->using(Provider::OpenAI, 'text-embedding-3-large')
-                ->fromInput($text)
-                ->withClientOptions(['timeout' => 15])
-                ->withClientRetry(2, 100)
-                ->generate();
-
-            if (empty($response->embeddings)) {
-                throw new \Exception("Hiba: A beágyazás generálása sikertelen.");
-            }
-
-            return $response->embeddings;
-        });
+        return [null, $embedding_token_count];
     }
 
     private function cosineSimilarity(array $a, array $b): float
