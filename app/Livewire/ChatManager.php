@@ -31,7 +31,11 @@ class ChatManager extends Component
 
     public function mount(SiteSelector $site_selector): void
     {
-        $this->site = $site_selector->getSite();
+        if($site_selector->hasSite()) {
+            $this->site = $site_selector->getSite();
+        }else {
+            $this->redirect('site-selector');
+        }
     }
 
     public function toggleOrderDirection(): void
