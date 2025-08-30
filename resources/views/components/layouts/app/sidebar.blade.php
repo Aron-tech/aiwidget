@@ -30,11 +30,20 @@
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">
-                <flux:profile
-                    :name="auth()->user()->name"
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevrons-up-down"
-                />
+                @empty(auth()->user()->image)
+                    <flux:profile
+                        :name="auth()->user()->name"
+                        :initials="auth()->user()->initials()"
+                        icon-trailing="chevrons-up-down"
+                    />
+                @else
+                    <flux:profile
+                        :avatar="Storage::disk('public')->url(auth()->user()->image)"
+                        :name="auth()->user()->name"
+                        :initials="auth()->user()->initials()"
+                        icon-trailing="chevrons-up-down"
+                    />
+                @endempty
 
                 <flux:menu class="w-[220px]">
                     <flux:menu.radio.group>
