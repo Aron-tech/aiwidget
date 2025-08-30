@@ -19,11 +19,9 @@ class Document extends Model
         'path',
         'type',
         'status',
-        'meta_data',
     ];
 
     protected $casts = [
-        'meta_data' => 'json',
         'type' => FileTypeEnum::class,
         'status' => FileStatusEnum::class,
     ];

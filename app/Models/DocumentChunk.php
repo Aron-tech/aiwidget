@@ -14,12 +14,10 @@ class DocumentChunk extends Model
         'token_count',
         'hash',
         'embedding',
-        'meta_data',
     ];
 
     protected $casts = [
         'embedding' => 'json',
-        'meta_data' => 'json',
     ];
 
     public function document(): BelongsTo
