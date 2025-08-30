@@ -2,27 +2,26 @@
 
 namespace App\Jobs;
 
+use App\Actions\GenerateEmbeddingAction;
 use App\Models\QuestionAnswer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
 
 class GenerateEmbedding implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $questionAnswer;
+    protected QuestionAnswer $question_answer;
 
-    public function __construct(QuestionAnswer $questionAnswer)
+    public function __construct(QuestionAnswer $question_answer)
     {
-        $this->questionAnswer = $questionAnswer;
+        $this->question_answer = $question_answer;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $embedding = $this->getEmbedding($this->questionAnswer->question);
         $this->questionAnswer->embedding = json_encode($embedding);
@@ -50,5 +49,8 @@ class GenerateEmbedding implements ShouldQueue
             ->generate();
 
         return $response->embeddings;
+        $embedding_response = GenerateEmbeddingAction::run($this->question_answer->question);
+        $this->question_answer->embedding = json_encode($embedding_response->embenddings);
+        $this->question_answer->save();
     }
 }

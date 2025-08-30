@@ -3,14 +3,14 @@
 namespace App\Actions;
 
 use App\Models\DocumentChunk;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class SearchDocumentsAction
 {
+    use AsAction;
     private Client $http_client;
     private string $qdrant_url;
     private string $collection_name = 'document_chunks';
@@ -32,8 +32,13 @@ class SearchDocumentsAction
     public function execute(string $query, int $site_id, int $top_k = 5): array
     {
         try {
+
+            $token_count = 0;
             // 1. Query embedding generálása
-            $queryEmbedding = $this->getEmbedding($query);
+
+            $embedding_response = GenerateEmbeddingAction::run($query);
+            $queryEmbedding = $embedding_response->embeddings;
+            $token_count += $embedding_response->usage->tokens;
 
             // 2. Releváns chunk-ok keresése Qdrant-ban
             $searchResults = $this->searchInQdrant($queryEmbedding, $site_id, $top_k);
@@ -45,6 +50,7 @@ class SearchDocumentsAction
             $answer = $this->generateAnswer($query, $enrichedResults);
 
             return [
+                'token_count' => $token_count,
                 'query' => $query,
                 'answer' => $answer,
                 'sources' => $this->formatSources($enrichedResults),
@@ -67,34 +73,6 @@ class SearchDocumentsAction
                 'context_used' => 0,
                 'error' => $e->getMessage()
             ];
-        }
-    }
-
-    /**
-     * Embedding generálása a kérdéshez
-     */
-    private function getEmbedding(string $text): array
-    {
-        try {
-            $response = Prism::embeddings()
-                ->using(Provider::OpenAI, 'text-embedding-3-large')
-                ->fromInput($text)
-                ->withClientOptions(['timeout' => 60])
-                ->withClientRetry(3, 1000)
-                ->generate();
-
-            if (!empty($response->embeddings)) {
-                return $response->embeddings;
-            }
-
-            throw new \Exception('Invalid embedding response format');
-
-        } catch (\Exception $e) {
-            Log::error('Embedding generation failed', [
-                'text' => substr($text, 0, 100),
-                'error' => $e->getMessage()
-            ]);
-            throw new \Exception('Failed to generate embedding: ' . $e->getMessage());
         }
     }
 
@@ -242,13 +220,7 @@ class SearchDocumentsAction
         }, $contexts));
 
         try {
-            $response = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o-mini')
-                ->withSystemPrompt($this->getSystemPrompt())
-                ->withPrompt("Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.")
-                ->withClientOptions(['timeout' => 60])
-                ->withClientRetry(3, 1000)
-                ->generate();
+            $response = GenerateTextAction::run($this->getSystemPrompt(), "Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.");
 
             return $response->text ?? __('interface.could_not_process_request');
 
@@ -327,11 +299,13 @@ class SearchDocumentsAction
     public function searchOnly(string $query, int $site_id, int $top_k = 10): array
     {
         try {
-            $queryEmbedding = $this->getEmbedding($query);
-            $searchResults = $this->searchInQdrant($queryEmbedding, $site_id, $top_k);
-            $enrichedResults = $this->enrichWithDatabaseData($searchResults);
+            $query_embedding_response = GenerateEmbeddingAction::run($query);
+            $query_embedding = $query_embedding_response->embeddings;
+            $search_results = $this->searchInQdrant($query_embedding, $site_id, $top_k);
+            $enrichedResults = $this->enrichWithDatabaseData($search_results);
 
             return [
+                'token_count' => $query_embedding_response->usage->tokens ?? 0,
                 'query' => $query,
                 'results' => $enrichedResults,
                 'total_found' => count($enrichedResults)

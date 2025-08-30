@@ -3,15 +3,16 @@
 namespace App\Actions;
 
 use App\Models\DocumentChunk;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class StoreEmbeddingsAction
 {
+    use AsAction;
+
     private Client $http_client;
     private string $qdrant_url;
     private string $collection_name = 'document_chunks';
@@ -36,12 +37,11 @@ class StoreEmbeddingsAction
 
         foreach ($chunks as $i => $text) {
             try {
-                $response = Prism::embeddings()
-                    ->using(Provider::OpenAI, 'text-embedding-3-large')
-                    ->fromInput($text)
-                    ->withClientOptions(['timeout' => 60])
-                    ->withClientRetry(3, 1000)
-                    ->generate();
+                $response = GenerateEmbeddingAction::run($text);
+
+                if(empty($response)){
+                    throw new Exception('Could not generate Embedding chunk');
+                }
 
                 $vector = $response->embeddings;
 
