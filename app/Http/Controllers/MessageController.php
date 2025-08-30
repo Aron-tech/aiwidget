@@ -28,17 +28,31 @@ class MessageController extends Controller
         $optimized_result_question = null;
         $optimized_result_document = null;
 
+        $language_cache = 'site_' . $site_id . '_chat_' . $chat_id . '_language';
+
+        $language_result = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question) {
+            return GenerateTextAction::run(
+                'You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.',
+                $user_question,
+                'gpt-3.5-turbo'
+            );
+        });
+
+        $language = $language_result->text;
+        $embedding_token_count += $language_result->usage->promptTokens;
+        $embedding_token_count += $language_result->usage->completionTokens;
+
         if (in_array('question', $kb_setting)) {
             $exact_match = $site->questionAnswers()
                 ->where('question', $user_question)
                 ->first();
 
             if ($exact_match) {
-                return $exact_match->answer;
+                return [$exact_match->answer, $embedding_token_count];
             }
 
             $user_embedding_response = GenerateEmbeddingAction::run($user_question);
-            $embedding_token_count = $user_embedding_response->usage->tokens;
+            $embedding_token_count += $user_embedding_response->usage->tokens;
             $user_embedding = $user_embedding_response->embeddings;
 
             $best_match = null;
@@ -62,19 +76,6 @@ class MessageController extends Controller
 
             if ($best_match && $highest_score > 0.5) {
 
-                $language_cache = 'site_' . $site_id . '_chat_' . $chat_id . '_language';
-
-                $language = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question, $embedding_token_count) {
-                    $language_result = GenerateTextAction::run(
-                        'You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.',
-                        $user_question,
-                        'gpt-3.5-turbo'
-                    );
-                    $embedding_token_count += $language_result->usage->promptTokens;
-                    $embedding_token_count += $language_result->usage->completionTokens;
-                    return $language_result->text;
-                });
-
                 $optimized_result_question = GenerateTextAction::run(
                     'You are a translation and phrasing expert.',
                     "Translate only the following system answer into {$language}.
@@ -87,23 +88,23 @@ class MessageController extends Controller
                 $embedding_token_count += $optimized_result_question->usage->promptTokens;
                 $embedding_token_count += $optimized_result_question->usage->completionTokens;
             }
-            if (in_array('document', $kb_setting)) {
-                $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3);
-                $embedding_token_count += $optimized_result_document['token_count'];
-            }
+        }
 
-            if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
-                $is_better_document = false;
-                foreach ($optimized_result_document['search_results'] as $document_item) {
-                    if ($highest_score < $document_item['score']) {
-                        $is_better_document = true;
-                    }
+        if (in_array('document', $kb_setting)) {
+            $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3);
+            $embedding_token_count += $optimized_result_document['token_count'];
+        }
+        if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
+            $is_better_document = false;
+            foreach ($optimized_result_document['search_results'] as $document_item) {
+                if ($highest_score < $document_item['score']) {
+                    $is_better_document = true;
                 }
-                if ($is_better_document) {
-                    return [$optimized_result_document['answer'], $embedding_token_count];
-                } else {
-                    return [$optimized_result_question->text, $embedding_token_count];
-                }
+            }
+            if ($is_better_document) {
+                return [$optimized_result_document['answer'], $embedding_token_count];
+            } else {
+                return [$optimized_result_question->text, $embedding_token_count];
             }
         }
 
