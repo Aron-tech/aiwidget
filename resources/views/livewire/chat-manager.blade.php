@@ -23,7 +23,7 @@
                 <flux:button icon-trailing="funnel"></flux:button>
                 <flux:menu>
                     <flux:menu.radio.group wire:model.live='filter'>
-                        <flux:menu.radio value="0">{{ __('interface.all')}}</flux:menu.radio>
+                        <flux:menu.radio value="0">{{ __('interface.active')}}</flux:menu.radio>
                         <flux:menu.radio value="1">{{ __('interface.opened')}}</flux:menu.radio>
                         <flux:menu.radio value="2">{{ __('interface.waiting')}}</flux:menu.radio>
                         <flux:menu.radio value="3">{{ __('interface.closed')}}</flux:menu.radio>
@@ -59,7 +59,7 @@
     <div class="flex flex-col lg:flex-row gap-4">
         <div class="w-full lg:w-2/3 order-2 lg:order-1">
             @if($selected_chat)
-                <div class="border-b  px-4 py-3 flex items-center justify-between rounded-t-lg">
+                <div class="border-b px-4 py-3 flex items-center justify-between rounded-t-lg">
                     <div>
                         <h3 class="text-lg font-medium dark:text-white">#{{$selected_chat->id}} - {{ $selected_chat->visitor_name }}</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-300">{{ $selected_chat->visitor_email }}</p>
@@ -110,8 +110,7 @@
                     @foreach($chats as $chat)
                         <flux:navlist.item
                             wire:click="selectChat({{ $chat->id }})"
-                            :active="$selected_chat && $selected_chat->id === $chat->id"
-                            class="dark:hover:bg-gray-700 dark:text-gray-200"
+                            class="dark:hover:bg-gray-700 dark:text-gray-200 py-6 px-4 {{$selected_chat?->id ? 'dark:bg-black/10 bg-gray-100' : ''}}"
                         >
                             <div class="flex items-center justify-between w-full">
                                 <div>
