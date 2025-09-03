@@ -131,4 +131,6 @@ return [
     'closed_success' => 'Successfully closed',
     'message' => 'Message',
     'inactive' => 'Inactive',
+    'active' => 'Active',
+    'open' => 'Open',
 ];
