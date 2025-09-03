@@ -11,7 +11,7 @@ class CreateStripeCheckout
 {
     use AsAction;
 
-    public function handle(int $amount, string $currency = 'eur', string $product_name = 'Demo product', $metadata = ['user_id' => auth()->id()], $note = 'Demo note'): Session
+    public function handle(int $amount, string $currency = 'eur', string $product_name = 'Demo product', $metadata = [], $note = 'Demo note'): Session
     {
         Stripe::setApiKey(config('services.stripe.secret'));
 
