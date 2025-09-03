@@ -33,7 +33,7 @@ class User extends Authenticatable // implements MustVerifyEmail
         'email',
         'password',
         'status',
-        'key_id'
+        'key_id',
     ];
 
     /**
@@ -54,6 +54,11 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function sites(): HasManyThrough
     {
         return $this->hasManyThrough(Site::class, Key::class, 'user_id', 'id', 'id', 'site_id');
+    }
+
+    public function balances(): HasMany
+    {
+        return $this->hasMany(Balance::class);
     }
 
     /**
