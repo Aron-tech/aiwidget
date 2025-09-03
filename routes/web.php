@@ -1,11 +1,13 @@
 <?php
 
+use App\Actions\ProcessSuccessfulPayment;
 use App\Livewire\ChatManager;
 use App\Actions\ViewFileAction;
 use App\Livewire\DocumentManager;
 use App\Livewire\UserManager;
 use App\Livewire\QuestionManager;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Livewire\Volt\Volt;
 
 Route::redirect('/', 'login')->name('home');
@@ -16,6 +18,11 @@ Route::view('site-picker', 'site-picker')
 
 
 Route::middleware(['auth','validate_site_selection'])->group(function () {
+    Route::get('/payment/success', function(Request $request) {
+        $session_id = $request->get('session_id');
+        return ProcessSuccessfulPayment::run($session_id);
+    });
+
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
     Volt::route('generate-widget', 'generatewidget')->name('generate-widget');
