@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Key;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Auth;
@@ -32,9 +33,10 @@ class SitePicker extends Component
     public function select($site_id): void
     {
         $auth_user_key = $this->auth_user->keys()->where('site_id', $site_id)->first();
+        $is_valid_owner_key = Key::where('site_id', $site_id)->where('type', KeyTypesEnum::OWNER)->where('expiration_time', '>', now()->subDays(3))->exists();
 
         //Ha nincs token, akkor nem engedjük tovább
-        if(!$auth_user_key) {
+        if(!$auth_user_key || !$is_valid_owner_key) {
             $this->notify('danger', __('interface.invalid_token'));
             return;
         }
