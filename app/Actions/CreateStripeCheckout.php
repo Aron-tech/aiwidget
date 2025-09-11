@@ -5,19 +5,31 @@ namespace App\Actions;
 use App\Models\SiteSelector;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Stripe\Checkout\Session;
+use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 
 class CreateStripeCheckout
 {
     use AsAction;
 
-    public function handle(int $amount, string $currency = 'eur', string $product_name = 'Demo product', $metadata = [], $note = 'Demo note'): Session
+    /**
+     * @param int $amount
+     * @param string $currency
+     * @param string $product_name
+     * @param $metadata
+     * @param $billing_address_collection
+     * @param $note
+     * @return Session
+     * @throws ApiErrorException
+     */
+    public function handle(int $amount, string $currency = 'eur', string $product_name = 'Demo product', $metadata = [], $billing_address_collection ='required'): Session
     {
         Stripe::setApiKey(config('services.stripe.secret'));
 
         return Session::create([
             'payment_method_types' => ['card'],
             'mode' => 'payment',
+            'billing_address_collection' => $billing_address_collection,
             'line_items' => [[
                 'price_data' => [
                     'currency' => $currency,
