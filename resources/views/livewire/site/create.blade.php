@@ -55,7 +55,8 @@ new class extends Component {
         $session = CreateStripeCheckout::run($total_in_cents, product_name: __('interface.buy_token_product'), metadata: array(
             'user_id' => $this->auth_user->id,
             'days_number' => $this->selected_fee_period->toDays(),
-            'note' => __('interface.buy_token_product')
+            'note' => __('interface.buy_token_product'),
+            'fee_period' => $this->selected_fee_period->getFee(),
         ));
 
         redirect($session->url);
