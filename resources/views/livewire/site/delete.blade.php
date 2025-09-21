@@ -10,63 +10,75 @@ use Illuminate\Support\Facades\DB;
 new class extends Component {
 
     public ?User $auth_user = null;
-
     public ?Site $site = null;
 
     #[On('openDeleteModal')]
-    public function openDeleteModal($site_id)
+    public function openDeleteModal($site_id): void
     {
         $this->site = Site::find($site_id);
-
         $this->auth_user = auth()->user();
 
-        if(empty($this->site) || empty($this->auth_user))
-        {
+        if (empty($this->site) || empty($this->auth_user)) {
             return;
         }
 
         Flux::modal('delete-site')->show();
     }
 
-    public function deleteSite()
+    public function deleteSite(): void
     {
         $user_key = $this->auth_user->keys()->where('site_id', $this->site->id)->first();
 
-        if($user_key->type === KeyTypesEnum::OWNER){
+        if (!$user_key) {
+            $this->dispatch('notify', 'error', __('interface.no_permission'));
+            return;
+        }
 
-            DB::table('keys_permissions')
-                ->whereIn('key_id', $this->site->keys->pluck('id'))
-                ->delete();
+        try {
+            DB::beginTransaction();
 
-            DB::table('document_chunks')
-                ->whereIn('document_id', $this->site->documents->pluck('id'))
-                ->delete();
+            if ($user_key->type === KeyTypesEnum::OWNER) {
 
-            $this->site->documents()->forceDelete();
+                DB::table('keys_permissions')
+                    ->whereIn('key_id', $this->site->keys->pluck('id'))
+                    ->delete();
 
-            $this->site->keys()
-                ->where('type', KeyTypesEnum::MODERATOR)
-                ->delete();
+                DB::table('document_chunks')
+                    ->whereIn('document_id', $this->site->documents->pluck('id'))
+                    ->delete();
 
-               $this->site->delete();
+                $this->site->documents()->forceDelete();
+                $this->site->balances()->delete();
 
-            $user_key->update([
+                $this->site->keys()
+                    ->where('type', KeyTypesEnum::MODERATOR)
+                    ->delete();
+
+                $user_key->update([
                     'site_id' => null,
                     'user_id' => null,
                 ]);
-        }else if ($user_key->type === KeyTypesEnum::MODERATOR){
-            $user_key->permissions()->detach();
-            $user_key->delete();
+
+                $this->site->delete();
+
+            } else if ($user_key->type === KeyTypesEnum::MODERATOR) {
+                $user_key->permissions()->detach();
+                $user_key->delete();
+            }
+
+            DB::commit();
+
+            Flux::modal('delete-site')->close();
+            $this->dispatch('reloadSites');
+            $this->dispatch('notify', 'success', __('interface.delete_success'));
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->dispatch('notify', 'error', __('interface.delete_failed') . ': ' . $e->getMessage());
         }
-
-        Flux::modal('delete-site')->close();
-
-        $this->dispatch('reloadSites');
-
-        $this->dispatch('notify','success',__('interface.delete_success'));
     }
-}; ?>
-
+};
+?>
 <div>
     <flux:modal name="delete-site" class="min-w-[22rem]">
         <div class="space-y-6">
@@ -79,13 +91,14 @@ new class extends Component {
             </div>
 
             <div class="flex gap-2">
-                <flux:spacer />
+                <flux:spacer/>
 
                 <flux:modal.close>
                     <flux:button variant="ghost">{{__('interface.cancel')}}</flux:button>
                 </flux:modal.close>
 
-                <flux:button wire:click='deleteSite()' type="submit" variant="danger">{{__('interface.delete')}}</flux:button>
+                <flux:button wire:click='deleteSite()' type="submit"
+                             variant="danger">{{__('interface.delete')}}</flux:button>
             </div>
         </div>
     </flux:modal>
