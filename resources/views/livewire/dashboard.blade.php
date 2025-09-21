@@ -42,7 +42,7 @@ new class extends Component {
 
     public function getBalance(): float
     {
-        return $this->site->balances()->where('balances.type', BalanceTransactionTypeEnum::CREDIT)->sum('amount') - $this->site->balances()->where('balances.type', BalanceTransactionTypeEnum::DEBIT)->sum('amount');
+        return $this->site->balances()->where('balances.type', BalanceTransactionTypeEnum::DEPOSIT)->sum('amount') - $this->site->balances()->whereIn('balances.type', [BalanceTransactionTypeEnum::PURCHASE, BalanceTransactionTypeEnum::RECURRING])->sum('amount');
     }
 
     public function getLastTransactions(int $amount = 10)
@@ -61,8 +61,8 @@ new class extends Component {
             'user_id' => auth()->id(),
             'key_id' => auth()->user()->keys()->where('site_id', $this->site->id)->first()->id,
             'note' => __('interface.top_up_amount')
-        ]
-        );
+        ]);
+
         redirect($session->url);
     }
 
@@ -79,7 +79,7 @@ new class extends Component {
                         'user_id' => auth()->id(),
                         'key_id' => $this->ownerKey->id,
                         'amount' => $this->selected_period->getFee(),
-                        'type' => BalanceTransactionTypeEnum::DEBIT,
+                        'type' => BalanceTransactionTypeEnum::PURCHASE,
                         'description' => __('interface.extend_subscription'),
                     ]);
 
@@ -158,7 +158,7 @@ new class extends Component {
                 @if(!empty($this->last_transactions))
                     @foreach($this->last_transactions as $transaction)
                         <flux:text>{{$transaction->description}}</flux:text>
-                        <flux:text>@if($transaction->type === BalanceTransactionTypeEnum::DEBIT)
+                        <flux:text>@if($transaction->type === BalanceTransactionTypeEnum::PURCHASE)
                                 -
                             @endif{{$transaction->amount}} €
                         </flux:text>

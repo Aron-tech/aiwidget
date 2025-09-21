@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum BalanceTransactionTypeEnum: string
 {
-    case CREDIT = 'credit';
-    case DEBIT  = 'debit';
+    case PURCHASE = 'purchase';
+    case RECURRING = 'recurring';
+    case DEPOSIT = 'deposit';
 }
