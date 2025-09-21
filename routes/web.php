@@ -18,12 +18,12 @@ Route::view('site-picker', 'site-picker')
 
 
 Route::middleware(['auth','validate_site_selection'])->group(function () {
-    Route::get('/payment/success', function(Request $request) {
+    Route::get('payment/success', function(Request $request) {
         $session_id = $request->get('session_id');
         return ProcessSuccessfulPayment::run($session_id);
     });
 
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Volt::route('dashboard', 'dashboard')->name('dashboard');
 
     Volt::route('generate-widget', 'generatewidget')->name('generate-widget');
 
