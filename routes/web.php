@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Livewire\Volt\Volt;
 
-Route::redirect('/', 'login')->name('home');
-
 Route::view('site-picker', 'site-picker')
     ->middleware(['auth', 'verified'])
     ->name('site.picker');
+
+Route::view('/', 'index')->name('home');
 
 
 Route::middleware(['auth','validate_site_selection'])->group(function () {
@@ -45,6 +45,14 @@ Route::middleware(['auth', 'validate_site_selection'])->name('manager.')->group(
     Volt::route('user-manager', UserManager::class)->name('user');
 
     Volt::route('document-manager', DocumentManager::class)->name('document');
+});
+
+//Set-locale API
+Route::post('/set-locale', function(Request $request) {
+    $locale = $request->input('locale', config('app.locale'));
+    App::setLocale($locale);
+    Session::put('locale', $locale);
+    return response()->noContent();
 });
 
 require __DIR__.'/auth.php';

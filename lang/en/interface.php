@@ -152,4 +152,6 @@ return [
     'balance' => 'Balance',
     'extend' => 'Extend',
     'recent_transactions' => 'Recent transactions',
+    'accept_p_policy' => 'I have read and accept the Privacy Policy',
+    'accept_gtc' => 'I have read and agree to the Terms of Service',
 ];
