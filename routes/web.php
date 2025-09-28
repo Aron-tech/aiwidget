@@ -1,22 +1,29 @@
 <?php
 
+use App\Actions\ProcessSuccessfulPayment;
 use App\Livewire\ChatManager;
 use App\Actions\ViewFileAction;
 use App\Livewire\DocumentManager;
 use App\Livewire\UserManager;
 use App\Livewire\QuestionManager;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Livewire\Volt\Volt;
-
-Route::redirect('/', 'login')->name('home');
 
 Route::view('site-picker', 'site-picker')
     ->middleware(['auth', 'verified'])
     ->name('site.picker');
 
+Route::view('/', 'index')->name('home');
+
 
 Route::middleware(['auth','validate_site_selection'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('payment/success', function(Request $request) {
+        $session_id = $request->get('session_id');
+        return ProcessSuccessfulPayment::run($session_id);
+    });
+
+    Volt::route('dashboard', 'dashboard')->name('dashboard');
 
     Volt::route('generate-widget', 'generatewidget')->name('generate-widget');
 
@@ -38,6 +45,14 @@ Route::middleware(['auth', 'validate_site_selection'])->name('manager.')->group(
     Volt::route('user-manager', UserManager::class)->name('user');
 
     Volt::route('document-manager', DocumentManager::class)->name('document');
+});
+
+//Set-locale API
+Route::post('/set-locale', function(Request $request) {
+    $locale = $request->input('locale', config('app.locale'));
+    App::setLocale($locale);
+    Session::put('locale', $locale);
+    return response()->noContent();
 });
 
 require __DIR__.'/auth.php';

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Enums\PermissionTypesEnum;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Key extends Model
 {
@@ -74,5 +75,10 @@ class Key extends Model
         )->pluck('id');
 
         $this->permissions()->syncWithoutDetaching($permission_ids);
+    }
+
+    public function balances(): HasMany
+    {
+        return $this->hasMany(Balance::class);
     }
 }
