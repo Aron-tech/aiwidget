@@ -140,7 +140,7 @@ return [
     'total_amount' => 'Total amount',
     'purchase_token' => 'Purchase token',
     'top_up_amount' => 'Top-up amount',
-    'system_usage_subscription' => 'System usage subscription',
+    'system_usage' => 'System usage',
     'buy_token_product' => 'Token product',
     'purchase_success' => 'Purchase successful!',
     'purchase_success_message' => 'Your purchase was successful! You can now return to the site picker and continue using our services.',
@@ -154,4 +154,9 @@ return [
     'recent_transactions' => 'Recent transactions',
     'accept_p_policy' => 'I have read and accept the Privacy Policy',
     'accept_gtc' => 'I have read and agree to the Terms of Service',
+    'system_usage_packages' => 'System usage packages',
+    'extend_subscription' => 'Extend subscription',
+    'extend_subscription_success' => 'Subscription successfully extended!',
+    'extend_subscription_failed' => 'Subscription failed extended!',
+    'extend_subscription_failed_no_money' => 'Subscription extension failed. The user does not have sufficient balance.',
 ];

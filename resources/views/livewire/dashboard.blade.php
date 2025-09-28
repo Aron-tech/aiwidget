@@ -21,6 +21,8 @@ new class extends Component {
     public ?Key $ownerKey = null;
 
     public float $upload_amount = 0;
+    public bool $p_policy = false;
+    public bool $terms = false;
 
     public SystemUsageFeePeriodEnum $selected_period = SystemUsageFeePeriodEnum::MONTHLY;
 
@@ -54,6 +56,8 @@ new class extends Component {
     {
         $this->validate([
             'upload_amount' => ['required', 'min:0.5', 'numeric'],
+            'terms' => ['accepted'],
+            'p_policy' => ['accepted'],
         ]);
 
         $total_in_cents = $this->upload_amount * 100;
@@ -91,10 +95,10 @@ new class extends Component {
                     $this->notify('success', __('interface_extend_subscription_success'));
                 });
             } else {
-                $this->notify('danger', __('interface_extend_subscription_failed_no_'));
+                $this->notify('danger', __('interface_extend_subscription_failed_no_money'));
             }
         } catch (\Throwable $e) {
-            $this->notify('error', __('interface.extend_subscription_failed_error'));
+            $this->notify('error', __('interface.extend_subscription_failed'));
         }
     }
 
@@ -125,16 +129,28 @@ new class extends Component {
             </div>
             <div class="space-y-2 lg:space-y-4">
                 <flux:input wire:model="upload_amount" type="number" label="{{__('interface.top_up_amount')}}"/>
+                <flux:field variant="inline">
+                    <flux:checkbox wire:model="p_policy" />
+                    <flux:label>@lang('interface.accept_p_policy')</flux:label>
+                    <flux:error name="p_policy" />
+                </flux:field>
+                <flux:field variant="inline">
+                    <flux:checkbox wire:model="terms" />
+                    <flux:label>@lang('interface.accept_gtc')</flux:label>
+                    <flux:error name="terms" />
+                </flux:field>
                 <div class="w-full justify-end flex">
                     <flux:button wire:click="uploadAmount" class="space-x-2 sm:space-x-0 self-end">{{__('interface.pay')}}</flux:button>
                 </div>
             </div>
 
-            <flux:separator/>
-            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">Rendszer használati</flux:text>
+            <div class="my-4">
+                <flux:separator/>
+            </div>
+            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">@lang('interface.system_usage')</flux:text>
             <flux:text>{{date("Y. M. d.", strtotime($this->ownerKey->expiration_time))}}</flux:text>
             <flux:select wire:model="selected_period"
-                         label="{{__('interface.system_usage_subscription')}}">
+                         label="{{__('interface.system_usage_packages')}}">
                 @foreach(SystemUsageFeePeriodEnum::cases() as $fee_period_enum)
                     <flux:select.option value="{{ $fee_period_enum->value }}">
                         {{ $fee_period_enum->label() }}
@@ -144,10 +160,12 @@ new class extends Component {
             <div class="flex justify-end w-full">
                 <flux:button wire:click="extendSubscription">{{__('interface.extend')}}</flux:button>
             </div>
-
         </div>
         <div class="hidden lg:flex justify-center">
             <flux:separator :vertical="true"/>
+        </div>
+        <div class="flex lg:hidden justify-center my-4">
+            <flux:separator />
         </div>
         <div class="space-y-2">
             <flux:text class="text-lg lg:text-2xl dark:text-white text-black">{{__('interface.recent_transactions')}}</flux:text>
