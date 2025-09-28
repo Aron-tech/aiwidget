@@ -27,6 +27,8 @@ new class extends Component {
     public float $upload_amount = 5;
     public float $total_amount = 0;
     public string $formatted_total_amount;
+    public bool $p_policy = false;
+    public bool $terms = false;
 
     public function updatedUploadAmount()
     {
@@ -49,6 +51,8 @@ new class extends Component {
     {
         $this->validate([
             'upload_amount' => 'required|numeric|min:5',
+            'terms' => 'accepted',
+            'p_policy' => 'accepted',
         ]);
 
         $total_in_cents = $this->total_amount * 100;
@@ -185,7 +189,19 @@ new class extends Component {
                     wire:model.live="formatted_total_amount"
                     readonly
                 />
-                <flux:button wire:click="checkOut" icon="credit-card">{{__('interface.buy_now')}}</flux:button>
+                <flux:field variant="inline">
+                    <flux:checkbox wire:model="p_policy" />
+                    <flux:label>@lang('interface.accept_p_policy')</flux:label>
+                    <flux:error name="p_policy" />
+                </flux:field>
+                <flux:field variant="inline">
+                    <flux:checkbox wire:model="terms" />
+                    <flux:label>@lang('interface.accept_gtc')</flux:label>
+                    <flux:error name="terms" />
+                </flux:field>
+                <div class="flex justify-end">
+                    <flux:button wire:click="checkOut" icon="credit-card">{{__('interface.buy_now')}}</flux:button>
+                </div>
             </div>
         </div>
     </flux:modal>
