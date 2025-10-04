@@ -27,8 +27,9 @@ trait ImageHandlerTrait
                         $path = $image->store($save_dir, $disk);
                         $model->{$attribute} = $path;
                         $model->save();
-                    } elseif ($json_value = getJsonValue($model, $attribute, $json_param)) {
-                        if ($json_value !== $default_img){
+                    } else {
+                        $json_value = getJsonValue($model, $attribute, $json_param);
+                        if ($json_value && $json_value !== $default_img){
                             Storage::disk($disk)->delete($json_value);
                         }
 
@@ -50,8 +51,9 @@ trait ImageHandlerTrait
                     $path = $image->store($save_dir, $disk);
                     $model->{$attribute} = $path;
                     $model->save();
-                } elseif ($json_value = getJsonValue($model, $attribute, $json_param)) {
-                    if ($json_value !== $default_img){
+                } else {
+                    $json_value = getJsonValue($model, $attribute, $json_param);
+                    if ($json_value && $json_value !== $default_img){
                         Storage::disk($disk)->delete($json_value);
                     }
 
