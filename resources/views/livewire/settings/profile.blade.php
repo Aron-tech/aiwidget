@@ -2,9 +2,11 @@
 
 use App\Livewire\Traits\ImageHandlerTrait;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
@@ -58,11 +60,22 @@ new class extends Component {
         $this->dispatch('profile-updated', name: $user->name);
     }
 
-    public function saveProfileImage()
+    public function updatedProfileImage(): void
     {
-        $this->validate();
-        $this->saveImage(auth()->user(), 'image', $this->profile_image, 'avatars/'.auth()->id());
+        try {
+            $this->validate();
+        } catch (ValidationException $e) {
+            $this->profile_image = null;
+            Session::flash('status', __('interface.invalid_file_type'));
+        }
+    }
+
+    public function saveProfileImage(): void
+    {
+        if (empty($this->profile_image)) return;
+        if ($this->saveImage(auth()->user(), 'image', $this->profile_image, 'avatars/' . auth()->id(), use_db_transaction: true)) $this->dispatch('reloadPage');
         $this->profile_image = null;
+
     }
 
 
@@ -87,7 +100,6 @@ new class extends Component {
 
 <section class="w-full">
     @include('partials.settings-heading')
-
     <x-settings.layout heading="{{ __('Profile') }}" subheading="{{ __('Update your name and email address') }}">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <flux:input wire:model="name" label="{{ __('Name') }}" type="text" name="name" required autofocus
@@ -131,13 +143,20 @@ new class extends Component {
         </form>
 
         <div class="flex lg:flex-row flex-col my-10 gap-8">
-            <img src="{{ $profile_image?->temporaryUrl() ?? Storage::disk('public')->url(auth()->user()->image) }}" class="rounded-lg size-32" alt="{{auth()->user()->name}}">
+            <img src="{{ $profile_image?->temporaryUrl() ?? route('view-file', ['path' => auth()->user()->image]) }}"
+                 class="rounded-lg size-32" alt="{{auth()->user()->name}}">
             <flux:input type="file" wire:model="profile_image" label="{{__('Change Profile Image')}}"/>
         </div>
-        <flux:button class="self-end" variant="primary" wire:click="saveProfileImage()">{{ __('Save') }}</flux:button>
-
+        <flux:button variant="primary" wire:click="saveProfileImage()">{{ __('Save') }}</flux:button>
 
         <livewire:settings.delete-user-form/>
 
     </x-settings.layout>
 </section>
+@script
+<script>
+    Livewire.on('reloadPage', () => {
+        location.reload();
+    });
+</script>
+@endscript
