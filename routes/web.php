@@ -17,7 +17,7 @@ Route::view('site-picker', 'site-picker')
 Route::view('/', 'index')->name('home');
 
 
-Route::middleware(['auth','validate_site_selection'])->group(function () {
+Route::middleware(['auth','validate_site_selection', 'verified'])->group(function () {
     Route::get('payment/success', function(Request $request) {
         $session_id = $request->get('session_id');
         return ProcessSuccessfulPayment::run($session_id);
@@ -37,7 +37,7 @@ Route::middleware(['auth','validate_site_selection'])->group(function () {
     Volt::route('settings/language', 'settings.language')->name('settings.language');
 });
 
-Route::middleware(['auth', 'validate_site_selection'])->name('manager.')->group(function () {
+Route::middleware(['auth', 'validate_site_selection', 'verified'])->name('manager.')->group(function () {
     Volt::route('question-manager', QuestionManager::class)->name('question');
 
     Volt::route('chat-manager', ChatManager::class)->name('chat');
