@@ -73,7 +73,7 @@ new class extends Component {
     public function saveProfileImage(): void
     {
         if (empty($this->profile_image)) return;
-        if ($this->saveImage(auth()->user(), 'image', $this->profile_image, 'avatars/' . auth()->id(), use_db_transaction: true)) $this->dispatch('reloadPage');
+        if ($this->saveImage(auth()->user(), 'image', $this->profile_image, 'avatars/' . auth()->id())) $this->dispatch('reloadPage');
         $this->profile_image = null;
 
     }

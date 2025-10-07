@@ -98,9 +98,8 @@ new class extends Component {
     public function saveWidgetImage(): void
     {
         if (empty($this->uploaded_widget_image)) return;
-        $this->saveImage($this->site, 'settings', $this->uploaded_widget_image, 'uploads/' . $this->site->id.'/widget-icon', json_param: 'widget_icon_path', use_db_transaction: true);
+        $this->saveImage($this->site, 'settings', $this->uploaded_widget_image, 'uploads/' . $this->site->id.'/widget-icon', json_param: 'widget_icon_path');
         $this->profile_image = null;
-
     }
 }; ?>
 
