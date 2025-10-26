@@ -3,14 +3,14 @@
 namespace App\Actions;
 
 use App\Models\DocumentChunk;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class SearchDocumentsAction
 {
+    use AsAction;
     private Client $http_client;
     private string $qdrant_url;
     private string $collection_name = 'document_chunks';
@@ -29,22 +29,24 @@ class SearchDocumentsAction
     /**
      * Dokumentumokban való keresés és válasz generálás
      */
-    public function execute(string $query, int $site_id, int $top_k = 5): array
+    public function execute(string $query, int $site_id, int $top_k = 5, string $lang = 'en'): array
     {
         try {
-            // 1. Query embedding generálása
-            $queryEmbedding = $this->getEmbedding($query);
 
-            // 2. Releváns chunk-ok keresése Qdrant-ban
+            $token_count = 0;
+
+            $embedding_response = GenerateEmbeddingAction::run($query);
+            $queryEmbedding = $embedding_response->embeddings;
+            $token_count += $embedding_response->usage->tokens;
+
             $searchResults = $this->searchInQdrant($queryEmbedding, $site_id, $top_k);
 
-            // 3. Chunk-ok részleteinek lekérése az adatbázisból
             $enrichedResults = $this->enrichWithDatabaseData($searchResults);
 
-            // 4. Válasz generálása a releváns kontextus alapján
-            $answer = $this->generateAnswer($query, $enrichedResults);
+            $answer = $this->generateAnswer($query, $enrichedResults, $lang);
 
             return [
+                'token_count' => $token_count,
                 'query' => $query,
                 'answer' => $answer,
                 'sources' => $this->formatSources($enrichedResults),
@@ -71,34 +73,6 @@ class SearchDocumentsAction
     }
 
     /**
-     * Embedding generálása a kérdéshez
-     */
-    private function getEmbedding(string $text): array
-    {
-        try {
-            $response = Prism::embeddings()
-                ->using(Provider::OpenAI, 'text-embedding-3-large')
-                ->fromInput($text)
-                ->withClientOptions(['timeout' => 60])
-                ->withClientRetry(3, 1000)
-                ->generate();
-
-            if (!empty($response->embeddings)) {
-                return $response->embeddings;
-            }
-
-            throw new \Exception('Invalid embedding response format');
-
-        } catch (\Exception $e) {
-            Log::error('Embedding generation failed', [
-                'text' => substr($text, 0, 100),
-                'error' => $e->getMessage()
-            ]);
-            throw new \Exception('Failed to generate embedding: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Keresés Qdrant vektortárban
      */
     private function searchInQdrant(array $queryEmbedding, int $site_id, int $top_k): array
@@ -107,9 +81,9 @@ class SearchDocumentsAction
             $response = $this->http_client->post("{$this->qdrant_url}/collections/{$this->collection_name}/points/search", [
                 'json' => [
                     'vector' => $queryEmbedding,
-                    'limit' => $top_k * 2, // Több eredményt kérünk, hogy legyen választék
+                    'limit' => $top_k * 2,
                     'with_payload' => true,
-                    'score_threshold' => 0.3, // Minimum hasonlósági küszöb
+                    'score_threshold' => 0.3,
                     'filter' => [
                         'must' => [
                             [
@@ -137,7 +111,6 @@ class SearchDocumentsAction
         } catch (GuzzleException $e) {
             Log::error("Qdrant search failed: " . $e->getMessage());
 
-            // Fallback: keresés filter nélkül, majd manuális szűrés
             return $this->fallbackSearch($queryEmbedding, $site_id, $top_k);
         }
     }
@@ -184,12 +157,10 @@ class SearchDocumentsAction
             return [];
         }
 
-        // Chunk ID-k gyűjtése (a Qdrant-ban tárolt ID-k DocumentChunk ID-k)
         $chunkIds = array_map(function($result) {
             return $result['id'];
         }, $searchResults);
 
-        // Chunk-ok lekérése az adatbázisból kapcsolt adatokkal
         $chunks = DocumentChunk::with(['document'])
             ->whereIn('id', $chunkIds)
             ->get()
@@ -210,7 +181,6 @@ class SearchDocumentsAction
             }
         }
 
-        // Pontszám szerint rendezés (magas -> alacsony)
         usort($enrichedResults, function($a, $b) {
             return $b['score'] <=> $a['score'];
         });
@@ -221,13 +191,12 @@ class SearchDocumentsAction
     /**
      * Válasz generálása AI-val a releváns kontextus alapján
      */
-    private function generateAnswer(string $query, array $enrichedResults): ?string
+    private function generateAnswer(string $query, array $enrichedResults, string $language): ?string
     {
         if (empty($enrichedResults)) {
-            return 'Nem találtam releváns információt a kérdésedre a feltöltött dokumentumokban.';
+            return null;
         }
 
-        // Kontextus összeállítása
         $contexts = [];
         foreach (array_slice($enrichedResults, 0, 5) as $result) { // Max 5 legjobb eredmény
             $contexts[] = [
@@ -242,15 +211,9 @@ class SearchDocumentsAction
         }, $contexts));
 
         try {
-            $response = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o-mini')
-                ->withSystemPrompt($this->getSystemPrompt())
-                ->withPrompt("Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.")
-                ->withClientOptions(['timeout' => 60])
-                ->withClientRetry(3, 1000)
-                ->generate();
+            $response = GenerateTextAction::run($this->getSystemPrompt($language), "Kontextus:\n{$contextText}\n\nKérdés: {$query}\n\nKérlek válaszolj a kérdésre a fenti kontextus alapján a kérdés nyelvén nyelven.");
 
-            return $response->text ?? __('interface.could_not_process_request');
+            return $response->text ?? null;
 
         } catch (\Exception $e) {
             Log::error('Answer generation failed', [
@@ -266,7 +229,7 @@ class SearchDocumentsAction
     /**
      * System prompt a válaszgeneráláshoz
      */
-    private function getSystemPrompt(): string
+    private function getSystemPrompt(string $language): string
     {
         return "Te egy hasznos asszisztens vagy, aki dokumentumok alapján válaszol kérdésekre.
 
@@ -274,7 +237,7 @@ class SearchDocumentsAction
         1. Alaposan olvasd el a megadott kontextust
         2. Válaszolj a kérdésre CSAK a kontextus alapján
         3. Ha a kontextusban nincs elegendő információ, akkor ezt közöld
-        4. Kérdés nyelvén(pl: magyar, angol) válaszolj, világosan és érthetően
+        4. A választ {$language} ISO kódú nyelv alapján fogalmazd meg érthetően.
 
         Szabályok:
         - NE találj ki információkat
@@ -305,7 +268,6 @@ class SearchDocumentsAction
                 $seenDocuments[$docId] = count($sources) - 1;
             } else {
                 $sources[$seenDocuments[$docId]]['chunk_count']++;
-                // Legjobb pontszámot tartjuk meg
                 $sources[$seenDocuments[$docId]]['relevance_score'] = max(
                     $sources[$seenDocuments[$docId]]['relevance_score'],
                     round($result['score'], 3)
@@ -313,7 +275,6 @@ class SearchDocumentsAction
             }
         }
 
-        // Relevancia szerint rendezés
         usort($sources, function($a, $b) {
             return $b['relevance_score'] <=> $a['relevance_score'];
         });
@@ -327,11 +288,13 @@ class SearchDocumentsAction
     public function searchOnly(string $query, int $site_id, int $top_k = 10): array
     {
         try {
-            $queryEmbedding = $this->getEmbedding($query);
-            $searchResults = $this->searchInQdrant($queryEmbedding, $site_id, $top_k);
-            $enrichedResults = $this->enrichWithDatabaseData($searchResults);
+            $query_embedding_response = GenerateEmbeddingAction::run($query);
+            $query_embedding = $query_embedding_response->embeddings;
+            $search_results = $this->searchInQdrant($query_embedding, $site_id, $top_k);
+            $enrichedResults = $this->enrichWithDatabaseData($search_results);
 
             return [
+                'token_count' => $query_embedding_response->usage->tokens ?? 0,
                 'query' => $query,
                 'results' => $enrichedResults,
                 'total_found' => count($enrichedResults)

@@ -21,6 +21,7 @@ class QuestionAnswer extends Model
         'question',
         'answer',
         'embedding',
+        'token_count',
     ];
 
     protected $casts = [
