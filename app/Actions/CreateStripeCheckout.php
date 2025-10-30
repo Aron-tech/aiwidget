@@ -2,7 +2,6 @@
 
 namespace App\Actions;
 
-use App\Models\SiteSelector;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Stripe\Checkout\Session;
 use Stripe\Exception\ApiErrorException;
@@ -18,7 +17,6 @@ class CreateStripeCheckout
      * @param string $product_name
      * @param $metadata
      * @param $billing_address_collection
-     * @param $note
      * @return Session
      * @throws ApiErrorException
      */
