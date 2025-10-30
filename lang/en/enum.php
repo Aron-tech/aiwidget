@@ -3,7 +3,7 @@
 return [
     // KeyTypesEnum
     'moderator' => 'Moderator',
-    'owner' => 'Owner',
+    'customer' => 'Customer',
     'developer' => 'Developer',
 
     // PermissionTypesEnum
