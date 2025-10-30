@@ -37,7 +37,7 @@ new class extends Component {
         try {
             DB::beginTransaction();
 
-            if ($user_key->type === KeyTypesEnum::OWNER) {
+            if ($user_key->type === KeyTypesEnum::CUSTOMER) {
 
                 DB::table('keys_permissions')
                     ->whereIn('key_id', $this->site->keys->pluck('id'))

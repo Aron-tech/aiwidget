@@ -99,7 +99,7 @@ class ProcessSuccessfulPayment
 
         $key = Key::create([
             'token' => hash('sha256', $token), // biztonságos tárolás
-            'type' => KeyTypesEnum::OWNER,
+            'type' => KeyTypesEnum::CUSTOMER,
             'expiration_time' => now()->addDays((int) $days_number),
         ]);
 

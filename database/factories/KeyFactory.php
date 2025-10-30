@@ -19,7 +19,7 @@ class KeyFactory extends Factory
     {
         return [
             'token' => $this->faker->uuid(),
-            'type' => $this->faker->randomElement([KeyTypesEnum::MODERATOR->value, KeyTypesEnum::OWNER->value]),
+            'type' => $this->faker->randomElement([KeyTypesEnum::MODERATOR->value, KeyTypesEnum::CUSTOMER->value]),
             'expiration_time' => now()->addYear(),
         ];
     }

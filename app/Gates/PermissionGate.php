@@ -30,7 +30,7 @@ class PermissionGate
             if(empty($key->permissions))
                 return false;
 
-            if ($key->type === KeyTypesEnum::OWNER || $key->type === KeyTypesEnum::DEVELOPER)
+            if ($key->type === KeyTypesEnum::CUSTOMER || $key->type === KeyTypesEnum::DEVELOPER)
                 return true;
 
             return $key->permissions->contains('value', $permission);

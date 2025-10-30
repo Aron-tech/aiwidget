@@ -26,14 +26,14 @@ class SitePicker extends Component
         return $this->auth_user->sites()
             ->select('sites.id','sites.uuid', 'sites.domain', 'sites.name')
             ->with(['keys' => function ($query) {
-            $query->where('type', KeyTypesEnum::OWNER)->select('user_id', 'site_id');
+            $query->where('type', KeyTypesEnum::CUSTOMER)->select('user_id', 'site_id');
         }])->get();
     }
 
     public function select($site_id): void
     {
         $auth_user_key = $this->auth_user->keys()->where('site_id', $site_id)->first();
-        $is_valid_owner_key = Key::where('site_id', $site_id)->where('type', KeyTypesEnum::OWNER)->where('expiration_time', '>', now()->subDays(3))->exists();
+        $is_valid_owner_key = Key::where('site_id', $site_id)->where('type', KeyTypesEnum::CUSTOMER)->where('expiration_time', '>', now()->subDays(3))->exists();
 
         //Ha nincs token, akkor nem engedjük tovább
         if(!$auth_user_key || !$is_valid_owner_key) {
@@ -43,7 +43,7 @@ class SitePicker extends Component
 
         //Ha több mint 3 napja lejárt a token, akkor nem engedjük tovább
         if($auth_user_key->expiration_time <= now()->subDays(3)) {
-            if($auth_user_key->type === KeyTypesEnum::OWNER) {
+            if($auth_user_key->type === KeyTypesEnum::CUSTOMER) {
                 $this->notify('danger', __('interface.invalid_token'));
             }else {
                 $this->notify('warning', __('interface.invalid_token_contact_owner'));

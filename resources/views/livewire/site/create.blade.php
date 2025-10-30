@@ -84,7 +84,7 @@ new class extends Component {
             return;
         }
 
-        if ($this->key->type === KeyTypesEnum::OWNER) {
+        if ($this->key->type === KeyTypesEnum::CUSTOMER) {
             Flux::modal('create-site')->show();
 
         } else if ($this->key->type === KeyTypesEnum::MODERATOR || $this->key->type === KeyTypesEnum::DEVELOPER) {
@@ -173,7 +173,6 @@ new class extends Component {
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">{{__('interface.purchase_token')}}</flux:heading>
-                <flux:subheading>{{__('interface.buy_token_subheading')}}</flux:subheading>
             </div>
             <div class="space-y-4">
                 <flux:select wire:model.live.debounce="selected_fee_period" label="{{__('interface.system_usage_subscription')}}">
@@ -191,12 +190,12 @@ new class extends Component {
                 />
                 <flux:field variant="inline">
                     <flux:checkbox wire:model="p_policy" />
-                    <flux:label>@lang('interface.accept_p_policy')</flux:label>
+                    <flux:label>{{__('interface.accept_p_policy')}}</flux:label>
                     <flux:error name="p_policy" />
                 </flux:field>
                 <flux:field variant="inline">
                     <flux:checkbox wire:model="terms" />
-                    <flux:label>@lang('interface.accept_gtc')</flux:label>
+                    <flux:label>{{__('interface.accept_gtc')}}</flux:label>
                     <flux:error name="terms" />
                 </flux:field>
                 <div class="flex justify-end">

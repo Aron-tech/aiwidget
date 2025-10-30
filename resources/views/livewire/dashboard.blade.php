@@ -39,7 +39,7 @@ new class extends Component {
 
         $this->last_transactions = $this->getLastTransactions();
 
-        $this->ownerKey = $this->site->keys()->where('keys.type', KeyTypesEnum::OWNER)->first();
+        $this->ownerKey = $this->site->keys()->where('keys.type', KeyTypesEnum::CUSTOMER)->first();
     }
 
     public function getBalance(): float
