@@ -35,6 +35,7 @@ Route::middleware(['auth','validate_site_selection', 'verified'])->group(functio
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
     Volt::route('settings/language', 'settings.language')->name('settings.language');
+    Volt::route('settings/manage-key', 'settings.manage-key')->name('settings.manage-key');
 });
 
 Route::middleware(['auth', 'validate_site_selection', 'verified'])->name('manager.')->group(function () {

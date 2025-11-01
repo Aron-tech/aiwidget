@@ -5,6 +5,7 @@
             <flux:navlist.item href="{{ route('settings.password') }}" wire:navigate>{{ __('Password') }}</flux:navlist.item>
             <flux:navlist.item href="{{ route('settings.appearance') }}" wire:navigate>{{ __('Appearance') }}</flux:navlist.item>
             <flux:navlist.item href="{{ route('settings.language') }}" wire:navigate>{{ __('language.languages') }}</flux:navlist.item>
+            <flux:navlist.item href="{{ route('settings.manage-key') }}" wire:navigate>{{ __('interface.manage_key') }}</flux:navlist.item>
         </flux:navlist>
     </div>
 

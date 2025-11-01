@@ -58,7 +58,7 @@ class UserManager extends Component
     {
         $keys = $this->site->keys()
             ->with(['user' => function($query) {
-                $query->select('id', 'name', 'email');
+                $query->select('id', 'name', 'email', 'image');
             }])
             ->where('keys.type', KeyTypesEnum::MODERATOR)
             ->when($this->search, function($query) {
