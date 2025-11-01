@@ -110,7 +110,7 @@
                     @foreach($chats as $chat)
                         <flux:navlist.item
                             wire:click="selectChat({{ $chat->id }})"
-                            class="dark:hover:bg-gray-700 dark:text-gray-200 py-6 px-4 {{$selected_chat?->id ? 'dark:bg-black/10 bg-gray-100' : ''}}"
+                            class="dark:hover:bg-gray-700 dark:text-gray-200 py-6 px-4 {{$selected_chat?->id === $chat->id ? 'dark:bg-black/10 bg-gray-100' : ''}}"
                         >
                             <div class="flex items-center justify-between w-full">
                                 <div>
