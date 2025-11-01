@@ -16,6 +16,7 @@ new class extends Component {
     public ?string $name = null;
     public string $widget_config = '';
 
+    public ?string $image_path = null;
     public array $selected_databases = [];
 
     #[Validate('required|image|mimes:jpg,png,jpeg,webp|max:5120')]
@@ -26,8 +27,8 @@ new class extends Component {
         if (!$site_selector->hasSite()) {
             return redirect()->route('site.picker')->with('error', __('interface.missing_site'));
         }
-
         $this->site = $site_selector->getSite();
+        $this->image_path = getJsonValue($this->site, 'settings', 'widget_icon_path', null);
         $this->selected_databases = getJsonValue($this->site, 'settings', 'knowledge-databases', []);
         $this->name = getJsonValue($this->site, 'settings', 'widget-name', '');
         $this->generateWidgetConfig();
@@ -62,7 +63,11 @@ new class extends Component {
             $config .= "     widgetName: '{$this->name}',\n";
         }
 
-        $config .= "     };\n";
+        if ($this->image_path) {
+            $config .= "     widgetIconUrl: '" . url(route('view-file', ['path' => $this->image_path])) . "',\n";
+        }
+
+        $config .= "};\n";
 
         $this->widget_config = "<div id=\"conversiveai-widget-container\"></div>\n<script>\n{$config}</script>\n<script src=\"https://szakdolgozat.test/js/widget.js\"></script>";
     }
@@ -99,6 +104,8 @@ new class extends Component {
     {
         if (empty($this->uploaded_widget_image)) return;
         $this->saveImage($this->site, 'settings', $this->uploaded_widget_image, 'uploads/' . $this->site->id.'/widget-icon', json_param: 'widget_icon_path');
+        $this->image_path = getJsonValue($this->site, 'settings', 'widget_icon_path', null);
+        $this->generateWidgetConfig();
         $this->profile_image = null;
     }
 }; ?>
