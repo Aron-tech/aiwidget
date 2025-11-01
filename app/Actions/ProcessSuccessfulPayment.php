@@ -129,7 +129,7 @@ class ProcessSuccessfulPayment
     private function generateUniqueToken(): string
     {
         do {
-            $token = Str::random(40);
+            $token = Str::uuid()->toString();
             $hashed = hash('sha256', $token);
             $exists = Key::where('token', $hashed)->exists();
         } while ($exists);

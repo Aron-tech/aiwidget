@@ -27,7 +27,7 @@ new class extends Component {
     {
         $this->site = Site::find($site_id);
 
-        $this->token = Str::random(40);
+        $this->token = Str::uuid()->toString();
 
         if(empty($this->site))
             $this->dispatch('notify', 'warning', __('interface.missing_site'));
