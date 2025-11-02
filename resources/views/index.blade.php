@@ -429,20 +429,7 @@
         </div>
     </div>
 </footer>
-<div id="conversiveai-widget-container"></div>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const btn = document.getElementById('demo-open');
-
-        btn.addEventListener('click', () => {
-            const target = document.querySelector('#conversiveai-widget-container');
-            if (target) {
-                target.click();
-            }
-        });
-    });
-
-
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -464,16 +451,13 @@
             nav.classList.remove('bg-dark-bg/95');
         }
     });
-
-    window.widgetConfig = {
-        siteId: '17SAvu5CFo4sPhFIWp3D2ngT',
-        widgetName: 'Demo',
-    };
 </script>
+<div id="conversiveai-widget-container"></div>
 <script>
     window.widgetConfig = {
-        siteId: '17SAvu5CFo4sPhFIWp3D2ngT',
+        siteId: 'u62OAeWsk3UBBy5fAzY9aAMh',
         widgetName: 'Demo',
+        widgetIconUrl: 'https://szakdolgozat.test/view-file?path=uploads%2F5%2Fwidget-icon%2FgwaEBc7wS8nEQHF92EJ2j1iyfRJjQljvWbnI7AAN.png',
     };
 </script>
 <script src="https://szakdolgozat.test/js/widget.js"></script>
