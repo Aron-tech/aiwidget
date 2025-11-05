@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
         $key = Key::factory()->create([
             'user_id' => $user->id,
             'site_id' => $site->id,
-            'token' => hash('sha256', 'customerkey2025'),
+            'token' => "customerkey2025",
             'type' => KeyTypesEnum::CUSTOMER->value,
             'expiration_time' => now()->addYear(3),
         ]);
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         Key::factory()->create([
             'user_id' => $user2->id,
             'site_id' => $site->id,
-            'token' => hash('sha256', 'moderatorkey2025'),
+            'token' => "moderatorkey2025",
             'type' => KeyTypesEnum::MODERATOR->value,
             'expiration_time' => now()->addYear(),
         ]);
@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
         Key::factory()->create([
             'user_id' => null,
             'site_id' => null,
-            'token'   => hash('sha256', 'customerkey'),
+            'token'   => "customerkey",
             'type' => KeyTypesEnum::CUSTOMER->value,
             'expiration_time' => now()->addYear(),
         ]);
@@ -88,7 +88,7 @@ class DatabaseSeeder extends Seeder
         Key::factory()->create([
             'user_id' => null,
             'site_id' => $site->id,
-            'token'   => hash('sha256', 'moderatorkey'),
+            'token'   => "moderatorkey",
             'type' => KeyTypesEnum::MODERATOR->value,
             'expiration_time' => now()->addYear(),
         ]);
