@@ -19,18 +19,9 @@
         <div class="flex space-x-4 justify-end w-full">
             <flux:button wire:click='downloadFolder()' icon="arrow-down-tray">{{__('interface.download')}}</flux:button>
             <flux:button wire:click='reloadDocuments' icon="arrow-path" variant="filled"></flux:button>
-            <flux:button.group>
-                <flux:modal.trigger name="add-document">
-                    <flux:button icon="plus">{{__('interface.add')}}</flux:button>
-                </flux:modal.trigger>
-                <flux:dropdown>
-                    <flux:button icon-trailing="chevron-down"></flux:button>
-
-                    <flux:menu>
-                        <flux:menu.item wire:click='import()' icon="table-cells">{{__('interface.write_text')}}</flux:menu.item>
-                    </flux:menu>
-                </flux:dropdown>
-            </flux:button.group>
+            <flux:modal.trigger name="add-document">
+                <flux:button icon="plus">{{__('interface.add')}}</flux:button>
+            </flux:modal.trigger>
         </div>
     </div>
     <div class=" grid grid-cols-3 gap-6">

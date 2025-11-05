@@ -145,7 +145,8 @@ new class extends Component {
                     />
                 @endif
             </div>
-            <flux:separator/>
+        </div>
+        <div class="space-y-14 w-full">
             <flux:fieldset>
                 <flux:legend>{{__('interface.knowledge_base')}}</flux:legend>
                 <flux:description>{{__('interface.knowledge_base_description')}}</flux:description>
@@ -156,8 +157,6 @@ new class extends Component {
                     </flux:checkbox.group>
                 </div>
             </flux:fieldset>
-        </div>
-        <div class="space-y-14 w-full">
             <flux:separator/>
             <div class="flex lg:flex-row flex-col my-10 gap-8">
                 <img
@@ -166,8 +165,9 @@ new class extends Component {
                 <flux:input type="file" wire:model="uploaded_widget_image"
                             label="{{__('interface.change_site_wiget_icon')}}"/>
             </div>
-            <flux:button variant="primary" wire:click="saveWidgetImage()">{{ __('Save') }}</flux:button>
+            <div class="text-right">
+                <flux:button variant="primary" wire:click="saveWidgetImage()">{{ __('Save') }}</flux:button>
+            </div>
         </div>
     </div>
-
 </div>
