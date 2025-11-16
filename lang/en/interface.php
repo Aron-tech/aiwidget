@@ -162,5 +162,12 @@ return [
     'open' => 'Open',
     'waiting' => 'Waiting',
     'closed' => 'Closed',
-    ''
+    'manage_key' => 'Manage key',
+    'manage_your_key' => 'Manage your key',
+    'change_site_wiget_icon' => 'Change widget icon',
+    'password' => 'Password',
+    'current_key ' => 'Current license key',
+    'new_key' => 'New license key',
+    'change' => 'Change',
+    'avatar' => 'Avatar',
 ];
