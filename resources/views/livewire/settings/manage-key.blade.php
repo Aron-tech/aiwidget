@@ -57,7 +57,7 @@ new class extends Component {
             />
 
             <flux:input
-                label="{{ __('interface.current_key') }}"
+                label="{{ __('interface.current_key ') }}"
                 type="text"
                 wire:model.defer="entered_key"
             />

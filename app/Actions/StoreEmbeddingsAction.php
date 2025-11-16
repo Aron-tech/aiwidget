@@ -45,22 +45,13 @@ class StoreEmbeddingsAction
 
                 $vector = $response->embeddings;
 
-                if(DocumentChunk::where('hash', hash('sha256', $text))->exists()) {
-                    Log::info("Chunk already exists in database, skipping", [
-                        'chunk_index' => $i,
-                        'text_preview' => substr($text, 0, 100)
-                    ]);
-                    continue;
-                }else{
-                    $document_chunk = DocumentChunk::create([
-                        'document_id' => $document_id,
-                        'chunk_index' => $i,
-                        'text' => $text,
-                        'token_count' => count(explode(' ', $text)),
-                        'hash' => hash('sha256', $text),
-                        'embedding' => json_encode($vector),
-                    ]);
-                }
+                $document_chunk = DocumentChunk::create([
+                    'document_id' => $document_id,
+                    'chunk_index' => $i,
+                    'text' => $text,
+                    'token_count' => count(explode(' ', $text)),
+                    'embedding' => json_encode($vector),
+                ]);
 
                 $points[] = [
                     'id' => $document_chunk->id,

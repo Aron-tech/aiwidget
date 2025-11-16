@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('chunk_index');
             $table->mediumText('text');
             $table->integer('token_count');
-            $table->char('hash', 64)->unique();
             $table->json('embedding');
             $table->timestamps();
         });

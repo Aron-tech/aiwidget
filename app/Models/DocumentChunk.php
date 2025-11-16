@@ -12,7 +12,6 @@ class DocumentChunk extends Model
         'chunk_index',
         'text',
         'token_count',
-        'hash',
         'embedding',
     ];
 

@@ -60,11 +60,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <form wire:submit="register" class="flex flex-col gap-6">
         <!-- Name -->
         <div class="grid gap-2">
-            <flux:input wire:model="first_name" min="3" id="first_name" label="{{ __('first_name') }}" type="text"
+            <flux:input wire:model="first_name" min="3" id="first_name" label="{{ __('First name') }}" type="text"
                         name="first_name" required autofocus autocomplete="first_name" placeholder="First name"/>
         </div>
         <div class="grid gap-2">
-            <flux:input wire:model="last_name" id="last_name" label="{{ __('last_name') }}" type="text" name="last_name"
+            <flux:input wire:model="last_name" id="last_name" label="{{ __('Last name') }}" type="text" name="last_name"
                         required autofocus autocomplete="last_name" placeholder="Last name"/>
         </div>
 
