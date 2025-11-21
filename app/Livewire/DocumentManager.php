@@ -134,7 +134,7 @@ class DocumentManager extends Component
             ]);
 
             ProcessDocumentJob::dispatch($this->site_id, $document);
-            $this->notify('success', 'Feltöltve, feldolgozás folyamatban...');
+            $this->notify('success', __('interface.document_saved'));
             $this->reset('file', 'title');
             Flux::modal('add-document')->close();
         } else {
