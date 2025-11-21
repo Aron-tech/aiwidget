@@ -23,7 +23,15 @@ return [
     'site_update' => 'Update website',
     'site_update_subheading' => 'Please provide the information for the website.',
     'back_site_picker' => 'Back to site picker',
+
+    // Chat
     'chat_manager' => 'Chat manager',
+    'chat' => 'Chat',
+    'close_chat' => 'Close chat',
+    'select_chat_to_start' => 'Select chat to start',
+    'closed_success' => 'Successfully closed',
+
+    // Questions
     'dont_have_access_to_site' => 'You are not authorized to view this site.',
     'question_answer_delete_message' => 'Are you sure you want to delete this question: ',
     'question_answer_delete_title' => 'Delete this question?',
@@ -52,6 +60,8 @@ return [
     'create_success' => 'Successfully created!',
     'delete_success' => 'Successfully deleted!',
     'edit_success' => 'Successfully edited!',
+
+    // Errors
     'missing_site' => 'The requested site is currently unavailable or missing.',
     'missing_permission' => 'You dont have permission!',
     'missing_key' => 'The requested key is currently unavailable or missing.',
@@ -59,10 +69,17 @@ return [
     'download_success' => 'Successfully downloaded',
     'import_success' => 'Successfully imported',
     'refresh_success' => 'Successfully refreshed!',
+    'could_not_process_request' => 'Your request could not be processed, please try again later.',
+
+    // User
     'email' => 'Email',
     'name' => 'Name',
     'user_manager' => 'User manager',
     'info' => 'Info',
+    'avatar' => 'Avatar',
+    'password' => 'Password',
+
+    // Keys
     'create_key' => 'Create key',
     'key' => 'Key',
     'delete_key' => 'Delete key',
@@ -70,13 +87,22 @@ return [
     'token_enscrypted' => 'Encrypted token',
     'token_enscrypted_info' => 'Token display is encrypted. Do not share these tokens.',
     'token_create_info' => 'You can only copy a key when it is created. If you forget, delete and create a new one. A key is valid for 3 days.',
-    'close' => 'Close',
     'all' => 'All',
     'activated' => 'Activated',
     'not_activated' => 'Not activated',
     'add_new_key' => 'Add new key',
     'key_delete_message' => "Are you sure you want to delete the following user's key: ",
     'key_delete_title' => 'Delete key',
+    'permissions' => 'Permissions',
+    'key_subheading' => 'Please select the permissions you want to add to the key.',
+    'edit_key' => 'Edit key',
+    'manage_key' => 'License key manager',
+    'manage_your_key' => 'Replace your old license key with your new license key.',
+    'current_key' => 'Current license key',
+    'new_key' => 'New license key',
+    'change' => 'Change',
+
+    // Widgets
     'generate_widget' => 'Generate widget',
     'widget_name' => 'Widget name',
     'select_widget_style' => 'Select widget style',
@@ -88,14 +114,9 @@ return [
     'widget_delete_message' => 'Are you sure you want to delete this widget: ',
     'widget_delete_title' => 'Delete widget',
     'widget_config_copied_to_clipboard' => 'Widget configuration copied to clipboard!',
-    'copy' => 'Copy',
-    'no_permission' => 'You do not have permission for this action.',
-    'permissions' => 'Permissions',
-    'key_subheading' => 'Please select the permissions you want to add to the key.',
-    'edit_key' => 'Edit key',
-    'attached to the website' => 'You are already connected to the given website.',
-    'invalid_token' => 'The provided token is invalid or expired.',
-    'invalid_token_contact_owner' => 'The token is invalid or expired. Contact the owner.',
+    'change_site_wiget_icon' => 'Change widget icon',
+
+    // Files
     'file' => 'File',
     'file_selection' => 'File selection',
     'title' => 'Title',
@@ -103,18 +124,24 @@ return [
     'file_type' => 'File type',
     'file_name' => 'File name',
     'upload_file' => 'Upload file',
+
+    // Documents
     'document_manager' => 'Document manager',
     'add_new_document' => 'Add new document',
     'document_not_found' => 'Document not found',
     'document_delete_title' => 'Delete this document?',
     'document_delete_message' => 'Are you sure you want to delete this document: ',
     'save_failed' => 'Save failed',
+    'document_saved' => 'Document saved',
     'must_select_one' => 'You must select at least one knowledge base.',
     'document_database' => 'Document database',
     'question_database' => 'Question database',
+
+    // Knowledge base
     'knowledge_base' => 'Knowledge base',
     'knowledge_base_description' => 'Choose which knowledge base you use to find answers.',
-    'could_not_process_request' => 'Your request could not be processed, please try again later.',
+
+    // Status
     'opened' => 'Opened',
     'closed' => 'Closed',
     'created_at' => 'Created at',
@@ -124,13 +151,8 @@ return [
     'sort_by_updated' => 'Sort by updated',
     'sort_by_status' => 'Sort by status',
     'sort_by_id' => 'Sort by ID',
-    'chat' => 'Chat',
-    'close_chat' => 'Close chat',
-    'select_chat_to_start' => 'Select chat to start',
-    'closed_success' => 'Successfully closed',
-    'message' => 'Message',
-    'inactive' => 'Inactive',
-    'top_up_amount' => 'Top up amount',
+
+    // Billing
     'system_usage' => 'System usage',
     'balance' => 'Balance',
     'recent_transactions' => 'Recent transactions',
@@ -141,8 +163,6 @@ return [
     'extend' => 'Extend',
     'pay' => 'Pay',
     'extend_subscription' => 'Extend subscription',
-    'profile_picture_changed_successed' => 'Profile picture changed successfully.',
-    'profile_picture_changed_failed' => 'Profile picture change failed.',
     'purchase_token' => 'Token purchase',
     'total_amount' => 'Total amount',
     'system_usage_subscription' => 'System usage subscription',
@@ -152,15 +172,17 @@ return [
     'yearly' => 'Yearly',
     'triennial' => 'Triennial',
     'buy_now' => 'Buy now',
+
     'active' => 'Active',
+    'inactive' => 'Inactive',
     'open' => 'Open',
     'waiting' => 'Waiting',
     'deposit' => 'Deposit',
-    'change_site_wiget_icon' => 'Change widget icon',
-    'password' => 'Password',
-    'current_key' => 'Current license key',
-    'new_key' => 'New license key',
-    'change' => 'Change',
-    'avatar' => 'Avatar',
-    'document_saved' => 'Document saved',
+
+    // Misc
+    'attached to the website' => 'You are already connected to the given website.',
+    'invalid_token' => 'The provided token is invalid or expired.',
+    'invalid_token_contact_owner' => 'The token is invalid or expired. Contact the owner.',
+    'copy' => 'Copy',
+    'message' => 'Message',
 ];

@@ -23,7 +23,15 @@ return [
     'site_update' => 'Website aktualisieren',
     'site_update_subheading' => 'Bitte geben Sie die Informationen für die Website ein.',
     'back_site_picker' => 'Zurück zur Seitenauswahl',
+
+    // Chat
     'chat_manager' => 'Chat-Manager',
+    'chat' => 'Chat',
+    'close_chat' => 'Chat schließen',
+    'select_chat_to_start' => 'Chat zum Starten auswählen',
+    'closed_success' => 'Erfolgreich geschlossen',
+
+    // Questions
     'dont_have_access_to_site' => 'Sie sind nicht berechtigt, diese Website anzuzeigen.',
     'question_answer_delete_message' => 'Sind Sie sicher, dass Sie diese Frage löschen möchten: ',
     'question_answer_delete_title' => 'Diese Frage löschen?',
@@ -52,6 +60,8 @@ return [
     'create_success' => 'Erfolgreich erstellt!',
     'delete_success' => 'Erfolgreich gelöscht!',
     'edit_success' => 'Erfolgreich bearbeitet!',
+
+    // Errors
     'missing_site' => 'Die angeforderte Website ist derzeit nicht verfügbar oder fehlt.',
     'missing_permission' => 'Keine Berechtigung!',
     'missing_key' => 'Der angeforderte Schlüssel ist derzeit nicht verfügbar oder fehlt.',
@@ -59,24 +69,40 @@ return [
     'download_success' => 'Erfolgreich heruntergeladen',
     'import_success' => 'Erfolgreich importiert',
     'refresh_success' => 'Erfolgreich aktualisiert!',
+    'could_not_process_request' => 'Die Anfrage konnte nicht verarbeitet werden. Bitte versuchen Sie es später erneut.',
+
+    // User
     'email' => 'E-Mail',
     'name' => 'Name',
     'user_manager' => 'Benutzerverwaltung',
     'info' => 'Informationen',
+    'avatar' => 'Profilbild',
+    'password' => 'Passwort',
+
+    // Keys
     'create_key' => 'Schlüssel erstellen',
     'key' => 'Schlüssel',
     'delete_key' => 'Schlüssel löschen',
-    'add_new_key_subheading' => 'Kopieren Sie das Token und teilen Sie es der Person mit, der Sie Moderatorenrechte gewähren möchten.',
+    'add_new_key_subheading' => 'Kopieren Sie das Token und teilen Sie es der Person mit, der Sie Moderatorrechte geben möchten.',
     'token_enscrypted' => 'Verschlüsseltes Token',
-    'token_enscrypted_info' => 'Die angezeigten Tokens sind verschlüsselt. Geben Sie diese Tokens nicht weiter.',
-    'token_create_info' => 'Der Schlüssel kann nur bei der Erstellung kopiert werden. 3 Tage gültig.',
-    'close' => 'Schließen',
+    'token_enscrypted_info' => 'Die angezeigten Tokens sind verschlüsselt. Geben Sie diese nicht weiter.',
+    'token_create_info' => 'Der Schlüssel kann nur bei der Erstellung kopiert werden. Der Schlüssel ist 3 Tage gültig.',
     'all' => 'Alle',
     'activated' => 'Aktiviert',
     'not_activated' => 'Nicht aktiviert',
     'add_new_key' => 'Neuen Schlüssel hinzufügen',
     'key_delete_message' => 'Sind Sie sicher, dass Sie den Schlüssel des folgenden Benutzers löschen möchten: ',
     'key_delete_title' => 'Schlüssel löschen',
+    'permissions' => 'Berechtigungen',
+    'key_subheading' => 'Bitte wählen Sie die Berechtigungen, die dem Schlüssel hinzugefügt werden sollen.',
+    'edit_key' => 'Schlüssel bearbeiten',
+    'manage_key' => 'Produktschlüssel Verwaltung',
+    'manage_your_key' => 'Ersetzen Sie Ihren alten Produktschlüssel durch den neuen.',
+    'current_key' => 'Aktueller Produktschlüssel',
+    'new_key' => 'Neuer Produktschlüssel',
+    'change' => 'Ändern',
+
+    // Widgets
     'generate_widget' => 'Widget generieren',
     'widget_name' => 'Widget-Name',
     'select_widget_style' => 'Widget-Stil auswählen',
@@ -88,14 +114,9 @@ return [
     'widget_delete_message' => 'Sind Sie sicher, dass Sie dieses Widget löschen möchten: ',
     'widget_delete_title' => 'Widget löschen',
     'widget_config_copied_to_clipboard' => 'Widget-Konfiguration kopiert!',
-    'copy' => 'Kopieren',
-    'no_permission' => 'Sie haben keine Berechtigung für diese Aktion.',
-    'permissions' => 'Berechtigungen',
-    'key_subheading' => 'Bitte wählen Sie die Berechtigungen für den Schlüssel.',
-    'edit_key' => 'Schlüssel bearbeiten',
-    'attached to the website' => 'Bereits mit dieser Website verbunden.',
-    'invalid_token' => 'Das Token ist ungültig oder abgelaufen.',
-    'invalid_token_contact_owner' => 'Token ungültig oder abgelaufen. Kontaktieren Sie den Eigentümer.',
+    'change_site_wiget_icon' => 'Widget-Symbol ändern',
+
+    // Files
     'file' => 'Datei',
     'file_selection' => 'Dateiauswahl',
     'title' => 'Titel',
@@ -103,18 +124,24 @@ return [
     'file_type' => 'Dateityp',
     'file_name' => 'Dateiname',
     'upload_file' => 'Datei hochladen',
+
+    // Documents
     'document_manager' => 'Dokumentenmanager',
     'add_new_document' => 'Neues Dokument hinzufügen',
     'document_not_found' => 'Dokument nicht gefunden',
     'document_delete_title' => 'Dokument löschen?',
     'document_delete_message' => 'Sind Sie sicher, dass Sie dieses Dokument löschen möchten: ',
     'save_failed' => 'Speichern fehlgeschlagen',
+    'document_saved' => 'Dokument gespeichert',
     'must_select_one' => 'Sie müssen mindestens eine Wissensdatenbank auswählen.',
     'document_database' => 'Dokumentdatenbank',
     'question_database' => 'Fragen-Datenbank',
+
+    // Knowledge base
     'knowledge_base' => 'Wissensdatenbank',
-    'knowledge_base_description' => 'Wählen Sie die Wissensdatenbank zur Beantwortung aus.',
-    'could_not_process_request' => 'Die Anfrage konnte nicht verarbeitet werden.',
+    'knowledge_base_description' => 'Wählen Sie aus, welche Wissensdatenbank Sie für Antworten verwenden möchten.',
+
+    // Status
     'opened' => 'Geöffnet',
     'closed' => 'Geschlossen',
     'created_at' => 'Erstellt am',
@@ -124,13 +151,8 @@ return [
     'sort_by_updated' => 'Nach Aktualisierungsdatum sortieren',
     'sort_by_status' => 'Nach Status sortieren',
     'sort_by_id' => 'Nach ID sortieren',
-    'chat' => 'Chat',
-    'close_chat' => 'Chat schließen',
-    'select_chat_to_start' => 'Chat zum Starten auswählen',
-    'closed_success' => 'Erfolgreich geschlossen',
-    'message' => 'Nachricht',
-    'inactive' => 'Inaktiv',
-    'top_up_amount' => 'Aufladebetrag',
+
+    // Billing
     'system_usage' => 'Systemnutzung',
     'balance' => 'Kontostand',
     'recent_transactions' => 'Letzte Transaktionen',
@@ -141,8 +163,6 @@ return [
     'extend' => 'Verlängern',
     'pay' => 'Bezahlen',
     'extend_subscription' => 'Abonnement verlängern',
-    'profile_picture_changed_successed' => 'Profilbild erfolgreich geändert.',
-    'profile_picture_changed_failed' => 'Profilbildänderung fehlgeschlagen.',
     'purchase_token' => 'Token-Kauf',
     'total_amount' => 'Gesamtbetrag',
     'system_usage_subscription' => 'Systemnutzungsabonnement',
@@ -153,14 +173,15 @@ return [
     'triennial' => 'Dreijährlich',
     'buy_now' => 'Jetzt kaufen',
     'active' => 'Aktiv',
+    'inactive' => 'Inaktiv',
     'open' => 'Offen',
     'waiting' => 'Wartet',
     'deposit' => 'Einzahlung',
-    'change_site_wiget_icon' => 'Widget-Symbol ändern',
-    'password' => 'Passwort',
-    'current_key' => 'Aktueller Lizenzschlüssel',
-    'new_key' => 'Neuer Lizenzschlüssel',
-    'change' => 'Ändern',
-    'avatar' => 'Avatar',
-    'document_saved' => 'Dokument gespeichert',
+
+    // Misc
+    'attached to the website' => 'Sie sind bereits mit dieser Website verbunden.',
+    'invalid_token' => 'Das Token ist ungültig oder abgelaufen.',
+    'invalid_token_contact_owner' => 'Token ungültig oder abgelaufen. Bitte kontaktieren Sie den Websitebesitzer.',
+    'copy' => 'Kopieren',
+    'message' => 'Nachricht',
 ];

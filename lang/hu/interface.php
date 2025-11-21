@@ -23,10 +23,18 @@ return [
     'site_update' => 'Weboldal frissítése',
     'site_update_subheading' => 'Kérjük, adja meg a weboldal adatait.',
     'back_site_picker' => 'Vissza a weboldal választóhoz',
+
+    // Chat
     'chat_manager' => 'Csevegéskezelő',
+    'chat' => 'Csevegés',
+    'close_chat' => 'Csevegés bezárása',
+    'select_chat_to_start' => 'Válasszon csevegést a kezdéshez',
+    'closed_success' => 'Sikeresen lezárva',
+
+    // Questions
     'dont_have_access_to_site' => 'Nincs jogosultsága az oldal megtekintéséhez.',
     'question_answer_delete_message' => 'Biztosan törölni szeretné ezt a kérdést: ',
-    'question_answer_delete_title' => 'Kérdés törlése',
+    'question_answer_delete_title' => 'Kérdés törlése?',
     'question' => 'Kérdés',
     'answer' => 'Válasz',
     'create_question_title' => 'Új kérdés és válasz hozzáadása',
@@ -52,6 +60,8 @@ return [
     'create_success' => 'Sikeresen létrehozva!',
     'delete_success' => 'Sikeresen törölve!',
     'edit_success' => 'Sikeresen szerkesztve!',
+
+    // Errors
     'missing_site' => 'A keresett weboldal jelenleg nem elérhető vagy nem létezik.',
     'missing_permission' => 'Nincs jogosultsága!',
     'missing_key' => 'A keresett kulcs nem található vagy nem elérhető.',
@@ -59,24 +69,40 @@ return [
     'download_success' => 'Sikeres letöltés',
     'import_success' => 'Sikeres importálás',
     'refresh_success' => 'Sikeres frissítés!',
+    'could_not_process_request' => 'A kérés feldolgozása nem sikerült. Kérjük, próbálja meg később.',
+
+    // User
     'email' => 'E-mail',
     'name' => 'Név',
     'user_manager' => 'Felhasználókezelő',
     'info' => 'Információ',
+    'avatar' => 'Profilkép',
+    'password' => 'Jelszó',
+
+    // Keys
     'create_key' => 'Kulcs létrehozása',
     'key' => 'Kulcs',
     'delete_key' => 'Kulcs törlése',
-    'add_new_key_subheading' => 'Másolja ki a tokent, és ossza meg azzal, akinek moderátori jogot kíván adni.',
+    'add_new_key_subheading' => 'Másolja ki a tokent, és ossza meg annak, akinek moderátori jogot szeretne adni.',
     'token_enscrypted' => 'Titkosított token',
-    'token_enscrypted_info' => 'A megjelenített tokenek titkosítottak, ezért ezeket ne adja tovább.',
-    'token_create_info' => 'A kulcsot csak létrehozáskor lehet kimásolni. 3 napig érvényes.',
-    'close' => 'Bezárás',
+    'token_enscrypted_info' => 'A megjelenített tokenek titkosítva vannak. Ne ossza meg őket másokkal.',
+    'token_create_info' => 'A kulcsot csak létrehozáskor lehet kimásolni. A kulcs 3 napig érvényes.',
     'all' => 'Összes',
     'activated' => 'Aktiválva',
     'not_activated' => 'Nincs aktiválva',
     'add_new_key' => 'Új kulcs hozzáadása',
     'key_delete_message' => 'Biztosan törölni szeretné a következő felhasználó kulcsát: ',
     'key_delete_title' => 'Kulcs törlése',
+    'permissions' => 'Jogosultságok',
+    'key_subheading' => 'Kérjük, válassza ki a kulcshoz adandó jogosultságokat.',
+    'edit_key' => 'Kulcs szerkesztése',
+    'manage_key' => 'Termékkulcs kezelő',
+    'manage_your_key' => 'Cserélje le régi termékkulcsát az új termékkulcsra.',
+    'current_key' => 'Jelenlegi termékkulcs',
+    'new_key' => 'Új termékkulcs',
+    'change' => 'Csere',
+
+    // Widgets
     'generate_widget' => 'Widget generálása',
     'widget_name' => 'Widget neve',
     'select_widget_style' => 'Widget stílus kiválasztása',
@@ -87,15 +113,10 @@ return [
     'delete_widget' => 'Widget törlése',
     'widget_delete_message' => 'Biztosan törölni szeretné ezt a widgetet: ',
     'widget_delete_title' => 'Widget törlése',
-    'widget_config_copied_to_clipboard' => 'Widget konfiguráció vágólapra másolva!',
-    'copy' => 'Másolás',
-    'no_permission' => 'Nincs jogosultsága ehhez a művelethez.',
-    'permissions' => 'Jogosultságok',
-    'key_subheading' => 'Kérjük, válassza ki, milyen jogosultságokat szeretne adni a kulcshoz.',
-    'edit_key' => 'Kulcs szerkesztése',
-    'attached to the website' => 'Már csatlakozva van a megadott weboldalhoz.',
-    'invalid_token' => 'A token érvénytelen vagy lejárt.',
-    'invalid_token_contact_owner' => 'A token érvénytelen vagy lejárt. Keresse a weboldal tulajdonosát.',
+    'widget_config_copied_to_clipboard' => 'Widget beállítás vágólapra másolva!',
+    'change_site_wiget_icon' => 'Widget ikon módosítása',
+
+    // Files
     'file' => 'Fájl',
     'file_selection' => 'Fájl kiválasztása',
     'title' => 'Cím',
@@ -103,18 +124,24 @@ return [
     'file_type' => 'Fájltípus',
     'file_name' => 'Fájlnév',
     'upload_file' => 'Fájl feltöltése',
+
+    // Documents
     'document_manager' => 'Dokumentumkezelő',
     'add_new_document' => 'Új dokumentum hozzáadása',
     'document_not_found' => 'A dokumentum nem található',
     'document_delete_title' => 'Dokumentum törlése?',
     'document_delete_message' => 'Biztosan törölni szeretné ezt a dokumentumot: ',
     'save_failed' => 'Mentés sikertelen',
+    'document_saved' => 'Dokumentum elmentve',
     'must_select_one' => 'Legalább egy tudásbázist ki kell választani.',
     'document_database' => 'Dokumentum adatbázis',
     'question_database' => 'Kérdés adatbázis',
+
+    // Knowledge base
     'knowledge_base' => 'Tudásbázis',
-    'knowledge_base_description' => 'Válassza ki, melyik tudásbázist kívánja használni.',
-    'could_not_process_request' => 'A kérés feldolgozása sikertelen.',
+    'knowledge_base_description' => 'Válassza ki, melyik tudásbázist szeretné használni a válaszok kereséséhez.',
+
+    // Status
     'opened' => 'Megnyitva',
     'closed' => 'Lezárva',
     'created_at' => 'Létrehozva',
@@ -124,13 +151,8 @@ return [
     'sort_by_updated' => 'Rendezés frissítés szerint',
     'sort_by_status' => 'Rendezés állapot szerint',
     'sort_by_id' => 'Rendezés ID szerint',
-    'chat' => 'Csevegés',
-    'close_chat' => 'Csevegés bezárása',
-    'select_chat_to_start' => 'Válasszon csevegést a kezdéshez',
-    'closed_success' => 'Sikeresen lezárva',
-    'message' => 'Üzenet',
-    'inactive' => 'Inaktív',
-    'top_up_amount' => 'Feltöltés összege',
+
+    // Billing
     'system_usage' => 'Rendszerhasználat',
     'balance' => 'Egyenleg',
     'recent_transactions' => 'Legutóbbi tranzakciók',
@@ -141,8 +163,6 @@ return [
     'extend' => 'Meghosszabbítás',
     'pay' => 'Fizetés',
     'extend_subscription' => 'Előfizetés meghosszabbítása',
-    'profile_picture_changed_successed' => 'Profilkép sikeresen módosítva.',
-    'profile_picture_changed_failed' => 'Profilkép módosítása sikertelen.',
     'purchase_token' => 'Token vásárlás',
     'total_amount' => 'Teljes összeg',
     'system_usage_subscription' => 'Rendszerhasználati előfizetés',
@@ -153,14 +173,15 @@ return [
     'triennial' => 'Hároméves',
     'buy_now' => 'Vásárlás most',
     'active' => 'Aktív',
+    'inactive' => 'Inaktív',
     'open' => 'Nyitott',
     'waiting' => 'Várakozik',
     'deposit' => 'Befizetés',
-    'change_site_wiget_icon' => 'Widget ikon módosítása',
-    'password' => 'Jelszó',
-    'current_key' => 'Jelenlegi licenszkulcs',
-    'new_key' => 'Új licenszkulcs',
-    'change' => 'Módosítás',
-    'avatar' => 'Avatar',
-    'document_saved' => 'Dokumentum elmentve',
+
+    // Misc
+    'attached to the website' => 'Már csatlakozva van a megadott weboldalhoz.',
+    'invalid_token' => 'A megadott token érvénytelen vagy lejárt.',
+    'invalid_token_contact_owner' => 'A token érvénytelen vagy lejárt. Kérjük, lépjen kapcsolatba a tulajdonossal.',
+    'copy' => 'Másolás',
+    'message' => 'Üzenet',
 ];
