@@ -5,6 +5,7 @@
         cssUrl: 'https://szakdolgozat.test/css/widget/default.css',
         siteId: null,
         widgetName: 'ConversiveAI',
+        widgetIconPath: 'https://szakdolgozat.test/widget/default.svg',
         pollingInterval: 10000 // 10 másodperces polling alapértelmezett
     };
 
@@ -59,7 +60,7 @@
         // Kék gomb létrehozása a jobb alsó sarokban
         const toggleButton = document.createElement('div');
         toggleButton.id = 'conversiveai-widget-toggle-button';
-        toggleButton.innerHTML = '<img src="https://szakdolgozat.test/widget/default.svg">';
+        toggleButton.innerHTML = `<img src="${widgetConfig.widgetIconPath}" alt="ConversiveAI ChatBot Icon" />`;
         document.body.appendChild(toggleButton);
 
         // Gomb eseménykezelője
@@ -156,19 +157,23 @@
             }
 
             const data = await fetchData(`${widgetConfig.apiUrl}/messages/${widgetConfig.siteId}?chat_id=${chatId}`);
+            if (initialLoad) {
+                renderChat(data);
 
-            // Frissítjük az utolsó üzenet ID-ját
-            if (data.messages && data.messages.length > 0) {
-                const newLastMessageId = data.messages[data.messages.length - 1].id;
-                if (newLastMessageId !== lastMessageId) {
-                    renderChat(data);
-                    lastMessageId = newLastMessageId;
+                if (data.messages?.length > 0) {
+                    lastMessageId = data.messages[data.messages.length - 1].id;
                 }
             } else {
-                renderChat(data);
+                // Csak akkor renderelj polling közben, ha változott
+                if (data.messages && data.messages.length > 0) {
+                    const newLastMessageId = data.messages[data.messages.length - 1].id;
+                    if (newLastMessageId !== lastMessageId) {
+                        renderChat(data);
+                        lastMessageId = newLastMessageId;
+                    }
+                }
             }
 
-            // Indítsuk a pollingot, ha még nem fut és a widget nyitva van
             if (!pollingInterval && chatId && isWidgetOpen) {
                 startPolling(chatId);
             }
