@@ -64,7 +64,7 @@ new class extends Component {
         }
 
         if ($this->image_path) {
-            $config .= "     widgetIconUrl: '" . url(route('view-file', ['path' => $this->image_path])) . "',\n";
+            $config .= "     widgetIconPath: '" . asset($this->image_path) . "',\n";
         }
 
         $config .= "};\n";
