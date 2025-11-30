@@ -59,3 +59,4 @@ Route::post('/set-locale', function(Request $request) {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/files.php';

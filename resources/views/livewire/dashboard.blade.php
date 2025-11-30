@@ -182,12 +182,12 @@ new class extends Component {
                 <flux:input wire:model="upload_amount" type="number" label="{{__('interface.top_up_amount')}}"/>
                 <flux:field variant="inline">
                     <flux:checkbox wire:model="p_policy"/>
-                    <flux:label>@lang('interface.accept_p_policy')</flux:label>
+                    <flux:label><a target="_blank" href="{{route('privacy-policy')}}">@lang('interface.accept_p_policy')</a></flux:label>
                     <flux:error name="p_policy"/>
                 </flux:field>
                 <flux:field variant="inline">
                     <flux:checkbox wire:model="terms"/>
-                    <flux:label>@lang('interface.accept_gtc')</flux:label>
+                    <flux:label><a target="_blank" href="{{route('terms-and-conditions')}}">@lang('interface.accept_gtc')</a></flux:label>
                     <flux:error name="terms"/>
                 </flux:field>
                 <div class="w-full justify-end flex">
