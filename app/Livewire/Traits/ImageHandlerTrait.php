@@ -2,9 +2,7 @@
 
 namespace App\Livewire\Traits;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
@@ -28,6 +26,8 @@ trait ImageHandlerTrait
     public function saveImage(Model $model, string $attribute, $image, string $save_dir, string $disk = 'public', ?string $default_img = null, ?string $json_param = null): bool {
         try {
             if (!$json_param) {
+                if(!$image) return false;
+
                 if ($model->{$attribute} && $model->{$attribute} !== $default_img) {
                     Storage::disk($disk)->delete($model->{$attribute});
                 }
