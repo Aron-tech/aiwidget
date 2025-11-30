@@ -90,6 +90,7 @@
     border-radius: 8px;
     font-size: 14px;
     transition: border-color 0.3s ease;
+    color: black;
 }
 
 .conversiveai-widget input:focus, .conversiveai-widget textarea:focus {
