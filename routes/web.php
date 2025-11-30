@@ -23,6 +23,8 @@ Route::middleware(['auth','validate_site_selection', 'verified'])->group(functio
         return ProcessSuccessfulPayment::run($session_id);
     });
 
+    Route::redirect('payment/cancel', '/dashboard?payment_failed=1');
+
     Volt::route('dashboard', 'dashboard')->name('dashboard');
 
     Volt::route('generate-widget', 'generatewidget')->name('generate-widget');

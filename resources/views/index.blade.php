@@ -457,7 +457,6 @@
     window.widgetConfig = {
         siteId: 'u62OAeWsk3UBBy5fAzY9aAMh',
         widgetName: 'Demo',
-        widgetIconUrl: 'https://szakdolgozat.test/view-file?path=uploads%2F5%2Fwidget-icon%2FgwaEBc7wS8nEQHF92EJ2j1iyfRJjQljvWbnI7AAN.png',
     };
 </script>
 <script src="https://szakdolgozat.test/js/widget.js"></script>

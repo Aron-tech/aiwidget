@@ -1,6 +1,27 @@
 <?php
 
 return [
+
+    //Dashboard menu
+    'dashboard' => 'Dashboard',
+
+    // Register/Login/Logout
+    'login' => 'Login',
+    'sign_up' => 'Sign up',
+    'remember_me' => 'Remember me',
+    'forgot_your_password' => 'Forgot your password?',
+    'login_dont_have_account' => 'Don\'t have an account yet?',
+    'already_have_account' => 'Already have an account?',
+    'login_title' => 'Login to the dashboard',
+    'login_description' => 'Enter your account details to sign in.',
+    'password_confirm' => 'Confirm password',
+    'registration_title' => 'Sign up to the dashboard',
+    'registration_description' => 'Enter your details to create your account.',
+    'logout' => 'Logout',
+
+    // Site picker
+    'visit_website' => 'Visit website',
+
     'select_website' => 'Select a website',
     'add_new_website' => 'Add new website',
     'add_new_website_subheading' => 'Please provide the information for the website.',
@@ -30,6 +51,8 @@ return [
     'close_chat' => 'Close chat',
     'select_chat_to_start' => 'Select chat to start',
     'closed_success' => 'Successfully closed',
+    'close' => 'Close',
+    'close_chat_content' => 'Are you sure you want to close this conversation?',
 
     // Questions
     'dont_have_access_to_site' => 'You are not authorized to view this site.',
@@ -40,10 +63,10 @@ return [
     'create_question_title' => 'Add new question and answer',
     'question_subheading' => 'Please provide the question and the answer.',
     'add_question' => 'Add question',
-    'import_excel' => 'Import from excel',
+    'import_excel' => 'Import from Excel',
     'search' => 'Search',
     'actions' => 'Actions',
-    'question_manager' => 'Question Manager',
+    'question_manager' => 'Question manager',
     'edit_question_title' => 'Update question and answer',
     'ready' => 'Ready',
     'waiting' => 'Waiting',
@@ -63,9 +86,9 @@ return [
 
     // Errors
     'missing_site' => 'The requested site is currently unavailable or missing.',
-    'missing_permission' => 'You dont have permission!',
+    'missing_permission' => 'You don\'t have permission!',
     'missing_key' => 'The requested key is currently unavailable or missing.',
-    'missing_auth_question' => 'You dont have permission or the question was not found.',
+    'missing_auth_question' => 'You don\'t have permission, or the question was not found.',
     'download_success' => 'Successfully downloaded',
     'import_success' => 'Successfully imported',
     'refresh_success' => 'Successfully refreshed!',
@@ -78,6 +101,8 @@ return [
     'info' => 'Info',
     'avatar' => 'Avatar',
     'password' => 'Password',
+    'last_name' => 'Last name',
+    'fist_name' => 'First name',
 
     // Keys
     'create_key' => 'Create key',
@@ -85,21 +110,21 @@ return [
     'delete_key' => 'Delete key',
     'add_new_key_subheading' => 'Copy the token and share it with the person you want to grant moderator privileges to.',
     'token_enscrypted' => 'Encrypted token',
-    'token_enscrypted_info' => 'Token display is encrypted. Do not share these tokens.',
-    'token_create_info' => 'You can only copy a key when it is created. If you forget, delete and create a new one. A key is valid for 3 days.',
+    'token_enscrypted_info' => 'The displayed tokens are encrypted. Do not share them.',
+    'token_create_info' => 'You can only copy a key when it is created. A key is valid for 3 days.',
     'all' => 'All',
     'activated' => 'Activated',
     'not_activated' => 'Not activated',
     'add_new_key' => 'Add new key',
-    'key_delete_message' => "Are you sure you want to delete the following user's key: ",
+    'key_delete_message' => 'Are you sure you want to delete the following user\'s key: ',
     'key_delete_title' => 'Delete key',
     'permissions' => 'Permissions',
     'key_subheading' => 'Please select the permissions you want to add to the key.',
     'edit_key' => 'Edit key',
-    'manage_key' => 'License key manager',
-    'manage_your_key' => 'Replace your old license key with your new license key.',
-    'current_key' => 'Current license key',
-    'new_key' => 'New license key',
+    'manage_key' => 'Product key manager',
+    'manage_your_key' => 'Replace your old product key with your new product key.',
+    'current_key' => 'Current product key',
+    'new_key' => 'New product key',
     'change' => 'Change',
 
     // Widgets
@@ -172,12 +197,19 @@ return [
     'yearly' => 'Yearly',
     'triennial' => 'Triennial',
     'buy_now' => 'Buy now',
-
     'active' => 'Active',
     'inactive' => 'Inactive',
     'open' => 'Open',
     'waiting' => 'Waiting',
     'deposit' => 'Deposit',
+    'accept_p_policy' => 'Accept Privacy Policy',
+    'accept_gtc' => 'Accept General Terms and Conditions (GTC)',
+    'top_up_amount' => 'Top-up amount',
+    'extend_subscription_success' => 'Subscription successfully extended!',
+    'extend_subscription_failed' => 'Subscription extension failed',
+    'purchase_success' => 'The payment was completed successfully!',
+    'purchase_failed' => 'The payment has failed!',
+    'purchase_success_message' => 'The payment was completed successfully!',
 
     // Misc
     'attached to the website' => 'You are already connected to the given website.',
@@ -185,4 +217,28 @@ return [
     'invalid_token_contact_owner' => 'The token is invalid or expired. Contact the owner.',
     'copy' => 'Copy',
     'message' => 'Message',
+    'saved' => 'Saved',
+
+    // Settings
+    'settings' => 'Settings',
+    'settings_description' => 'Manage profile settings',
+    'profile' => 'Profile',
+    'resend_verification_email' => 'Click here to resend the verification email.',
+    'change_avatar' => 'Change avatar',
+    'change_your_name_or_email' => 'Change your profile name and email address.',
+    'confirm_delete_account_title' => 'Are you sure you want to delete your account?',
+    'confirm_delete_account_description' => 'Once your account is deleted, all associated resources and data will be permanently removed. Please enter your password to confirm permanent account deletion.',
+    'unverified_email' => 'Your email address is not verified.',
+    'sended_verification_email' => 'A new verification link has been sent to your email address.',
+    'delete_account' => 'Delete account',
+    'light_theme' => 'Light theme',
+    'dark_theme' => 'Dark theme',
+    'system_theme' => 'System theme',
+    'appearance' => 'Appearance',
+    'appearance_title' => 'Appearance',
+    'appearance_description' => 'Choose the appearance theme',
+    'new_password' => 'New password',
+    'confirm_new_password' => 'Confirm new password',
+    'update_password_title' => 'Change password',
+    'update_password_description' => 'Change your password',
 ];

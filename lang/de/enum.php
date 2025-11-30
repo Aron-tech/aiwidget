@@ -16,6 +16,7 @@ return [
     'update_questions' => 'Fragen und Antworten aktualisieren',
     'delete_questions' => 'Fragen und Antworten löschen',
     'read_widget_export' => 'Widget-Export anzeigen',
+    'import_questions' => 'Fragen-antwort-paare importieren',
     'close_chat' => 'Chat schließen',
     'read_documents' => 'Dokumente anzeigen',
     'upload_documents' => 'Dokumentdatei hochladen',

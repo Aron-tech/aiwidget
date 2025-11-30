@@ -100,31 +100,31 @@ new class extends Component {
 
 <section class="w-full">
     @include('partials.settings-heading')
-    <x-settings.layout heading="{{ __('Profile') }}" subheading="{{ __('Update your name and email address') }}">
+    <x-settings.layout heading="{{ __('interface.profile') }}" subheading="{{ __('interface.change_your_name_or_email') }}">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" label="{{ __('Name') }}" type="text" name="name" required autofocus
+            <flux:input wire:model="name" label="{{ __('interface.name') }}" type="text" name="name" required autofocus
                         autocomplete="name"/>
 
             <div>
-                <flux:input wire:model="email" label="{{ __('Email') }}" type="email" name="email" required
+                <flux:input wire:model="email" label="{{ __('interface.email') }}" type="email" name="email" required
                             autocomplete="email"/>
 
                 @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
                     <div>
                         <p class="mt-2 text-sm text-gray-800">
-                            {{ __('Your email address is unverified.') }}
+                            {{ __('interface.unverified_email') }}
 
                             <button
                                 wire:click.prevent="resendVerificationNotification"
                                 class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                {{ __('Click here to re-send the verification email.') }}
+                                {{ __('interface.resend_verification_email') }}
                             </button>
                         </p>
 
                         @if (session('status') === 'verification-link-sent')
                             <p class="mt-2 text-sm font-medium text-green-600">
-                                {{ __('A new verification link has been sent to your email address.') }}
+                                {{ __('interface.sended_verification_email') }}
                             </p>
                         @endif
                     </div>
@@ -133,11 +133,11 @@ new class extends Component {
 
             <div class="flex items-center gap-4">
                 <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
+                    <flux:button variant="primary" type="submit" class="w-full">{{ __('interface.save') }}</flux:button>
                 </div>
 
                 <x-action-message class="me-3" on="profile-updated">
-                    {{ __('Saved.') }}
+                    {{ __('interface.saved') }}
                 </x-action-message>
             </div>
         </form>
@@ -145,9 +145,9 @@ new class extends Component {
         <div class="flex lg:flex-row flex-col my-10 gap-8">
             <img src="{{ $profile_image?->temporaryUrl() ?? route('view-file', ['path' => auth()->user()->image]) }}"
                  class="rounded-lg size-32" alt="{{auth()->user()->name}}">
-            <flux:input type="file" wire:model="profile_image" label="{{__('Change Profile Image')}}"/>
+            <flux:input type="file" wire:model="profile_image" label="{{__('interface.change_avatar')}}"/>
         </div>
-        <flux:button variant="primary" wire:click="saveProfileImage()">{{ __('Save') }}</flux:button>
+        <flux:button variant="primary" wire:click="saveProfileImage()">{{ __('interface.save') }}</flux:button>
 
         <livewire:settings.delete-user-form/>
 

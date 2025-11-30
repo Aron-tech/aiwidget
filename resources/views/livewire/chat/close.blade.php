@@ -43,8 +43,8 @@ new class extends Component {
                 <flux:heading size="lg">{{__('interface.close_chat')}}</flux:heading>
 
                 <flux:text class="mt-2">
-                    <p>You're about to delete this project.</p>
-                    <p>This action cannot be reversed.</p>
+                    <p>{{__('interface.close_chat_content')}}</p>
+                    <p>{{__('interface.irreversible')}}</p>
                 </flux:text>
             </div>
 

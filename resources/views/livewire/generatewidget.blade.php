@@ -127,8 +127,7 @@ new class extends Component {
                 <flux:radio.group wire:model.live="style" label="{{ __('interface.select_widget_style') }}"
                                   variant="segmented" size="lg">
                     <flux:radio value="" checked label="{{ __('interface.default_style') }}"/>
-                    <flux:radio value="2" label="{{ __('interface.custom_style') }}"/>
-                    <flux:radio value="1" label="{{ __('interface.custom_style') }}"/>
+                    <flux:radio disabled value="1" label="{{ __('interface.custom_style') }}"/>
                 </flux:radio.group>
             </div>
             <div class="mt-10 flex flex-col gap-4">
@@ -152,8 +151,8 @@ new class extends Component {
                 <flux:description>{{__('interface.knowledge_base_description')}}</flux:description>
                 <div class="flex gap-4 *:gap-x-2">
                     <flux:checkbox.group wire:model.live="selected_databases">
-                        <flux:checkbox checked value="document" :label="__('interface.document_database')"/>
-                        <flux:checkbox checked value="question" :label="__('interface.question_database')"/>
+                        <flux:checkbox value="document" :label="__('interface.document_database')"/>
+                        <flux:checkbox value="question" :label="__('interface.question_database')"/>
                     </flux:checkbox.group>
                 </div>
             </flux:fieldset>
@@ -166,7 +165,7 @@ new class extends Component {
                             label="{{__('interface.change_site_wiget_icon')}}"/>
             </div>
             <div class="text-right">
-                <flux:button variant="primary" wire:click="saveWidgetImage()">{{ __('Save') }}</flux:button>
+                <flux:button variant="primary" wire:click="saveWidgetImage()">{{ __('interface.save') }}</flux:button>
             </div>
         </div>
     </div>

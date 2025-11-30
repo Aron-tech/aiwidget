@@ -14,7 +14,7 @@ row-span-2 bg-white dark:bg-black/10 rounded-lg shadow-md w-full h-full p-6 hove
     </div>
 
     <div class="mt-auto">
-        <a href="{{$site->domain}}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">Weboldal megtekintése</a>
+        <a href="{{$site->domain}}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">{{__('interface.visit_website')}}</a>
     </div>
 </div>
 

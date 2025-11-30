@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Site;
 use App\Models\SiteSelector;
 use Livewire\Volt\Component;
 use Illuminate\Support\Str;
@@ -9,10 +10,17 @@ new class extends Component {
     public string $password = '';
     public string $entered_key = '';
     public string $new_key = '';
+    public ?Site $site = null;
 
-    public function mount()
+    public function mount(SiteSelector $site_selector)
     {
         $this->generateKey();
+        if(!$site_selector->hasSite()){
+            $this->redirectRoute('site.picker');
+            return;
+        }
+
+        $this->site = $site_selector->getSite();
     }
 
     public function generateKey()
@@ -57,7 +65,7 @@ new class extends Component {
             />
 
             <flux:input
-                label="{{ __('interface.current_key ') }}"
+                label="{{ __('interface.current_key') }}"
                 type="text"
                 wire:model.defer="entered_key"
             />

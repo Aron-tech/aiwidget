@@ -33,9 +33,13 @@ new class extends Component {
             return;
         }
 
+        if(isset($_GET['payment_failed']) && (bool)$_GET['payment_failed']){
+            $this->notify('danger', __('interface.purchase_failed'));
+        }
+
         $this->site = $site_selector->getSite();
 
-        $this->balance = $this->getBalance();
+        $this->balance = round($this->getBalance(),2);
 
         $this->last_transactions = $this->getLastTransactions();
 
@@ -106,8 +110,8 @@ new class extends Component {
 <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
     <x-notification.panel :notifications="session()->all()"/>
     <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-
+        <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-10">
+            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">Statisztika</flux:text>
         </div>
         <div
             class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
@@ -178,7 +182,7 @@ new class extends Component {
                         <flux:text>{{$transaction->description}}</flux:text>
                         <flux:text>@if($transaction->type === BalanceTransactionTypeEnum::PURCHASE)
                                 -
-                            @endif{{$transaction->amount}} €
+                            @endif{{round($transaction->amount,2)}} €
                         </flux:text>
                         <flux:text>{{$transaction->created_at}}</flux:text>
                     @endforeach

@@ -74,7 +74,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header title="Log in to your account" description="Enter your email and password below to log in" />
+    <x-auth-header title="{{__('interface.login_title')}}" description="{{__('interface.login_description')}}" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
@@ -83,7 +83,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <!-- Email Address -->
         <flux:input
             wire:model="email"
-            label="{{ __('Email address') }}"
+            label="{{ __('interface.email') }}"
             type="email"
             name="email"
             required
@@ -96,7 +96,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <div class="relative">
             <flux:input
                 wire:model="password"
-                label="{{ __('Password') }}"
+                label="{{ __('interface.password') }}"
                 type="password"
                 name="password"
                 required
@@ -106,21 +106,21 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
             @if (Route::has('password.request'))
                 <flux:link class="absolute right-0 top-0 text-sm" href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
+                    {{ __('interface.forgot_your_password') }}
                 </flux:link>
             @endif
         </div>
 
         <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" label="{{ __('Remember me') }}" />
+        <flux:checkbox wire:model="remember" label="{{ __('interface.remember_me') }}" />
 
         <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+            <flux:button variant="primary" type="submit" class="w-full">{{ __('interface.login') }}</flux:button>
         </div>
     </form>
 
     <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Don't have an account?
-        <flux:link href="{{ route('register') }}" wire:navigate>Sign up</flux:link>
+        @lang('interface.login_dont_have_account')
+        <flux:link href="{{ route('register') }}" wire:navigate>{{__('interface.sign_up')}}</flux:link>
     </div>
 </div>

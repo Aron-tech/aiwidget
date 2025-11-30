@@ -16,6 +16,7 @@ return [
     'update_questions' => 'Kérdések és válaszok frissítése',
     'delete_questions' => 'Kérdések és válaszok törlése',
     'read_widget_export' => 'Widget export megtekintése',
+    'import_questions' => 'Kérdés-válasz párok importálása',
     'close_chat' => 'Csevegés lezárása',
     'read_documents' => 'Dokumentumok megtekintése',
     'upload_documents' => 'Dokumentum fájl feltöltése',

@@ -52,7 +52,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header title="Create an account" description="Enter your details below to create your account"/>
+    <x-auth-header title="{{__('interface.registration_title')}}" description="{{__('interface.registration_description')}}"/>
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')"/>
@@ -60,17 +60,17 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <form wire:submit="register" class="flex flex-col gap-6">
         <!-- Name -->
         <div class="grid gap-2">
-            <flux:input wire:model="first_name" min="3" id="first_name" label="{{ __('First name') }}" type="text"
-                        name="first_name" required autofocus autocomplete="first_name" placeholder="First name"/>
+            <flux:input wire:model="first_name" min="3" id="first_name" label="{{ __('interface.fist_name') }}" type="text"
+                        name="first_name" required autofocus autocomplete="first_name" placeholder="Petra"/>
         </div>
         <div class="grid gap-2">
-            <flux:input wire:model="last_name" id="last_name" label="{{ __('Last name') }}" type="text" name="last_name"
-                        required autofocus autocomplete="last_name" placeholder="Last name"/>
+            <flux:input wire:model="last_name" id="last_name" label="{{ __('interface.last_name') }}" type="text" name="last_name"
+                        required autofocus autocomplete="last_name" placeholder="Rabi"/>
         </div>
 
         <!-- Email Address -->
         <div class="grid gap-2">
-            <flux:input wire:model="email" id="email" label="{{ __('Email address') }}" type="email" name="email"
+            <flux:input wire:model="email" id="email" label="{{ __('interface.email') }}" type="email" name="email"
                         required autocomplete="email" placeholder="email@example.com"/>
         </div>
 
@@ -79,7 +79,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <flux:input
                 wire:model="password"
                 id="password"
-                label="{{ __('Password') }}"
+                label="{{ __('interface.password') }}"
                 type="password"
                 name="password"
                 required
@@ -93,27 +93,27 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <flux:input
                 wire:model="password_confirmation"
                 id="password_confirmation"
-                label="{{ __('Confirm password') }}"
+                label="{{ __('interface.password_confirm') }}"
                 type="password"
                 name="password_confirmation"
                 required
                 autocomplete="new-password"
-                placeholder="Confirm password"
+                placeholder="Password"
             />
         </div>
         <div class="grid gap-2">
-            <flux:input type="file" wire:model="user_profile_image" label="{{__('Profile Avatar')}}"/>
+            <flux:input type="file" wire:model="user_profile_image" label="{{__('interface.avatar')}}" />
         </div>
 
         <div class="flex items-center justify-end">
             <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Create account') }}
+                {{ __('interface.sign_up') }}
             </flux:button>
         </div>
     </form>
 
     <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Already have an account?
-        <flux:link href="{{ route('login') }}" wire:navigate>Log in</flux:link>
+        @lang('interface.already_have_account')
+        <flux:link href="{{ route('login') }}" wire:navigate>@lang('interface.login')</flux:link>
     </div>
 </div>

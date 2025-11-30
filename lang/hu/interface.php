@@ -1,6 +1,27 @@
 <?php
 
 return [
+
+    //Dashboard menu
+    'dashboard' => 'Kezdőlap',
+
+    //Register/Login/Logout
+    'login' => 'Bejelentkezés',
+    'sign_up' => 'Regisztráció',
+    'remember_me' => 'Emlékezz rám',
+    'forgot_your_password' => 'Elfelejtetted a jelszavad?',
+    'login_dont_have_account' => 'Nem rendelkezel még fiókkal?',
+    'already_have_account' => 'Rendelkezel már fiókkal?',
+    'login_title' => 'Bejelentkezés a kezelőfelületre',
+    'login_description' => 'Add meg a fiókod adatait a bejelentkezéshez',
+    'password_confirm' => 'Jelszó ismétlése',
+    'registration_title' => 'Regisztráció a kezelőfelületre',
+    'registration_description' => 'Add meg az adataidat a fiókod létrehozásához',
+    'logout' => 'Kijelentkezés',
+
+    //Site picker
+    'visit_website' => 'Weboldal megtekintése',
+
     'select_website' => 'Weboldal kiválasztása',
     'add_new_website' => 'Új weboldal hozzáadása',
     'add_new_website_subheading' => 'Kérjük, adja meg a weboldal adatait.',
@@ -30,6 +51,8 @@ return [
     'close_chat' => 'Csevegés bezárása',
     'select_chat_to_start' => 'Válasszon csevegést a kezdéshez',
     'closed_success' => 'Sikeresen lezárva',
+    'close' => 'Bezár',
+    'close_chat_content' => 'Biztosan lezárod a beszélgetést?',
 
     // Questions
     'dont_have_access_to_site' => 'Nincs jogosultsága az oldal megtekintéséhez.',
@@ -78,6 +101,8 @@ return [
     'info' => 'Információ',
     'avatar' => 'Profilkép',
     'password' => 'Jelszó',
+    'last_name' => 'Vezetéknév',
+    'fist_name' => 'Keresztnév',
 
     // Keys
     'create_key' => 'Kulcs létrehozása',
@@ -177,6 +202,14 @@ return [
     'open' => 'Nyitott',
     'waiting' => 'Várakozik',
     'deposit' => 'Befizetés',
+    'accept_p_policy' => 'Adatvédelmi irányelvek elfogadása',
+    'accept_gtc' => 'Általános Szerződési Feltételek elfogadása',
+    'top_up_amount' => 'Feltöltendő összeg',
+    'extend_subscription_success' => 'Az előfizetés sikeresen meghosszabbítva!',
+    'extend_subscription_failed' => 'Az előfizetés meghosszabbítása sikertelen!',
+    'purchase_success' => 'A fizetés sikeresen megtörtént!',
+    'purchase_failed' => 'A fizetés sikertelen volt!',
+    'purchase_success_message' => 'A fizetés sikeresen megtörtént!',
 
     // Misc
     'attached to the website' => 'Már csatlakozva van a megadott weboldalhoz.',
@@ -184,4 +217,28 @@ return [
     'invalid_token_contact_owner' => 'A token érvénytelen vagy lejárt. Kérjük, lépjen kapcsolatba a tulajdonossal.',
     'copy' => 'Másolás',
     'message' => 'Üzenet',
+    'saved' => 'Mentve',
+
+    //Settings
+    'settings' => 'Beállítások',
+    'settings_description' => 'Profil beállítások kezelése',
+    'profile' => 'Profil',
+    'resend_verification_email' => 'Kattintson ide az ellenőrző e-mail újbóli elküldéséhez.',
+    'change_avatar' => 'Profilkép megváltoztatása',
+    'change_your_name_or_email' => 'Módosítsa a profilnevét és az e-mail címét.',
+    'confirm_delete_account_title' => 'Biztosan törölni szeretnéd a fiókodat?',
+    'confirm_delete_account_description' => 'A fiók törlését követően az összes hozzá tartozó erőforrás és adat véglegesen törlődik. Kérjük, adja meg jelszavát a fiók végleges törlésének megerősítéséhez.',
+    'unverified_email' => 'Az e-mail címed nincs ellenőrizve.',
+    'sended_verification_email' => 'Egy új ellenőrző linket küldtünk az e-mail címedre.',
+    'delete_account' => 'Profil törlése',
+    'light_theme' => 'Világos téma',
+    'dark_theme' => 'Sötét téma',
+    'system_theme' => 'Rendszertéma',
+    'appearance' => 'Megjelenítés',
+    'appearance_title' => 'Megjelenítés',
+    'appearance_description' => 'Válassza ki a megjelenítés témáját',
+    'new_password' => 'Új jelszó',
+    'confirm_new_password' => 'Új jelszó megismétlése',
+    'update_password_title' => 'Jelszó megváltoztatása',
+    'update_password_description' => 'Változtassa meg a jelszavát',
 ];

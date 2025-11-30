@@ -90,7 +90,7 @@ class ProcessSuccessfulPayment
             'description' => $note,
         ]);
 
-        return to_route('dashboard')->with('success', __('interface.purchase.success'));
+        return to_route('dashboard')->with('success', __('interface.purchase_success'));
     }
 
     private function processLicensePurchase($user_id, $days_number, $amount, $fee_period, $note)

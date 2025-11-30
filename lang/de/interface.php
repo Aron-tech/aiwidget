@@ -1,6 +1,27 @@
 <?php
 
 return [
+
+    //Dashboard menu
+    'dashboard' => 'Armaturenbrett',
+
+    // Register/Login/Logout
+    'login' => 'Anmelden',
+    'sign_up' => 'Registrieren',
+    'remember_me' => 'Angemeldet bleiben',
+    'forgot_your_password' => 'Passwort vergessen?',
+    'login_dont_have_account' => 'Sie haben noch kein Konto?',
+    'already_have_account' => 'Sie haben bereits ein Konto?',
+    'login_title' => 'Beim Dashboard anmelden',
+    'login_description' => 'Geben Sie Ihre Kontodaten ein, um sich anzumelden.',
+    'password_confirm' => 'Passwort bestätigen',
+    'registration_title' => 'Für das Dashboard registrieren',
+    'registration_description' => 'Geben Sie Ihre Daten ein, um Ihr Konto zu erstellen.',
+    'logout' => 'Abmelden',
+
+    // Site picker
+    'visit_website' => 'Website besuchen',
+
     'select_website' => 'Website auswählen',
     'add_new_website' => 'Neue Website hinzufügen',
     'add_new_website_subheading' => 'Bitte geben Sie die Informationen für die Website ein.',
@@ -30,6 +51,8 @@ return [
     'close_chat' => 'Chat schließen',
     'select_chat_to_start' => 'Chat zum Starten auswählen',
     'closed_success' => 'Erfolgreich geschlossen',
+    'close' => 'Schließen',
+    'close_chat_content' => 'Möchten Sie dieses Gespräch wirklich schließen?',
 
     // Questions
     'dont_have_access_to_site' => 'Sie sind nicht berechtigt, diese Website anzuzeigen.',
@@ -78,6 +101,8 @@ return [
     'info' => 'Informationen',
     'avatar' => 'Profilbild',
     'password' => 'Passwort',
+    'last_name' => 'Nachname',
+    'fist_name' => 'Vorname',
 
     // Keys
     'create_key' => 'Schlüssel erstellen',
@@ -96,7 +121,7 @@ return [
     'permissions' => 'Berechtigungen',
     'key_subheading' => 'Bitte wählen Sie die Berechtigungen, die dem Schlüssel hinzugefügt werden sollen.',
     'edit_key' => 'Schlüssel bearbeiten',
-    'manage_key' => 'Produktschlüssel Verwaltung',
+    'manage_key' => 'Produktschlüsselverwaltung',
     'manage_your_key' => 'Ersetzen Sie Ihren alten Produktschlüssel durch den neuen.',
     'current_key' => 'Aktueller Produktschlüssel',
     'new_key' => 'Neuer Produktschlüssel',
@@ -177,6 +202,14 @@ return [
     'open' => 'Offen',
     'waiting' => 'Wartet',
     'deposit' => 'Einzahlung',
+    'accept_p_policy' => 'Datenschutzerklärung akzeptieren',
+    'accept_gtc' => 'AGB (Allgemeine Geschäftsbedingungen) akzeptieren',
+    'top_up_amount' => 'Aufladebetrag',
+    'extend_subscription_success' => 'Abonnement erfolgreich verlängert',
+    'extend_subscription_failed' => 'Verlängerung des Abonnements fehlgeschlagen',
+    'purchase_success' => 'Die Zahlung wurde erfolgreich abgeschlossen!',
+    'purchase_failed' => 'Die Zahlung ist fehlgeschlagen!',
+    'purchase_success_message' => 'Die Zahlung wurde erfolgreich abgeschlossen!',
 
     // Misc
     'attached to the website' => 'Sie sind bereits mit dieser Website verbunden.',
@@ -184,4 +217,28 @@ return [
     'invalid_token_contact_owner' => 'Token ungültig oder abgelaufen. Bitte kontaktieren Sie den Websitebesitzer.',
     'copy' => 'Kopieren',
     'message' => 'Nachricht',
+    'saved' => 'Gespeichert',
+
+    // Settings
+    'settings' => 'Einstellungen',
+    'settings_description' => 'Profileinstellungen verwalten',
+    'profile' => 'Profil',
+    'resend_verification_email' => 'Klicken Sie hier, um die Bestätigungs-E-Mail erneut zu senden.',
+    'change_avatar' => 'Profilbild ändern',
+    'change_your_name_or_email' => 'Ändern Sie Ihren Profilnamen und Ihre E-Mail-Adresse.',
+    'confirm_delete_account_title' => 'Sind Sie sicher, dass Sie Ihr Konto löschen möchten?',
+    'confirm_delete_account_description' => 'Nach dem Löschen Ihres Kontos werden alle zugehörigen Ressourcen und Daten dauerhaft entfernt. Bitte geben Sie Ihr Passwort ein, um die endgültige Löschung zu bestätigen.',
+    'unverified_email' => 'Ihre E-Mail-Adresse ist nicht verifiziert.',
+    'sended_verification_email' => 'Ein neuer Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.',
+    'delete_account' => 'Konto löschen',
+    'light_theme' => 'Helles Design',
+    'dark_theme' => 'Dunkles Design',
+    'system_theme' => 'Systemdesign',
+    'appearance' => 'Darstellung',
+    'appearance_title' => 'Darstellung',
+    'appearance_description' => 'Wählen Sie das gewünschte Design',
+    'new_password' => 'Neues Passwort',
+    'confirm_new_password' => 'Neues Passwort bestätigen',
+    'update_password_title' => 'Passwort ändern',
+    'update_password_description' => 'Ändern Sie Ihr Passwort',
 ];
