@@ -88,11 +88,17 @@ class MessageController extends Controller
                 $embedding_token_count += $optimized_result_question->usage->promptTokens;
                 $embedding_token_count += $optimized_result_question->usage->completionTokens;
             }
+            if(in_array('question', $kb_setting) && !in_array('document', $kb_setting)) {
+                return [$optimized_result_question?->text, $embedding_token_count];
+            }
         }
 
         if (in_array('document', $kb_setting)) {
             $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3, $language);
             $embedding_token_count += $optimized_result_document['token_count'];
+            if(in_array('document', $kb_setting) && !in_array('question', $kb_setting)) {
+                return [$optimized_result_document['answer'], $embedding_token_count];
+            }
         }
         if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
             $is_better_document = false;
