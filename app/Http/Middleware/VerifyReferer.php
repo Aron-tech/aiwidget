@@ -19,13 +19,14 @@ class VerifyReferer
     {
         $referer = $request->server('HTTP_REFERER');
 
-        //Log::info($referer);
-
         $uuid = $request->route('site')['uuid'];
 
         $site = Site::where('uuid', $uuid)->firstOrFail();
 
-        if ($referer !== $site->domain)
+        $referer_host = parse_url($referer, PHP_URL_HOST);
+        $site_host = parse_url($site->domain, PHP_URL_HOST) ?: $site->domain;
+
+        if ($referer_host !== $site_host)
             abort(403, 'Érvénytelen azonosító!');
 
         return $next($request);
