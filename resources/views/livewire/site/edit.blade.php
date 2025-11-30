@@ -24,7 +24,7 @@ new class extends Component {
             $this->dispatch('notify','warning',__('interface.missing_site'));
         }
 
-        $owner_key_exists = $this->site->keys()->where('user_id', auth()->user()->id)->where('type', KeyTypesEnum::OWNER)->exists();
+        $owner_key_exists = $this->site->keys()->where('user_id', auth()->user()->id)->where('type', KeyTypesEnum::CUSTOMER)->exists();
 
         if(!$owner_key_exists)
         {

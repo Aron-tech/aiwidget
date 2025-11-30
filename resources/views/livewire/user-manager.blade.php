@@ -36,9 +36,8 @@
         </div>
     </div>
     <div class="grid grid-cols-4 gap-6">
-        <!--Táblázat fejléc-->
         <div class="pb-3 dark:border-white/20 border-b-zinc-900/20 border-b-2">
-            <flux:heading size="lg">{{__('interface.token_enscrypted')}}</flux:heading>
+            <flux:heading size="lg">{{__('interface.avatar')}}</flux:heading>
         </div>
         <div class="pb-3 dark:border-white/20 border-b-zinc-900/20 border-b-2">
             <flux:heading size="lg">{{__('interface.name')}}</flux:heading>
@@ -50,16 +49,15 @@
             <flux:heading size="lg">{{__('interface.actions')}}</flux:heading>
         </div>
 
-        <!--Táblázat adatok-->
         @foreach ($keys as $key)
             @if($key->type === App\Enums\KeyTypesEnum::MODERATOR)
                 <div class="overflow-hidden">
-                    <flux:heading>{{$key->token}}</flux:heading>
+                    <x-avatar :src="$key->user?->image" size="48" :fallback="Str::upper(Str::substr($key->user?->name, 0, 1))"/>
                 </div>
-                <div>
+                <div class="flex items-center">
                     <flux:heading>{{$key->user?->name}}</flux:heading>
                 </div>
-                <div>
+                <div class="flex items-center">
                     <flux:heading>{{$key->user?->email}}</flux:heading>
                 </div>
                 <div class="flex justify-center space-x-4">

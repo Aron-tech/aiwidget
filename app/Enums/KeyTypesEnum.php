@@ -5,16 +5,16 @@ namespace App\Enums;
 enum KeyTypesEnum: string
 {
     case MODERATOR = 'moderator';
-    case OWNER = 'owner';
+    case CUSTOMER = 'customer';
     case DEVELOPER = 'developer';
 
 
     public function getLabel(): string
     {
         return match ($this) {
-            KeyTypesEnum::MODERATOR => 'Weboldal moderátor',
-            KeyTypesEnum::OWNER => 'Weboldal tulajdonos',
-            KeyTypesEnum::DEVELOPER => 'Fejlesztő',
+            KeyTypesEnum::MODERATOR => __('enum.moderator'),
+            KeyTypesEnum::CUSTOMER => __('enum.customer'),
+            KeyTypesEnum::DEVELOPER => __('enum.developer'),
         };
     }
 

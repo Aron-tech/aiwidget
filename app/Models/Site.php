@@ -24,21 +24,21 @@ class Site extends Model
         'settings',
     ];
 
-        public function getRouteKeyName(): string
-        {
-            return 'uuid';
-        }
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
 
-        protected static function boot()
-        {
-            parent::boot();
-            static::creating(function ($model) {
-                if (empty($model->uuid)) {
-                    $nano = new Client();
-                    $model->uuid = $nano->generateId(24); // 24 karakter hosszú Nano ID
-                }
-            });
-        }
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $nano = new Client();
+                $model->uuid = $nano->generateId(24); // 24 karakter hosszú Nano ID
+            }
+        });
+    }
 
     protected $casts = [
         'settings' => 'json',
@@ -62,5 +62,15 @@ class Site extends Model
     public function questionAnswers(): HasMany
     {
         return $this->hasMany(QuestionAnswer::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function balances(): HasManyThrough
+    {
+        return $this->hasManyThrough(Balance::class, Key::class, 'site_id', 'key_id', 'id', 'id');
     }
 }

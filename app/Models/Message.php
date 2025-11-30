@@ -18,6 +18,7 @@ class Message extends Model
         'chat_id',
         'message',
         'sender_role',
+        'token_count',
     ];
 
     protected $casts = [

@@ -2,113 +2,113 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\GenerateEmbeddingAction;
+use App\Actions\GenerateTextAction;
+use App\Actions\SearchDocumentsAction;
 use App\Http\Requests\MessageRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Models\Chat;
 use App\Models\Site;
 use App\Models\Message;
-use App\Models\QuestionAnswer;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\ChatStatusEnum;
 use App\Enums\MessageSenderRolesEnum;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class MessageController extends Controller
 {
-    public function findBestAnswer($user_question, $site_id, $chat_id): ?string
+    use AsAction;
+
+    public function findBestAnswer(string $user_question, Site $site, int $chat_id): array
     {
-        $exact_match = QuestionAnswer::where('site_id', $site_id)
-            ->where('question', $user_question)
-            ->first();
-
-        if ($exact_match) {
-            return $exact_match->answer;
-        }
-
-        $user_embedding = $this->getEmbedding($user_question);
-
-        $best_match = null;
+        $site_id = $site->id;
+        $kb_setting = getJsonValue($site, 'settings', 'knowledge-databases', []);
         $highest_score = 0;
+        $embedding_token_count = 0;
+        $optimized_result_question = null;
+        $optimized_result_document = null;
 
-        $questions = QuestionAnswer::where('site_id', $site_id)->get();
+        $language_cache = 'site_' . $site_id . '_chat_' . $chat_id . '_language';
 
-        foreach ($questions as $question) {
-            $question_embedding = json_decode($question->embedding, true);
-
-            if(!empty($question_embedding) && !empty($user_embedding)) {
-                $similarity_score = $this->cosineSimilarity($user_embedding, $question_embedding);
-            }else{
-                $similarity_score = 0;
-            }
-
-            if ($similarity_score > $highest_score) {
-                $highest_score = $similarity_score;
-                $best_match = $question;
-            }
-        }
-        //Log::info($highest_score);
-
-        if ($best_match && $highest_score > 0.5){
-
-            $language_cache = 'site_' . $site_id . '_chat_' . $chat_id . '_language';
-
-            //Log::info('Felhasználó kérdés: ' . $user_question . ' Válasz: ' . $best_match->answer);
-            $language = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question) {
-                $language_result = Prism::text()
-                    ->using(Provider::OpenAI, 'gpt-3.5-turbo')
-                    ->withSystemPrompt('You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.')
-                    ->withPrompt($user_question)
-                    ->generate();
-                return $language_result->text;
-            });
-
-            //Log::info('Nyelv: ' . $language->text);
-
-            $optimized_result = Prism::text()
-                ->using(Provider::OpenAI, 'gpt-4o-mini')
-                ->withSystemPrompt('You are a translation and phrasing expert.')
-                ->withClientOptions(['timeout' => 15])
-                ->withPrompt(
-                    "You are given a user question, a system question, and a system answer.\n\n" .
-                    "Your task is to translate ONLY the system answer into " . $language . ".\n" .
-                    "Do NOT return or rephrase the user question or system question.\n" .
-                    "Do NOT add any explanation or extra text — return only the translated answer.\n\n" .
-                    "User question: " . $user_question . "\n" .
-                    "System question: " . $best_match->question . "\n" .
-                    "System answer: " . $best_match->answer
-                )
-                ->generate();
-            //Log::info('Optimalizált válasz: ' . $optimized_result->text);
-
-            if (isset($optimized_result->text))
-                return $optimized_result->text;
-        }
-
-        return null;
-    }
-
-    private function getEmbedding($text): ?array
-    {
-        $cache_key = 'embedding_' . md5($text);
-
-        return Cache::remember($cache_key, now()->addHours(12), function () use ($text) {
-
-            $response = Prism::embeddings()
-                ->using(Provider::OpenAI, 'text-embedding-3-large')
-                ->fromInput($text)
-                ->withClientOptions(['timeout' => 15])
-                ->withClientRetry(2, 100)
-                ->generate();
-
-            if (empty($response->embeddings)) {
-                throw new \Exception("Hiba: A beágyazás generálása sikertelen.");
-            }
-
-            return $response->embeddings;
+        $language_result = Cache::remember($language_cache, now()->addMinutes(10), function () use ($user_question) {
+            return GenerateTextAction::run(
+                'You are a language detection service. Only respond with a short ISO 639-1 language code like "en", "hu", or "de". Do not explain.',
+                $user_question,
+                'gpt-3.5-turbo'
+            );
         });
+
+        $language = $language_result->text;
+        $embedding_token_count += $language_result->usage->promptTokens;
+        $embedding_token_count += $language_result->usage->completionTokens;
+
+        if (in_array('question', $kb_setting)) {
+            $exact_match = $site->questionAnswers()
+                ->where('question', $user_question)
+                ->first();
+
+            if ($exact_match) {
+                return [$exact_match->answer, $embedding_token_count];
+            }
+
+            $user_embedding_response = GenerateEmbeddingAction::run($user_question);
+            $embedding_token_count += $user_embedding_response->usage->tokens;
+            $user_embedding = $user_embedding_response->embeddings;
+
+            $best_match = null;
+
+            $questions = $site->questionAnswers()->get();
+
+            foreach ($questions as $question) {
+                $question_embedding = json_decode($question->embedding, true);
+
+                if (!empty($question_embedding) && !empty($user_embedding)) {
+                    $similarity_score = $this->cosineSimilarity($user_embedding, $question_embedding);
+                } else {
+                    $similarity_score = 0;
+                }
+
+                if ($similarity_score > $highest_score) {
+                    $highest_score = $similarity_score;
+                    $best_match = $question;
+                }
+            }
+
+            if ($best_match && $highest_score > 0.5) {
+
+                $optimized_result_question = GenerateTextAction::run(
+                    'You are a translation and phrasing expert.',
+                    "Translate only the following system answer into {$language}.
+                                Use the user and system question only as context if needed.
+                                Return only the translated system answer, nothing else.
+                                User question: {$user_question}
+                                System question: {$best_match->question}
+                                System answer: {$best_match->answer}");
+
+                $embedding_token_count += $optimized_result_question->usage->promptTokens;
+                $embedding_token_count += $optimized_result_question->usage->completionTokens;
+            }
+        }
+
+        if (in_array('document', $kb_setting)) {
+            $optimized_result_document = (new SearchDocumentsAction())->execute($user_question, $site_id, 3, $language);
+            $embedding_token_count += $optimized_result_document['token_count'];
+        }
+        if (in_array('question', $kb_setting) && in_array('document', $kb_setting)) {
+            $is_better_document = false;
+            foreach ($optimized_result_document['search_results'] as $document_item) {
+                if ($highest_score < $document_item['score']) {
+                    $is_better_document = true;
+                }
+            }
+            if ($is_better_document) {
+                return [$optimized_result_document['answer'], $embedding_token_count];
+            } elseif($highest_score>=0.1) {
+                return [$optimized_result_question?->text, $embedding_token_count];
+            }
+        }
+
+        return [null, $embedding_token_count];
     }
 
     private function cosineSimilarity(array $a, array $b): float
@@ -148,24 +148,23 @@ class MessageController extends Controller
             'message' => $validated['message'],
         ]);
 
-        $answer = $this->findBestAnswer($validated['message'], $site->id, $chat->id);
+        $answer_response = $this->findBestAnswer($validated['message'], $site, $chat->id);
+        $answer = $answer_response[0];
+        $used_token_count = $answer_response[1];
 
-        if(!$answer){
+        if (!$answer) {
             $answer = "A kérdésedre nem sikerült helyes választ találni, hamarosan megválaszolja egy munkatárs a kérdésedet.";
             $chat->update([
                 'status' => ChatStatusEnum::WAITING,
             ]);
         }
 
-        //Log::info("Bot válasz lekérdezés után: $answer");
-
         Message::create([
             'chat_id' => $chat->id,
             'message' => $answer,
             'sender_role' => MessageSenderRolesEnum::BOT,
+            'token_count' => $used_token_count,
         ]);
-
-        //Log::info("Bot üzenet mentése adatbázisba: $bot_message->id");
 
         return response()->json([
             'message' => 'Az üzenet sikeresen elküldve!',

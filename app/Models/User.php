@@ -5,17 +5,19 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Traits\Searchable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable // implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, Searchable;
+    use HasFactory, Notifiable, Searchable, SoftDeletes;
 
     protected array $searchable = ['name', 'email'];
 
@@ -32,8 +34,6 @@ class User extends Authenticatable // implements MustVerifyEmail
         'other_data',
         'email',
         'password',
-        'status',
-        'key_id'
     ];
 
     /**
@@ -54,6 +54,11 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function sites(): HasManyThrough
     {
         return $this->hasManyThrough(Site::class, Key::class, 'user_id', 'id', 'id', 'site_id');
+    }
+
+    public function balances(): HasMany
+    {
+        return $this->hasMany(Balance::class);
     }
 
     /**
