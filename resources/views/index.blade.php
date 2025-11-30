@@ -345,7 +345,7 @@
 
                     <div class="mb-8">
                         <div class="text-5xl font-bold text-white mb-2">
-                            <span class="bg-ai-gradient bg-clip-text text-transparent">€0.002</span>
+                            <span class="bg-ai-gradient bg-clip-text text-transparent">0.00001 €</span>
                         </div>
                         <p class="text-gray-300">@lang('pages.pricing.usage_fee.per_token')</p>
                     </div>

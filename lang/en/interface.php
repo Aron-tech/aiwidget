@@ -4,6 +4,12 @@ return [
 
     //Dashboard menu
     'dashboard' => 'Dashboard',
+    'monthly_statistics' => 'Monthly statistics',
+    'messages_this_month' => 'Total messages sent',
+    'bot_messages_this_month' => 'Messages sent by the system',
+    'user_messages_this_month' => 'Messages sent by users',
+    'used_tokens_count' => 'Number of tokens used',
+    'monthly_token_amount' => 'Monthly token spending',
 
     // Register/Login/Logout
     'login' => 'Login',
@@ -164,7 +170,7 @@ return [
 
     // Knowledge base
     'knowledge_base' => 'Knowledge base',
-    'knowledge_base_description' => 'Choose which knowledge base you use to find answers.',
+    'knowledge_base_description' => 'Choose which knowledge base you want to use to find answers.',
 
     // Status
     'opened' => 'Opened',
@@ -218,6 +224,7 @@ return [
     'copy' => 'Copy',
     'message' => 'Message',
     'saved' => 'Saved',
+    'no_permission_to_change_key' => 'You do not have permission; only the product key can be changed!',
 
     // Settings
     'settings' => 'Settings',

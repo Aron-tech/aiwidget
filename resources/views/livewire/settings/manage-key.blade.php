@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\KeyTypesEnum;
+use App\Models\Key;
 use App\Models\Site;
 use App\Models\SiteSelector;
 use Livewire\Volt\Component;
@@ -15,12 +17,23 @@ new class extends Component {
     public function mount(SiteSelector $site_selector)
     {
         $this->generateKey();
-        if(!$site_selector->hasSite()){
+        if (!$site_selector->hasSite()) {
             $this->redirectRoute('site.picker');
             return;
         }
 
         $this->site = $site_selector->getSite();
+
+        $is_owner = false;
+
+        $is_owner = Key::where('site_id', $this->site->id)
+            ->where('user_id', auth()->id())
+            ->where('type', KeyTypesEnum::CUSTOMER)
+            ->exists();
+
+        if (! $is_owner) {
+            return to_route('dashboard')->with('danger', __('interface.no_permission_to_change_key'));
+        }
     }
 
     public function generateKey()
