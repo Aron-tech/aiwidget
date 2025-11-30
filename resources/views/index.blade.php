@@ -371,7 +371,7 @@
                     <div class="text-center bg-ai-gradient/10 rounded-xl p-4">
                         <p class="text-sm text-gray-300">
                             <span class="text-ai-blue font-semibold">1000 @lang('pages.pricing.usage_fee.cost_example')</span>
-                            <span class="text-ai-orange font-semibold">€1-3</span> @lang('pages.pricing.usage_fee.title')
+                            <span class="text-ai-orange font-semibold">€0.1-0.3</span> @lang('pages.pricing.usage_fee.title')
                         </p>
                     </div>
                 </div>
@@ -417,8 +417,8 @@
             </div>
 
             <div class="flex space-x-8">
-                <a href="#" class="text-gray-400 hover:text-white transition-colors">@lang('pages.footer.privacy')</a>
-                <a href="#" class="text-gray-400 hover:text-white transition-colors">@lang('pages.footer.terms')</a>
+                <a href="{{route('privacy-policy')}}" class="text-gray-400 hover:text-white transition-colors">@lang('pages.footer.privacy')</a>
+                <a href="{{route('terms-and-conditions')}}" class="text-gray-400 hover:text-white transition-colors">@lang('pages.footer.terms')</a>
             </div>
         </div>
 

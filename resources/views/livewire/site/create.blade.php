@@ -190,12 +190,12 @@ new class extends Component {
                 />
                 <flux:field variant="inline">
                     <flux:checkbox wire:model="p_policy" />
-                    <flux:label>{{__('interface.accept_p_policy')}}</flux:label>
+                    <flux:label><a target="_blank" href="{{route('privacy-policy')}}">{{__('interface.accept_p_policy')}}</a></flux:label>
                     <flux:error name="p_policy" />
                 </flux:field>
                 <flux:field variant="inline">
                     <flux:checkbox wire:model="terms" />
-                    <flux:label>{{__('interface.accept_gtc')}}</flux:label>
+                    <flux:label><a target="_blank" href="{{route('terms-and-conditions')}}">{{__('interface.accept_gtc')}}</a></flux:label>
                     <flux:error name="terms" />
                 </flux:field>
                 <div class="flex justify-end">

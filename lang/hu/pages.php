@@ -66,8 +66,8 @@ return [
     ],
     'footer' => [
         'tagline' => 'A jövő chatbot megoldásai',
-        'privacy' => 'Adatvédelem',
-        'terms' => 'Feltételek',
+        'privacy' => 'Adatkezelési Tájékoztató',
+        'terms' => 'Általános Szerződési Feltételek',
         'copyright' => '© 2025 ConversiveAI. Minden jog fenntartva.'
     ]
 ];

@@ -66,8 +66,6 @@ return [
     ],
     'footer' => [
         'tagline' => 'Die Zukunft der Chatbot-Lösungen',
-        'privacy' => 'Datenschutz',
-        'terms' => 'Bedingungen',
         'copyright' => '© 2025 ConversiveAI. Alle Rechte vorbehalten.'
     ]
 ];
