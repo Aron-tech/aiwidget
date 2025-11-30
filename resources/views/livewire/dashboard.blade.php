@@ -3,9 +3,11 @@
 use App\Actions\CreateStripeCheckout;
 use App\Enums\BalanceTransactionTypeEnum;
 use App\Enums\KeyTypesEnum;
+use App\Enums\MessageSenderRolesEnum;
 use App\Livewire\Traits\GlobalNotifyEvent;
 use App\Models\Balance;
 use App\Models\Key;
+use App\Models\Message;
 use App\Models\Site;
 use App\Models\SiteSelector;
 use Carbon\Carbon;
@@ -16,6 +18,8 @@ new class extends Component {
 
     use GlobalNotifyEvent;
 
+    const TOKEN_USE_FEE = 0.00001;
+
     public ?Site $site = null;
     public float $balance = 0;
     public ?Key $ownerKey = null;
@@ -23,6 +27,11 @@ new class extends Component {
     public float $upload_amount = 0;
     public bool $p_policy = false;
     public bool $terms = false;
+
+    public int $message_count = 0;
+    public int $bot_message_count = 0;
+    public int $user_message_count = 0;
+    public int $used_tokens_count = 0;
 
     public SystemUsageFeePeriodEnum $selected_period = SystemUsageFeePeriodEnum::MONTHLY;
 
@@ -33,17 +42,35 @@ new class extends Component {
             return;
         }
 
-        if(isset($_GET['payment_failed']) && (bool)$_GET['payment_failed']){
+        if (isset($_GET['payment_failed']) && (bool)$_GET['payment_failed']) {
             $this->notify('danger', __('interface.purchase_failed'));
         }
 
         $this->site = $site_selector->getSite();
 
-        $this->balance = round($this->getBalance(),2);
+        $this->balance = round($this->getBalance(), 2);
 
         $this->last_transactions = $this->getLastTransactions();
 
         $this->ownerKey = $this->site->keys()->where('keys.type', KeyTypesEnum::CUSTOMER)->first();
+
+        $base_query = Message::query()
+            ->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->whereIn('sender_role', [
+                MessageSenderRolesEnum::BOT,
+                MessageSenderRolesEnum::USER,
+            ]);
+
+        $this->message_count = (clone $base_query)->count();
+        $this->bot_message_count = (clone $base_query)
+            ->where('sender_role', MessageSenderRolesEnum::BOT)
+            ->count();
+        $this->user_message_count = (clone $base_query)
+            ->where('sender_role', MessageSenderRolesEnum::USER)
+            ->count();
+
+        $this->used_tokens_count = Message::whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->sum('token_count');
     }
 
     public function getBalance(): float
@@ -96,7 +123,7 @@ new class extends Component {
 
                     $this->balance = $this->balance - $this->selected_period->getFee();
                     $this->last_transactions = $this->getLastTransactions();
-                    $this->notify('success', __('interface_extend_subscription_success'));
+                    $this->notify('success', __('interface.extend_subscription_success'));
                 });
             } else {
                 $this->notify('danger', __('interface_extend_subscription_failed_no_money'));
@@ -110,15 +137,35 @@ new class extends Component {
 <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
     <x-notification.panel :notifications="session()->all()"/>
     <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-10">
-            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">Statisztika</flux:text>
-        </div>
         <div
-            class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-
+            class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-10">
+            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">
+                @lang('interface.monthly_statistics')
+            </flux:text>
+            <div>
+                <flux:text class="mt-4 text-base lg:text-base md:text-sm font-semibold space-y-1">
+                    {{ __('interface.messages_this_month') }}: {{ $this->message_count }}
+                    <br>
+                    {{ __('interface.bot_messages_this_month') }}: {{ $this->bot_message_count }}
+                    <br>
+                    {{ __('interface.user_messages_this_month') }}: {{ $this->user_message_count }}
+                    <br>
+                    <br>
+                    {{__('interface.used_tokens_count')}}: {{$this->used_tokens_count}}
+                    <br>
+                </flux:text>
+            </div>
         </div>
-        <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-
+        <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
+            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">
+                {{__('interface.monthly_token_amount')}}
+            </flux:text>
+            <br>
+            <div>
+                <flux:text class="mt-4 text-base lg:text-xl font-semibold space-y-1">
+                    {{$this->used_tokens_count*self::TOKEN_USE_FEE}} €
+                </flux:text>
+            </div>
         </div>
     </div>
     <div
@@ -134,24 +181,26 @@ new class extends Component {
             <div class="space-y-2 lg:space-y-4">
                 <flux:input wire:model="upload_amount" type="number" label="{{__('interface.top_up_amount')}}"/>
                 <flux:field variant="inline">
-                    <flux:checkbox wire:model="p_policy" />
+                    <flux:checkbox wire:model="p_policy"/>
                     <flux:label>@lang('interface.accept_p_policy')</flux:label>
-                    <flux:error name="p_policy" />
+                    <flux:error name="p_policy"/>
                 </flux:field>
                 <flux:field variant="inline">
-                    <flux:checkbox wire:model="terms" />
+                    <flux:checkbox wire:model="terms"/>
                     <flux:label>@lang('interface.accept_gtc')</flux:label>
-                    <flux:error name="terms" />
+                    <flux:error name="terms"/>
                 </flux:field>
                 <div class="w-full justify-end flex">
-                    <flux:button wire:click="uploadAmount" class="space-x-2 sm:space-x-0 self-end">{{__('interface.pay')}}</flux:button>
+                    <flux:button wire:click="uploadAmount"
+                                 class="space-x-2 sm:space-x-0 self-end">{{__('interface.pay')}}</flux:button>
                 </div>
             </div>
 
             <div class="my-4">
                 <flux:separator/>
             </div>
-            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">@lang('interface.system_usage')</flux:text>
+            <flux:text
+                class="text-lg lg:text-2xl dark:text-white text-black">@lang('interface.system_usage')</flux:text>
             <flux:text>{{date("Y. M. d.", strtotime($this->ownerKey->expiration_time))}}</flux:text>
             <flux:select wire:model="selected_period"
                          label="{{__('interface.system_usage_packages')}}">
@@ -169,10 +218,11 @@ new class extends Component {
             <flux:separator :vertical="true"/>
         </div>
         <div class="flex lg:hidden justify-center my-4">
-            <flux:separator />
+            <flux:separator/>
         </div>
         <div class="space-y-2">
-            <flux:text class="text-lg lg:text-2xl dark:text-white text-black">{{__('interface.recent_transactions')}}</flux:text>
+            <flux:text
+                class="text-lg lg:text-2xl dark:text-white text-black">{{__('interface.recent_transactions')}}</flux:text>
             <div class="lg:mt-10 grid grid-cols-3 gap-4">
                 <flux:text>{{__('interface.product_name')}}</flux:text>
                 <flux:text>{{__('interface.amount')}}</flux:text>
