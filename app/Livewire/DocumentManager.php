@@ -30,7 +30,7 @@ class DocumentManager extends Component
     use WithoutUrlPagination;
     use GlobalNotifyEvent;
 
-    #[Validate('required|file|max:200240|mimes:pdf,doc,docx,txt,html,md')]
+    #[Validate('required|file|max:400240|mimes:pdf,doc,docx,txt,html,md')]
     public $file;
     #[Validate('required|string|max:255')]
     public string $title;

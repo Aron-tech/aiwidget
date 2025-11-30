@@ -34,7 +34,7 @@ class ChatManager extends Component
         if($site_selector->hasSite()) {
             $this->site = $site_selector->getSite();
         }else {
-            $this->redirect('site-selector');
+            $this->redirect('site-picker');
         }
     }
 
