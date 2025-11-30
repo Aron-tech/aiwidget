@@ -4,6 +4,12 @@ return [
 
     //Dashboard menu
     'dashboard' => 'Kezdőlap',
+    'monthly_statistics' => 'Havi statisztika',
+    'messages_this_month' => 'Összes elküldött üzenet',
+    'bot_messages_this_month' => 'Rendszer által elküldőtt üzenet ',
+    'user_messages_this_month' => 'Felhasználó által elküldött üzenetek',
+    'used_tokens_count' => 'Elhasznált tokenek száma',
+    'monthly_token_amount' => 'Havi token költések',
 
     //Register/Login/Logout
     'login' => 'Bejelentkezés',
@@ -218,6 +224,7 @@ return [
     'copy' => 'Másolás',
     'message' => 'Üzenet',
     'saved' => 'Mentve',
+    'no_permission_to_change_key' => 'Nincs jogosultságod, csakis termékkulcsot lehet megváltoztatni!',
 
     //Settings
     'settings' => 'Beállítások',

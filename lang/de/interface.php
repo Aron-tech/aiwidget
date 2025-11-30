@@ -3,7 +3,13 @@
 return [
 
     //Dashboard menu
-    'dashboard' => 'Armaturenbrett',
+    'dashboard' => 'Dashboard',
+    'monthly_statistics' => 'Monatliche Statistik',
+    'messages_this_month' => 'Gesendete Nachrichten insgesamt',
+    'bot_messages_this_month' => 'Vom System gesendete Nachrichten',
+    'user_messages_this_month' => 'Von Benutzern gesendete Nachrichten',
+    'used_tokens_count' => 'Anzahl der verwendeten Tokens',
+    'monthly_token_amount' => 'Monatliche Token-Ausgaben',
 
     // Register/Login/Logout
     'login' => 'Anmelden',
@@ -69,7 +75,7 @@ return [
     'question_manager' => 'Fragen-Manager',
     'edit_question_title' => 'Frage und Antwort bearbeiten',
     'ready' => 'Bereit',
-    'waiting' => 'Wartet',
+    'waiting' => 'Wartend',
     'questions_download' => 'Fragen herunterladen',
     'download' => 'Herunterladen',
     'upload' => 'Hochladen',
@@ -200,7 +206,7 @@ return [
     'active' => 'Aktiv',
     'inactive' => 'Inaktiv',
     'open' => 'Offen',
-    'waiting' => 'Wartet',
+    'waiting' => 'Wartend',
     'deposit' => 'Einzahlung',
     'accept_p_policy' => 'Datenschutzerklärung akzeptieren',
     'accept_gtc' => 'AGB (Allgemeine Geschäftsbedingungen) akzeptieren',
@@ -218,6 +224,7 @@ return [
     'copy' => 'Kopieren',
     'message' => 'Nachricht',
     'saved' => 'Gespeichert',
+    'no_permission_to_change_key' => 'Sie haben keine Berechtigung, es kann nur der Produktschlüssel geändert werden!',
 
     // Settings
     'settings' => 'Einstellungen',
