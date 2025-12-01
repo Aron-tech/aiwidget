@@ -13,7 +13,7 @@ class VerifyReferer
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param Closure(Request): (Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -22,6 +22,10 @@ class VerifyReferer
         $uuid = $request->route('site')['uuid'];
 
         $site = Site::where('uuid', $uuid)->firstOrFail();
+
+        if ($referer && !str_starts_with($referer, 'http')) {
+            $referer = 'https://' . $referer;
+        }
 
         $referer_host = parse_url($referer, PHP_URL_HOST);
         $site_host = parse_url($site->domain, PHP_URL_HOST) ?: $site->domain;
