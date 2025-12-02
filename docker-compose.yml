@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: ../../Desktop/Szakdolgozat
+      dockerfile: Dockerfile
+    container_name: aichat_app
+    env_file: .env
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+      - redis
+      - qdrant
+    networks:
+      - aichat_network
+
+  nginx:
+    image: nginx:stable
+    container_name: aichat_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./storage/logs/nginx:/var/log/nginx
+    depends_on:
+      - app
+    networks:
+      - aichat_network
+
+  db:
+    image: mariadb:11
+    container_name: aichat_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: aichat
+      MYSQL_USER: aichat_user
+      MYSQL_PASSWORD: aistrongpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - aichat_network
+
+  redis:
+    image: redis:7
+    container_name: aichat_redis
+    command: ["redis-server", "--requirepass", "redispassword"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - aichat_network
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: aichat_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - aichat_network
+
+networks:
+  aichat_network:
+    driver: bridge
+
+volumes:
+  db_data:
+  redis_data:
+  qdrant_data:
