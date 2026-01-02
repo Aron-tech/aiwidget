@@ -161,7 +161,7 @@ new class extends Component {
 
             <div class="flex justify-between">
                 <flux:modal.trigger name="buy-token">
-                    <flux:button x-on:click="$flux.modal('add-site').close()">Buy token</flux:button>
+                    <flux:button x-on:click="$flux.modal('add-site').close()">{{__('interface.buy_token')}}</flux:button>
                 </flux:modal.trigger>
                 <flux:button type="submit" wire:click='addWebsite()'
                              variant="primary">{{__('interface.add_site')}}</flux:button>

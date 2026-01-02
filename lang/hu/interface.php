@@ -203,6 +203,7 @@ return [
     'yearly' => 'Éves',
     'triennial' => 'Hároméves',
     'buy_now' => 'Vásárlás most',
+    'buy_token' => 'Termékkulcs vásárlás',
     'active' => 'Aktív',
     'inactive' => 'Inaktív',
     'open' => 'Nyitott',

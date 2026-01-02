@@ -203,6 +203,7 @@ return [
     'yearly' => 'Jährlich',
     'triennial' => 'Dreijährlich',
     'buy_now' => 'Jetzt kaufen',
+    'buy_token' => 'Kauf eines Produktschlüssels',
     'active' => 'Aktiv',
     'inactive' => 'Inaktiv',
     'open' => 'Offen',

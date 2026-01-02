@@ -203,6 +203,7 @@ return [
     'yearly' => 'Yearly',
     'triennial' => 'Triennial',
     'buy_now' => 'Buy now',
+    'buy_token' => 'Buy token',
     'active' => 'Active',
     'inactive' => 'Inactive',
     'open' => 'Open',
