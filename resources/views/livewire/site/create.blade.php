@@ -159,12 +159,12 @@ new class extends Component {
                             name="token" required autocomplete="token" placeholder="key-token" clearable/>
             </div>
 
-            <div class="flex flex-wrap justify-between gap-4">
-                <flux:modal.trigger name="buy-token">
-                    <flux:button x-on:click="$flux.modal('add-site').close()">{{__('interface.buy_token')}}</flux:button>
+            <div class="flex flex-row flex-nowrap justify-between gap-4 items-center">
+                <flux:modal.trigger name="buy-token" class="flex-1">
+                    <flux:button x-on:click="$flux.modal('add-site').close()" class="w-full !whitespace-normal h-auto py-2">{{__('interface.buy_token')}}</flux:button>
                 </flux:modal.trigger>
                 <flux:button type="submit" wire:click='addWebsite()'
-                             variant="primary">{{__('interface.add_site')}}</flux:button>
+                             variant="primary" class="flex-1 !whitespace-normal h-auto py-2">{{__('interface.add_site')}}</flux:button>
             </div>
         </div>
     </flux:modal>
